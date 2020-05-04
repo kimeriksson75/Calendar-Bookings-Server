@@ -12,6 +12,9 @@ app.use(cors());
 
 // app.use(jwt());
 
+app.get('/', function (req, res) {
+  res.redirect('/bookings');
+});
 app.use('/users', require('./users/user.controller'));
 app.use('/bookings', require('./bookings/booking.controller'));
 app.use('/apartments', require('./apartments/apartment.controller'));
