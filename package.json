@@ -16,7 +16,7 @@
     "rootpath": "^0.1.2"
   },
   "engines": {
-    "node": "12.16.2"
+    "node": "^12.16.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.3"
