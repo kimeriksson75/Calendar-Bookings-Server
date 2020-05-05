@@ -18,11 +18,13 @@ const getByDate = (req, res, next) => bookingService.getByDate(req.params.date)
   .then(booking => booking ? res.json(booking) : res.status(404))
   .catch(err => next(err));
 
+const getByMonth = (req, res, next) => bookingService.getByMonth(req.params.date)
+  .then(booking => booking ? res.json(booking) : res.status(404))
+  .catch(err => next(err));
+
+
 const update = (req, res, next) => bookingService.update(req.params.id, req.body)
-  .then((booking) => {
-    console.log('update controller', booking)
-    res.json(booking)
-  })
+  .then((booking) => res.json(booking))
   .catch(err => next(err));
 
 const _delete = (req, res, next) => bookingService.delete(req.params.id)
@@ -32,6 +34,7 @@ const _delete = (req, res, next) => bookingService.delete(req.params.id)
 router.post('/create', create);
 router.get('/', getAll);
 router.get('/date/:date', getByDate);
+router.get('/month/:date', getByMonth)
 router.get('/:id', getById);
 router.patch('/:id', update);
 router.delete('/:id', _delete);
