@@ -13,8 +13,12 @@ app.use(cors());
 app.use(express.static(__dirname + '/'));
 // app.use(jwt());
 
+// Add a health check route in express
+app.get('/_health', (req, res) => {
+  res.status(200).send('ok')
+})
 app.get('/', function (req, res) {
-  res.redirect('/bookings');
+  res.status(200).send('ok')
 });
 app.use('/users', require('./users/user.controller'));
 app.use('/bookings', require('./bookings/booking.controller'));
