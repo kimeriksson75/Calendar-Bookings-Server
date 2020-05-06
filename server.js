@@ -2,15 +2,18 @@ require('rootpath')();
 require('dotenv').config();
 const express = require('express');
 const app = express();
+const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const jwt = require('_helpers/jwt');
 const errorHandler = require('_helpers/error-handler');
+const helmet = require('helmet');
 
+app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
-app.use(express.static(__dirname + '/'));
+app.use(express.static(path.join(__dirname, 'public')));
 // app.use(jwt());
 
 // Add a health check route in express
