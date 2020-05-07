@@ -29,8 +29,8 @@ app.use('/apartments', require('./apartments/apartment.controller'));
 
 app.use(errorHandler);
 
-const port = process.env.NODE_ENV === 'production' ? (process.env.port || 8080) : 3000;
+const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 8080) : 3000;
 
-const server = app.listen(port, () => {
+app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 })
