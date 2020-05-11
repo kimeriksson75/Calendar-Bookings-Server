@@ -30,7 +30,7 @@ const create = async userParam => {
 
 const authenticate = async ({ username, password }) => {
   const user = await User.findOne({ username });
-  if (!user) throw 'User not found';
+  if (!user) throw `Username ${username} is not found`;
   // user and password validation
   if (user && bcrypt.compareSync(password, user.hash)) {
     const { hash, ...userWithoutHash } = user.toObject();
@@ -45,11 +45,11 @@ const authenticate = async ({ username, password }) => {
 const update = async (id, userParam) => {
   const user = User.findById(id);
   // validate user
-  if (!user) throw 'User not found';
+  if (!user) throw `Username ${userParam.username} is not found`;
 
   // validate unique user name
   if (user.username !== userParam.username && await user.findOne({ username: userParam.username })) {
-    throw `Username ${userParam.username} is already taken`;
+    throw `Username ${userParam.username} is not related to this user id`;
   }
 
   if (userParam.password) {

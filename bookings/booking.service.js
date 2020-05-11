@@ -12,7 +12,7 @@ const create = async bookingParam => {
 const update = async (id, bookingParam) => {
   // validate booking
   Booking.findById(id, (err, doc) => {
-    if (err) throw 'Booking not found';
+    if (err) throw 'Booking is not found';
   });
 
   return await Booking.findOneAndUpdate({ _id: id }, { $set: bookingParam }, (err, doc) => {
