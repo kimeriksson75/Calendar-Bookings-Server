@@ -26,6 +26,7 @@ app.get('/', function (req, res) {
 app.use('/users', require('./users/user.controller'));
 app.use('/bookings', require('./bookings/booking.controller'));
 app.use('/apartments', require('./apartments/apartment.controller'));
+app.use('/services', require('./services/service.controller'));
 
 app.use(errorHandler);
 

@@ -20,26 +20,25 @@ const update = async (id, bookingParam) => {
     return doc
   });
 }
+const getById = async (service, id) => await Booking.findById({ service, id });
 
-const getAll = async () => await Booking.find();
+const getAll = async service => await Booking.find({ service });
 
-const getById = async id => await Booking.findById(id);
-
-const getByDate = async date => {
+const getByDate = async (service, date) => {
   const start = moment(date).startOf('day');
   const end = moment(date).endOf('day');
-  const booking = await Booking.findOne({ date: { '$gte': start, '$lte': end } });
+  const booking = await Booking.findOne({ service, date: { '$gte': start, '$lte': end } });
   const doc = booking ? booking : {}
   return doc;
 }
-const getByMonth = async date => {
+const getByMonth = async (service, date) => {
   const start = moment(date).startOf('month');
   const end = moment(date).endOf('month');
-  const booking = await Booking.find({ date: { '$gte': start, '$lte': end } });
+  const booking = await Booking.find({ service, date: { '$gte': start, '$lte': end } });
   const doc = booking ? booking : {}
   return doc;
 }
-const _delete = async id => await Booking.findOneAndRemove(id);
+const _delete = async id => await Booking.findOneAndRemove({ id });
 
 module.exports = {
   create,

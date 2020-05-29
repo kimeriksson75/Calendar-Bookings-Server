@@ -15,5 +15,6 @@ mongoose.Promise = global.Promise;
 module.exports = {
   User: require('../users/user.model'),
   Booking: require('../bookings/booking.model'),
-  Apartment: require('../apartments/apartment.model')
+  Apartment: require('../apartments/apartment.model'),
+  Service: require('../services/service.model')
 }
