@@ -1,4 +1,3 @@
-const config = require('config.json');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const db = require('_helpers/db');
@@ -34,7 +33,7 @@ const authenticate = async ({ username, password }) => {
   // user and password validation
   if (user && bcrypt.compareSync(password, user.hash)) {
     const { hash, ...userWithoutHash } = user.toObject();
-    const token = jwt.sign({ sub: user.id }, config.secret);
+    const token = jwt.sign({ sub: user.id }, process.env.ACCESS_TOKEN_SECRET);
     return {
       ...userWithoutHash,
       token

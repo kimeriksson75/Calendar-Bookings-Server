@@ -1,4 +1,4 @@
 {
   "connectionString": "mongodb://localhost/node-mongo-registration-login-api",
-  "secret": "generatesomclientsecret"
+  "secret": "41b3a736c371cefb677c188c1c9335610111e8e1bfee2bf11bc0531b092f54650de697f0a2cc77dca188ae9faa80b5354e718e473c2c35e2ee8dca132bd7f0c2"
 }

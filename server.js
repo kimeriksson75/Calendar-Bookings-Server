@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use(jwt());
+
 
 // Add a health check route in express
 app.get('/_health', (req, res) => {
@@ -24,9 +24,9 @@ app.get('/', function (req, res) {
   res.status(200).send('ok')
 });
 app.use('/users', require('./users/user.controller'));
-app.use('/bookings', require('./bookings/booking.controller'));
-app.use('/apartments', require('./apartments/apartment.controller'));
-app.use('/services', require('./services/service.controller'));
+app.use('/bookings', jwt.authenticateToken, require('./bookings/booking.controller'));
+app.use('/apartments', jwt.authenticateToken, require('./apartments/apartment.controller'));
+app.use('/services', jwt.authenticateToken, require('./services/service.controller'));
 
 app.use(errorHandler);
 
