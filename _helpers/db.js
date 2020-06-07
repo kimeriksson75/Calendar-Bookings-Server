@@ -1,10 +1,9 @@
-const config = require('config.json');
 const mongoose = require('mongoose');
 
 // connect  
-mongoose.connect(process.env.MONGODB_URI || config.connectionString, { useCreateIndex: true, useUnifiedTopology: true, useNewUrlParser: true })
+mongoose.connect(process.env.MONGODB_URI, { useCreateIndex: true, useUnifiedTopology: true, useNewUrlParser: true })
   .then(() => {
-    console.log(`DB ${process.env.MONGODB_URI ? process.env.MONGODB_URI : config.connectionString} connection established`);
+    console.log(`DB ${process.env.MONGODB_URI} connection established`);
   })
   .catch((error) => {
     console.error(`DB connection faild: ${error}`)
