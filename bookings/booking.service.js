@@ -38,6 +38,11 @@ const getByMonth = async (service, date) => {
   const doc = booking ? booking : {}
   return doc;
 }
+const getByUser = async (service, id) => {
+  const booking = await Booking.find({ service, 'timeslots.userId': id })
+  const doc = booking ? booking : {}
+  return doc
+}
 const _delete = async id => await Booking.findOneAndRemove({ id });
 
 module.exports = {
@@ -46,6 +51,7 @@ module.exports = {
   getById,
   getByDate,
   getByMonth,
+  getByUser,
   update,
   delete: _delete
 };

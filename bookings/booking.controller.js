@@ -22,6 +22,9 @@ const getByMonth = (req, res, next) => bookingService.getByMonth(req.params.serv
   .then(booking => booking ? res.json(booking) : res.status(404))
   .catch(err => next(err));
 
+const getByUser = (req, res, next) => bookingService.getByUser(req.params.service, req.params.id)
+  .then(booking => booking ? res.json(booking) : res.status(404))
+  .catch(err => next(err));
 
 const update = (req, res, next) => bookingService.update(req.params.id, req.body)
   .then((booking) => res.json(booking))
@@ -35,6 +38,7 @@ router.post('/create', create);
 router.get('/:service', getAll);
 router.get('/:service/date/:date', getByDate);
 router.get('/:service/month/:date', getByMonth)
+router.get('/:service/user/:id', getByUser)
 router.get('/:id', getById);
 router.patch('/:id', update);
 router.delete('/:id', _delete);
