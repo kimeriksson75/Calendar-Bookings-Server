@@ -11,11 +11,11 @@ const create = async userParam => {
     throw `Username ${userParam.username} is not available`;
   }
   if (await User.findOne({ apartmentid: userParam.apartmentid })) {
-    throw `Apartment ${userParam.apartmentid} is already taken`;
+    throw `Apartment is already taken`;
   }
 
-  if (! await Apartment.findOne({ apartment: userParam.apartmentid })) {
-    throw `Apartment ${userParam.apartmentid} is not a valid apartment`;
+  if (!await Apartment.findOne({ _id: userParam.apartmentid })) {
+    throw `Apartment is not a valid apartment`;
   }
   const user = new User(userParam);
 

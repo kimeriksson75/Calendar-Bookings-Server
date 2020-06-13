@@ -9,7 +9,7 @@ const create = async apartmentParam => {
   return apartment;
 }
 
-const getAll = async () => await Apartment.find();
+const getAll = async residence => await Apartment.find({ residence });
 
 const getById = async id => await Apartment.findById(id);
 

@@ -15,5 +15,6 @@ module.exports = {
   User: require('../users/user.model'),
   Booking: require('../bookings/booking.model'),
   Apartment: require('../apartments/apartment.model'),
-  Service: require('../services/service.model')
+  Service: require('../services/service.model'),
+  Residence: require('../residences/residence.model')
 }

@@ -7,7 +7,8 @@ const userSchema = new Schema({
   hash: { type: String, required: true },
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
-  apartmentid: { type: String, unique: true, required: true }
+  apartmentid: { type: String, unique: true, required: true },
+  residenceid: { type: String, required: true }
 });
 
 userSchema.set('toJSON', { virtuals: true });
