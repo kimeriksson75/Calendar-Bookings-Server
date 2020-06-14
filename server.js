@@ -24,10 +24,10 @@ app.get('/', function (req, res) {
   res.status(200).send('ok')
 });
 app.use('/users', require('./users/user.controller'));
-app.use('/bookings', jwt.authenticateToken, require('./bookings/booking.controller'));
-app.use('/residences', jwt.authenticateToken, require('./residences/residence.controller'));
-app.use('/apartments', jwt.authenticateToken, require('./apartments/apartment.controller'));
-app.use('/services', jwt.authenticateToken, require('./services/service.controller'));
+app.use('/bookings', require('./bookings/booking.controller'));
+app.use('/residences', require('./residences/residence.controller'));
+app.use('/apartments', require('./apartments/apartment.controller'));
+app.use('/services', require('./services/service.controller'));
 
 app.use(errorHandler);
 
