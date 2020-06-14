@@ -13,11 +13,14 @@ const getAll = async () => await Service.find();
 
 const getById = async id => await Service.findById(id);
 
+const getByResidence = async residence => await Service.find({ residence });
+
 const _delete = async id => await Service.findOneAndRemove(id);
 
 module.exports = {
   create,
   getAll,
   getById,
+  getByResidence,
   delete: _delete
 };

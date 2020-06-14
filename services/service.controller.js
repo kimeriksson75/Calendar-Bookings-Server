@@ -14,6 +14,10 @@ const getById = (req, res, next) => serviceService.getById(req.params.id)
   .then(service => service ? res.json(service) : res.status(404))
   .catch(err => next(err));
 
+const getByResidence = (req, res, next) => serviceService.getByResidence(req.params.residence)
+  .then(service => service ? res.json(service) : res.status(404))
+  .catch(err => next(err));
+
 const _delete = (req, res, next) => serviceService.delete(req.params.id)
   .then(() => res.json({}))
   .catch(err => next(err))
@@ -21,6 +25,7 @@ const _delete = (req, res, next) => serviceService.delete(req.params.id)
 router.post('/create', create);
 router.get('/', getAll);
 router.get('/:id', getById);
+router.get('/:residence', getByResidence);
 router.delete('/:id', _delete);
 
 module.exports = router;

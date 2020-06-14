@@ -6,6 +6,7 @@ const serviceSchema = new Schema({
   type: { type: String, required: true },
   timeslots: { type: Array, required: true },
   name: { type: String, required: true },
+  residence: { type: String, required: true },
   limit: { type: Number }
 });
 
