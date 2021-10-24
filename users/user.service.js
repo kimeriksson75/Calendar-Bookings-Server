@@ -5,18 +5,20 @@ const db = require('_helpers/db');
 const User = db.User;
 const Apartment = db.Apartment;
 
-const create = async userParam => {
-  // unique username validation
+const register = async userParam => {
+
+  const {firstname, lastname, username, email, password} = userParam;
+
+  if (!(firstname && lastname && username && email && password)) {
+    throw `All fields are required`;
+  }
   if (await User.findOne({ username: userParam.username })) {
     throw `Username ${userParam.username} is not available`;
   }
-  if (await User.findOne({ apartmentid: userParam.apartmentid })) {
-    throw `Apartment is already taken`;
+  if (await User.findOne({ email: userParam.email })) {
+    throw `Email is already registered`;
   }
 
-  if (!await Apartment.findOne({ _id: userParam.apartmentid })) {
-    throw `Apartment is not a valid apartment`;
-  }
   const user = new User(userParam);
 
   // hash user password
@@ -70,7 +72,7 @@ const _delete = async id => await User.findOneAndRemove(id);
 
 module.exports = {
   authenticate,
-  create,
+  register,
   getAll,
   getById,
   update,

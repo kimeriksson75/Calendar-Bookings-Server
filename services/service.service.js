@@ -1,5 +1,4 @@
 const db = require('_helpers/db');
-const moment = require('moment');
 
 const Service = db.Service;
 

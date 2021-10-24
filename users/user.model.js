@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const validator = require('validator');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -7,8 +7,16 @@ const userSchema = new Schema({
   hash: { type: String, required: true },
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
-  apartmentid: { type: String, unique: true, required: true },
-  residenceid: { type: String, required: true }
+  email: { 
+    type: String, 
+    unique: true, 
+    required: true, 
+    validate: {
+      validator: validator.isEmail,
+      message: '{VALUE} is not a valid email address',
+      isAsync: false,
+    },
+  },
 });
 
 userSchema.set('toJSON', { virtuals: true });

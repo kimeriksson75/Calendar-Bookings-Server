@@ -24,6 +24,8 @@ app.get('/', function (req, res) {
   res.status(200).send('ok')
 });
 app.use('/users', require('./users/user.controller'));
+app.use('/clients', jwt.authenticateToken, require('./clients/client.controller'));
+app.use('/activities', jwt.authenticateToken, require('./activities/activity.controller'));
 app.use('/bookings', jwt.authenticateToken, require('./bookings/booking.controller'));
 app.use('/residences', jwt.authenticateToken, require('./residences/residence.controller'));
 app.use('/apartments', jwt.authenticateToken, require('./apartments/apartment.controller'));
