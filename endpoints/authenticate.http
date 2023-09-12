@@ -1,0 +1,11 @@
+@baseUrl = http://localhost:3000
+@urlPath = verify-access-token
+
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NGVjZGFjOGQyNjliNDIzNjQ0YWU1MzEiLCJpYXQiOjE2OTMyNDQxOTZ9.Forb7DbMRY1QZOyoujrg-SByZf9XmzURqDhGUWH4dRg
+
+### 
+GET {{baseUrl}}/{{urlPath}}
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+Authorization: Bearer {{authToken}}

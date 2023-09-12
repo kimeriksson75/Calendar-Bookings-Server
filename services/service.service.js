@@ -4,18 +4,49 @@ const moment = require('moment');
 const Service = db.Service;
 
 const create = async serviceParam => {
-  const service = new Service(serviceParam);
-  await service.save();
-  return service;
+  try {
+    const service = await Service.create(serviceParam);
+    return service;
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-const getAll = async () => await Service.find();
+const getAll = async () => {
+  try {
+    const services = await Service.find();
+    return services;
+  } catch (err) {
+    throw new Error(err);
+  }
+}
 
-const getById = async id => await Service.findById(id);
+const getById = async id => {
+  try {
+    const service = await Service.findOne(id);
+    return service;
+  } catch (err) {
+    throw new Error(err);
+  }
+}
 
-const getByResidence = async residence => await Service.find({ residence });
+const getByResidence = async residence => {
+  try {
+    const services = await Service.find({ residence });
+    return services;
+  } catch (err) {
+    throw new Error(err);
+  }
+}
 
-const _delete = async id => await Service.findOneAndRemove(id);
+const _delete = async id => {
+  try {
+    await Service.findByIdAndRemove(id);
+    return null;
+  } catch (err) {
+    throw new Error(err);
+  }
+}
 
 module.exports = {
   create,

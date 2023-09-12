@@ -1,0 +1,33 @@
+{
+    "_id": "64ff4cb0ed9b749b94f039cd",
+    "service": "64ff4c8bed9b749b94f039c6",
+    "date": "2023-09-12T17:21:47.228Z",
+    "timeslots": [
+        {
+            "timeslot": "07.00 - 10.00",
+            "userId": "64f2fb695bd7da60df0673ba",
+            "id": 0,
+            "userName": "Eriksson"
+        },
+        {
+            "timeslot": "10.00 - 14.00",
+            "userId": null,
+            "id": 1,
+            "userName": null
+        },
+        {
+            "timeslot": "14.00 - 18.00",
+            "userId": null,
+            "id": 2,
+            "userName": null
+        },
+        {
+            "timeslot": "18.00 - 22.00",
+            "userId": "64f2fb695bd7da60df0673ba",
+            "id": 3,
+            "userName": "Eriksson"
+        }
+    ],
+    "__v": 0,
+    "id": "64ff4cb0ed9b749b94f039cd"
+}

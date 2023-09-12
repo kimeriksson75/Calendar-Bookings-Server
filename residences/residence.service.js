@@ -3,16 +3,39 @@ const db = require('_helpers/db');
 const Residence = db.Residence;
 
 const create = async residenceParam => {
-  const residence = new Residence(residenceParam);
-  await residence.save();
-  return residence;
+  try {
+    const residence = await Residence.create(residenceParam);
+    return residence;
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-const getAll = async () => await Residence.find();
+const getAll = async () => {
+  try {
+    const residences = await Residence.find();
+    return residences;
+  } catch (err) {
+    throw new Error(err);
+  }
+}
 
-const getById = async id => await Residence.findById(id);
+const getById = async id => {
+  try {
+    const residence = await Residence.findById(id);
+    return residence;
+  } catch (err) {
+    throw new Error(err);
+  }
+}
 
-const _delete = async id => await Residence.findOneAndRemove(id);
+const _delete = async id => {
+  try {
+    await Residence.findByIdAndRemove(id);
+  } catch (err) {
+    throw new Error(err);
+  }
+}
 
 module.exports = {
   create,

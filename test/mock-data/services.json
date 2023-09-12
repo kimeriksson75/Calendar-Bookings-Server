@@ -1,0 +1,86 @@
+[
+    {
+        "type": "Tvättstuga",
+        "timeslots": [
+            {
+                "timeslot": "07.00 - 10.00",
+                "userId": "",
+                "id": 0
+            },
+            {
+                "timeslot": "10.00 - 14.00",
+                "userId": "",
+                "id": 1
+            },
+            {
+                "timeslot": "14.00 - 18.00",
+                "userId": "",
+                "id": 2
+            },
+            {
+                "timeslot": "18.00 - 22.00",
+                "userId": "",
+                "id": 3
+            }
+        ],
+        "name": "Läslampan 1",
+        "residence": "64ff05cbb5b14b8850b3a0b2",
+        "limit": 2
+    },
+    {
+        "type": "Hobbyrum",
+        "timeslots": [
+            {
+                "timeslot": "07.00 - 10.00",
+                "userId": "",
+                "id": 0
+            },
+            {
+                "timeslot": "10.00 - 14.00",
+                "userId": "",
+                "id": 1
+            },
+            {
+                "timeslot": "14.00 - 18.00",
+                "userId": "",
+                "id": 2
+            },
+            {
+                "timeslot": "18.00 - 22.00",
+                "userId": "",
+                "id": 3
+            }
+        ],
+        "name": "Läslampan 1",
+        "residence": "64ff05cbb5b14b8850b3a0b2",
+        "limit": 2
+    },
+    {
+        "type": "Grillplats",
+        "timeslots": [
+            {
+                "timeslot": "07.00 - 10.00",
+                "userId": "",
+                "id": 0
+            },
+            {
+                "timeslot": "10.00 - 14.00",
+                "userId": "",
+                "id": 1
+            },
+            {
+                "timeslot": "14.00 - 18.00",
+                "userId": "",
+                "id": 2
+            },
+            {
+                "timeslot": "18.00 - 22.00",
+                "userId": "",
+                "id": 3
+            }
+        ],
+        "name": "Läslampan 1",
+        "residence": "64ff05cbb5b14b8850b3a0b2",
+        "limit": 2
+    }
+]

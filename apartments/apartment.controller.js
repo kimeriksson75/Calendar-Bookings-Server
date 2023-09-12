@@ -1,26 +1,17 @@
-const express = require('express');
-const router = express.Router();
 const apartmentService = require('./apartment.service');
 
-const create = (req, res, next) => apartmentService.create(req.body)
-  .then((apartment) => res.json(apartment))
+exports.create = (req, res, next) => apartmentService.create(req.body)
+  .then((apartment) => res.status(200).json(apartment))
   .catch(err => next(err));
 
-const getAll = (req, res, next) => apartmentService.getAll(req.params.residence)
-  .then(apartments => res.json(apartments))
+exports.getByResidence = (req, res, next) => apartmentService.getByResidence(req.params.residence)
+  .then(apartments => res.status(200).json(apartments))
   .catch(err => next(err));
 
-const getById = (req, res, next) => apartmentService.getById(req.params.id)
-  .then(apartment => apartment ? res.json(apartment) : res.status(404))
+exports.getById = (req, res, next) => apartmentService.getById(req.params.id)
+  .then(apartment => apartment ? res.status(200).json(apartment) : res.status(404))
   .catch(err => next(err));
 
-const _delete = (req, res, next) => apartmentService.delete(req.params.id)
-  .then(() => res.json({}))
+exports._delete = (req, res, next) => apartmentService.delete(req.params.id)
+  .then(() => res.status(200).json({}))
   .catch(err => next(err))
-
-router.post('/create', create);
-router.get('/:residence', getAll);
-router.get('/:id', getById);
-router.delete('/:id', _delete);
-
-module.exports = router;

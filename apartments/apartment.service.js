@@ -4,20 +4,52 @@ const moment = require('moment');
 const Apartment = db.Apartment;
 
 const create = async apartmentParam => {
-  const apartment = new Apartment(apartmentParam);
-  await apartment.save();
-  return apartment;
+  const existingApartment = await Apartment.findOne({ name: apartmentParam.name, residence: apartmentParam.residence })
+  if (existingApartment) {
+    throw new Error (`Apartment with name ${apartmentParam.name} already exists`);
+  }
+  
+  try {
+    const apartment = await Apartment.create(apartmentParam);
+    return apartment;
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
-const getAll = async residence => await Apartment.find({ residence });
+const getByResidence = async residence => {
+  try {
+    const apartments = await Apartment.find({ residence });
+    console.log({apartments});
+    return apartments;
+  } catch (err) {
+    throw new Error(err);
+  }
+}
 
-const getById = async id => await Apartment.findById(id);
+const getById = async id => {
+  try {
+    const apartment = await Apartment.findById(id);
+    console.log({apartment});
 
-const _delete = async id => await Apartment.findOneAndRemove(id);
+    return apartment;
+  } catch (err) {
+    throw new Error(err);
+  }
+}
+
+const _delete = async id => {
+  try {
+    await Apartment.findByIdAndRemove(id);
+    return null;
+  } catch (err) {
+    throw new Error(err);
+  }
+}
 
 module.exports = {
   create,
-  getAll,
+  getByResidence,
   getById,
   delete: _delete
 };

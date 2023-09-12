@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 
+const monogoUri = process.env.MONGODB_URI ?? 'mongodb://localhost/node-mongo-registration-login-api';
 // connect  
-mongoose.connect(process.env.MONGODB_URI, { useCreateIndex: true, useUnifiedTopology: true, useNewUrlParser: true })
+mongoose.connect(monogoUri, { useUnifiedTopology: true, useNewUrlParser: true })
   .then(() => {
-    console.log(`DB ${process.env.MONGODB_URI} connection established`);
+    //console.log(`DB ${monogoUri} connection established`);
   })
   .catch((error) => {
     console.error(`DB connection faild: ${error}`)

@@ -1,27 +1,26 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const db = require('_helpers/db');
+const { User, Apartment} = require('_helpers/db');
 
-const User = db.User;
-const Apartment = db.Apartment;
-
-const create = async userParam => {
+const register = async body => {
   // unique username validation
-  if (await User.findOne({ username: userParam.username })) {
-    throw `Username ${userParam.username} is not available`;
+  
+  if (await User.findOne({ username: body.username })) {
+    throw new Error(`Username ${body.username} is already taken`);
   }
-  if (await User.findOne({ apartmentid: userParam.apartmentid })) {
-    throw `Apartment is already taken`;
+  
+  if (await User.findOne({ apartment: body.apartment })) {
+    throw new Error(`Apartment ${body.apartment} is already taken`);
   }
 
-  if (!await Apartment.findOne({ _id: userParam.apartmentid })) {
-    throw `Apartment is not a valid apartment`;
+  if (!await Apartment.findOne({ _id: body.apartment })) {
+    throw new Error(`Apartment ${body.apartment} is not a valid apartment`);
   }
-  const user = new User(userParam);
+  const user = new User(body);
 
   // hash user password
-  if (userParam.password) {
-    user.hash = bcrypt.hashSync(userParam.password, 10);
+  if (body.password) {
+    user.hash = bcrypt.hashSync(body.password, 10);
   }
   await user.save();
   return user;
@@ -44,11 +43,11 @@ const authenticate = async ({ username, password }) => {
 const update = async (id, userParam) => {
   const user = User.findById(id);
   // validate user
-  if (!user) throw `Username ${userParam.username} is not found`;
+  if (!user) new Error(`Username ${userParam.username} is not found`);
 
   // validate unique user name
   if (user.username !== userParam.username && await user.findOne({ username: userParam.username })) {
-    throw `Username ${userParam.username} is not related to this user id`;
+    throw new Error(`Username ${userParam.username} is not related to this user id`);
   }
 
   if (userParam.password) {
@@ -56,7 +55,7 @@ const update = async (id, userParam) => {
   }
 
   const updated = await User.findOneAndUpdate(id, { $set: userParam }, { upsert: true }, (err, doc) => {
-    if (err) throw err;
+    if (err) throw new Error(err);
   });
 
   return updated;
@@ -70,7 +69,7 @@ const _delete = async id => await User.findOneAndRemove(id);
 
 module.exports = {
   authenticate,
-  create,
+  register,
   getAll,
   getById,
   update,

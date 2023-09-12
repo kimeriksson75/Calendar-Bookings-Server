@@ -1,5 +1,8 @@
-require('rootpath')();
+'use strict';
+
 require('dotenv').config();
+
+require('rootpath')();
 const express = require('express');
 const app = express();
 const path = require('path');
@@ -15,19 +18,21 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(express.json());
 
 // Add a health check route in express
 app.get('/_health', (req, res) => {
-  res.status(200).send('ok')
+  res.status(200).json({ status: 'ok' })
 })
 app.get('/', function (req, res) {
   res.status(200).send('ok')
 });
-app.use('/users', require('./users/user.controller'));
-app.use('/bookings', jwt.authenticateToken, require('./bookings/booking.controller'));
-app.use('/residences', jwt.authenticateToken, require('./residences/residence.controller'));
-app.use('/apartments', jwt.authenticateToken, require('./apartments/apartment.controller'));
-app.use('/services', jwt.authenticateToken, require('./services/service.controller'));
+app.get('/verify-access-token', jwt.authenticateToken, (req, res) => res.status(200).json({ status: 'ok' }));
+app.use('/users', require('./users/user.routes'));
+app.use('/bookings', jwt.authenticateToken, require('./bookings/booking.routes'));
+app.use('/residences', jwt.authenticateToken, require('./residences/residence.routes'));
+app.use('/apartments', jwt.authenticateToken, require('./apartments/apartment.routes'));
+app.use('/services', jwt.authenticateToken, require('./services/service.routes'));
 
 app.use(errorHandler);
 
