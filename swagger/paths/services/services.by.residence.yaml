@@ -1,0 +1,17 @@
+tags:
+- Services
+summary: Get services by residence in the system
+description: Get services by residence in the system
+parameters:
+- name: residence
+  in: path
+  required: true
+  description: ID of residence related to issued services
+  type: string
+responses:
+  '200':
+    description: OK
+    schema:
+      type: array
+      items:
+        $ref: ../../definitions/services/service.yaml

@@ -1,0 +1,20 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Calendar booking API v6
+  description: Calendar booking API
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+host: localhost:3000
+basePath: "/"
+schemes:
+- http
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  $ref: ./paths/index.yaml
+definitions:
+  $ref: ./definitions/index.yaml

@@ -1,0 +1,22 @@
+tags:
+- User
+summary: Update user by id
+description: Update user by id
+parameters:
+- name: id
+  in: path
+  required: true
+  description: ID of user that we want to find
+  type: string
+  schema:
+    $ref: ../../definitions/users/user.yaml
+- name: user
+  in: body
+  description: User with new values of properties
+  schema:
+    $ref: ../../definitions/users/user.yaml
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: ../../definitions/users/user.yaml

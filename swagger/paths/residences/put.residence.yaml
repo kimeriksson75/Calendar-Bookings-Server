@@ -1,0 +1,22 @@
+tags:
+- Residence
+summary: Update residence by id
+description: Update residence by id
+parameters:
+- name: id
+  in: path
+  required: true
+  description: ID of residence that we want to find
+  type: string
+  schema:
+    $ref: ../../definitions/residences/residence.yaml
+- name: residence
+  in: body
+  description: Residence with new values of properties
+  schema:
+    $ref: ../../definitions/residences/residence.yaml
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: ../../definitions/residences/residence.yaml

@@ -3,23 +3,19 @@
     "timeslots": [
         {
             "timeslot": "07.00 - 10.00",
-            "userId": "",
-            "id": 0
+            "userId": null
         },
         {
             "timeslot": "10.00 - 14.00",
-            "userId": "",
-            "id": 1
+            "userId": null
         },
         {
             "timeslot": "14.00 - 18.00",
-            "userId": "",
-            "id": 2
+            "userId": null
         },
         {
             "timeslot": "18.00 - 22.00",
-            "userId": "",
-            "id": 3
+            "userId": null
         }
     ],
     "name": "Läslampan 1",

@@ -1,0 +1,250 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "Calendar booking API",
+      "description": "Calendar booking API",
+      "license": {
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT"
+      }
+    },
+    "host": "localhost:3000",
+    "basePath": "/",
+    "tags": [
+      {
+        "name": "Users",
+        "description": "API for users in the system"
+      }
+    ],
+    "schemes": ["http"],
+    "consumes": ["application/json"],
+    "produces": ["application/json"],
+    "paths": {
+        "/users": {
+            "get": {
+                "tags": ["Users"],
+                "summary": "Get all users in system",
+                "responses": {
+                "200": {
+                    "description": "OK",
+                    "schema": {
+                    "$ref": "#/definitions/Users"
+                    }
+                }
+                }
+            },
+            "post": {
+                "tags": ["User"],
+                "summary": "Create new user",
+                "description": "Create new user",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "body",
+                        "description": "User with new values of properties",
+                        "schema": {
+                            "$ref": "#/definitions/CreateUser"
+                        }
+                    }
+                ],
+                "responses": {
+                "200": {
+                    "description": "OK",
+                    "schema": {
+                    "$ref": "#/definitions/User"
+                    }
+                }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "tags": ["User"],
+                "summary": "Get user by id",
+                "description": "Get user by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID of user that we want to find",
+                        "type": "string",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": ["User"],
+                "summary": "Update user by id",
+                "description": "Update user by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID of user that we want to find",
+                        "type": "string",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    {
+                        "name": "user",
+                        "in": "body",
+                        "description": "User with new values of properties",
+                        "schema": {
+                            "$ref": "#/definitions/UpdateUser"
+                        }
+                    }
+                ],
+                "responses": {
+                "200": {
+                    "description": "OK",
+                    "schema": {
+                    "$ref": "#/definitions/User"
+                    }
+                }
+                }
+            },
+            "delete": {
+                "tags": ["User"],
+                "summary": "Delete user by id",
+                "description": "Delete user by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID of user that we want to delete",
+                        "type": "string",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "User": {
+            "required": ["username", "email", "firstname", "lastname", "apartment", "residence"],
+            "properties": {
+                "_id": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "hash": {
+                    "type": "string",
+                    "required": true
+                },
+                "email": {
+                    "type": "string",
+                    "required": true
+                },
+                "username": {
+                    "type": "string",
+                    "required": true
+                },
+                "firstname": {
+                    "type": "string",
+                    "required": true
+                },
+                "lastname": {
+                    "type": "string",
+                    "required": true
+                },
+                "apartment": {
+                    "type": "integer",
+                    "uniqueItems": true
+                },
+                "residence": {
+                    "type": "integer",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "Users": {
+            "type": "array",
+            "$ref": "#/definitions/User"
+        },
+        "CreateUser": {
+            "required": ["username", "email", "password", "firstname", "lastname", "apartment", "residence"],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "required": true
+                },
+                "username": {
+                    "type": "string",
+                    "required": true
+                },
+                "firstname": {
+                    "type": "string",
+                    "required": true
+                },
+                "lastname": {
+                    "type": "string",
+                    "required": true
+                },
+                "apartment": {
+                    "type": "string",
+                    "required": true,
+                    "uniqueItems": true
+                },
+                "residence": {
+                    "type": "string",
+                    "required": true,
+                    "uniqueItems": true
+                }
+            }
+        },
+        "UpdateUser": {
+            "required": [],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "required": true
+                },
+                "username": {
+                    "type": "string",
+                    "required": true
+                },
+                "firstname": {
+                    "type": "string",
+                    "required": true
+                },
+                "lastname": {
+                    "type": "string",
+                    "required": true
+                },
+                "apartment": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "residence": {
+                    "type": "string",
+                    "uniqueItems": true
+                }
+            }
+        }
+    }
+  }

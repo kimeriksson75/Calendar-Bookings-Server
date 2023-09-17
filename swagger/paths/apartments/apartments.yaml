@@ -1,0 +1,10 @@
+tags:
+- Apartments
+summary: Get all apartments in system
+responses:
+  '200':
+    description: OK
+    schema:
+      type: array
+      items:
+        $ref: ../../definitions/apartments/apartment.yaml

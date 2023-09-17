@@ -1,0 +1,22 @@
+tags:
+- Bookings
+summary: Get bookings by service and month in the system
+description: Get bookings by service and month in the system
+parameters:
+- name: service
+  in: path
+  required: true
+  description: ID of service related to issued bookings
+  type: string
+- name: date
+  in: path
+  required: true
+  description: month related to issued bookings
+  type: string
+responses:
+  '200':
+    description: OK
+    schema:
+      type: array
+      items:
+        $ref: ../../definitions/bookings/booking.yaml

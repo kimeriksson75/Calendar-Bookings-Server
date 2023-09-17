@@ -1,0 +1,17 @@
+tags:
+- Service
+summary: Get service by id
+description: Get service by id
+parameters:
+- name: id
+  in: path
+  required: true
+  description: ID of service that we want to find
+  type: string
+  schema:
+    $ref: ../../definitions/services/service.yaml
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: ../../definitions/services/service.yaml

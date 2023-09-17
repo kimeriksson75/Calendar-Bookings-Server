@@ -1,0 +1,17 @@
+tags:
+- Apartment
+summary: Delete apartment by id
+description: Delete apartment by id
+parameters:
+- name: id
+  in: path
+  required: true
+  description: ID of apartment that we want to delete
+  type: string
+  schema:
+    $ref: ../../definitions/apartments/apartment.yaml
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: ../../definitions/apartments/apartment.yaml

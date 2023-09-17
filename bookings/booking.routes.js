@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { create, getByService, getById, getByDate, getByMonth, getByUser, update, _delete } = require('./booking.controller');
+const { create, getAll, getByService, getById, getByServiceDate, getByServiceMonth, getByServiceUser, update, _delete } = require('./booking.controller');
 
 router.post('/create', create);
-router.get('/:service', getByService);
-router.get('/:service/date/:date', getByDate);
-router.get('/:service/month/:date', getByMonth)
-router.get('/:service/user/:id', getByUser)
-//router.get('/:id', getById);
+router.get('/', getAll);
+router.get('/:id', getById);
+router.get('/service/:service', getByService);
+router.get('/service/:service/date/:date', getByServiceDate);
+router.get('/service/:service/month/:date', getByServiceMonth)
+router.get('/service/:service/user/:id', getByServiceUser)
 router.patch('/:id', update);
 router.delete('/:id', _delete);
 

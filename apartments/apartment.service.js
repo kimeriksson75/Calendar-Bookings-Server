@@ -17,10 +17,18 @@ const create = async apartmentParam => {
   }
 }
 
+const getAll = async () => {
+  try {
+    const apartments = await Apartment.find();
+    return apartments;
+  } catch (err) {
+    throw new Error(err);
+  }
+}
+
 const getByResidence = async residence => {
   try {
     const apartments = await Apartment.find({ residence });
-    console.log({apartments});
     return apartments;
   } catch (err) {
     throw new Error(err);
@@ -30,8 +38,6 @@ const getByResidence = async residence => {
 const getById = async id => {
   try {
     const apartment = await Apartment.findById(id);
-    console.log({apartment});
-
     return apartment;
   } catch (err) {
     throw new Error(err);
@@ -49,6 +55,7 @@ const _delete = async id => {
 
 module.exports = {
   create,
+  getAll,
   getByResidence,
   getById,
   delete: _delete

@@ -1,0 +1,22 @@
+User:
+  $ref: ./users/user.yaml
+Users:
+  $ref: ./users/users.yaml
+CreateUser:
+  $ref: ./users/create.user.yaml
+Residence:
+  $ref: ./residences/residence.yaml
+Residences:
+  $ref: ./residences/residences.yaml
+Apartment:
+  $ref: ./apartments/apartment.yaml
+Apartments:
+  $ref: ./apartments/apartments.yaml
+Service:
+  $ref: ./services/service.yaml
+Services:
+  $ref: ./services/services.yaml
+Booking:
+  $ref: ./bookings/booking.yaml
+Bookings:
+  $ref: ./bookings/bookings.yaml

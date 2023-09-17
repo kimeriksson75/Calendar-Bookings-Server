@@ -1,0 +1,15 @@
+tags:
+- Service
+summary: Create new service
+description: Create new service
+parameters:
+- name: service
+  in: body
+  description: Service with new values of properties
+  schema:
+    $ref: ../../definitions/services/service.yaml
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: ../../definitions/services/service.yaml

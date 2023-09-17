@@ -1,0 +1,10 @@
+tags:
+- Services
+summary: Get all services in system
+responses:
+  '200':
+    description: OK
+    schema:
+      type: array
+      items:
+        $ref: ../../definitions/services/service.yaml

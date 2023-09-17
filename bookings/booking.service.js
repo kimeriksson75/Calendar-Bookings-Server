@@ -26,7 +26,23 @@ const update = async (id, bookingParam) => {
   }
 }
 
+const getById = async (service, id) => {
+  try {
+    const booking = await Booking.findById({ service, id });
+    return booking;
+  } catch (err) {
+    throw new Error(err);
+  }
+}
 
+const getAll = async () => {
+  try {
+    const bookings = await Booking.find();
+    return bookings || [];
+  } catch (err) {
+    throw new Error(err);
+  }
+}
 
 const getByService = async service => {
   try {
@@ -37,7 +53,7 @@ const getByService = async service => {
   }
 }
 
-const getByDate = async (service, date) => {
+const getByServiceDate = async (service, date) => {
   try {
     const start = moment(date).startOf('day');
     const end = moment(date).endOf('day');
@@ -48,7 +64,9 @@ const getByDate = async (service, date) => {
   }
 }
 
-const getByMonth = async (service, date) => {
+const getByServiceMonth = async (service, date) => {
+  console.log('service', service, 'date', date);
+
   try {
     const start = moment(date).startOf('month');
     const end = moment(date).endOf('month');
@@ -58,9 +76,9 @@ const getByMonth = async (service, date) => {
     throw new Error(err);
   }
 }
-const getByUser = async (service, id) => {
+const getByServiceUser = async (service, id) => {
   try {
-    const bookings = await Booking.find({ service, 'timeslots.userId': id })
+    const bookings = await Booking.find({ service, 'timeslots.userid': id })
     return bookings || [];
   } catch (err) {
     throw new Error(err);
@@ -76,24 +94,14 @@ const _delete = async id => {
   }
 }
 
-/*
-const getById = async (service, id) => {
-  try {
-    const booking = await Booking.findById({ service, id });
-    return booking;
-  } catch (err) {
-    throw new Error(err);
-  }
-}
-*/
-
 module.exports = {
   create,
+  getAll,
+  getById,
   getByService,
-  getByDate,
-  getByMonth,
-  getByUser,
+  getByServiceDate,
+  getByServiceMonth,
+  getByServiceUser,
   update,
   delete: _delete
-  //getById,
 };

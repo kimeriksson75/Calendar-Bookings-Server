@@ -1,0 +1,17 @@
+tags:
+- Apartments
+summary: Get apartments by residence in the system
+description: Get apartments by residence in the system
+parameters:
+- name: residence
+  in: path
+  required: true
+  description: ID of residence related to issued apartments
+  type: string
+responses:
+  '200':
+    description: OK
+    schema:
+      type: array
+      items:
+        $ref: ../../definitions/apartments/apartment.yaml

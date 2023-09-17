@@ -1,0 +1,1079 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Calendar booking API v6",
+    "description": "Calendar booking API",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get all users in system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Create new user",
+        "description": "Create new user",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "description": "User with new values of properties",
+            "schema": {
+              "$ref": "#/definitions/CreateUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get user by id",
+        "description": "Get user by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of user that we want to find",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Update user by id",
+        "description": "Update user by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of user that we want to find",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          {
+            "name": "user",
+            "in": "body",
+            "description": "User with new values of properties",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Delete user by id",
+        "description": "Delete user by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of user that we want to delete",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/residences": {
+      "get": {
+        "tags": [
+          "Residences"
+        ],
+        "summary": "Get all residences in system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Residence"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Residence"
+        ],
+        "summary": "Create new residence",
+        "description": "Create new residence",
+        "parameters": [
+          {
+            "name": "residence",
+            "in": "body",
+            "description": "Residence with new values of properties",
+            "schema": {
+              "$ref": "#/definitions/Residence"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Residence"
+            }
+          }
+        }
+      }
+    },
+    "/residences/{id}": {
+      "get": {
+        "tags": [
+          "Residence"
+        ],
+        "summary": "Get residence by id",
+        "description": "Get residence by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of residence that we want to find",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/Residence"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Residence"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Residence"
+        ],
+        "summary": "Update residence by id",
+        "description": "Update residence by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of residence that we want to find",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/Residence"
+            }
+          },
+          {
+            "name": "residence",
+            "in": "body",
+            "description": "Residence with new values of properties",
+            "schema": {
+              "$ref": "#/definitions/Residence"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Residence"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Residence"
+        ],
+        "summary": "Delete residence by id",
+        "description": "Delete residence by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of residence that we want to delete",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/Residence"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Residence"
+            }
+          }
+        }
+      }
+    },
+    "/apartments": {
+      "get": {
+        "tags": [
+          "Apartments"
+        ],
+        "summary": "Get all apartments in system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Apartment"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Apartment"
+        ],
+        "summary": "Create new apartment",
+        "description": "Create new apartment",
+        "parameters": [
+          {
+            "name": "apartment",
+            "in": "body",
+            "description": "Apartment with new values of properties",
+            "schema": {
+              "$ref": "#/definitions/Apartment"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Apartment"
+            }
+          }
+        }
+      }
+    },
+    "/apartments/residence/{residence}": {
+      "get": {
+        "tags": [
+          "Apartments"
+        ],
+        "summary": "Get apartments by residence in the system",
+        "description": "Get apartments by residence in the system",
+        "parameters": [
+          {
+            "name": "residence",
+            "in": "path",
+            "required": true,
+            "description": "ID of residence related to issued apartments",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Apartment"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apartments/{id}": {
+      "get": {
+        "tags": [
+          "Apartment"
+        ],
+        "summary": "Get apartment by id",
+        "description": "Get apartment by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of apartment that we want to find",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/Apartment"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Apartment"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Apartment"
+        ],
+        "summary": "Update apartment by id",
+        "description": "Update apartment by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of apartment that we want to find",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/Apartment"
+            }
+          },
+          {
+            "name": "apartment",
+            "in": "body",
+            "description": "apartment with new values of properties",
+            "schema": {
+              "$ref": "#/definitions/Apartment"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Apartment"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Apartment"
+        ],
+        "summary": "Delete apartment by id",
+        "description": "Delete apartment by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of apartment that we want to delete",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/Apartment"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Apartment"
+            }
+          }
+        }
+      }
+    },
+    "/services": {
+      "get": {
+        "tags": [
+          "Services"
+        ],
+        "summary": "Get all services in system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Service"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/services/residence/{residence}": {
+      "get": {
+        "tags": [
+          "Services"
+        ],
+        "summary": "Get services by residence in the system",
+        "description": "Get services by residence in the system",
+        "parameters": [
+          {
+            "name": "residence",
+            "in": "path",
+            "required": true,
+            "description": "ID of residence related to issued services",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Service"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Service"
+        ],
+        "summary": "Create new service",
+        "description": "Create new service",
+        "parameters": [
+          {
+            "name": "service",
+            "in": "body",
+            "description": "Service with new values of properties",
+            "schema": {
+              "$ref": "#/definitions/Service"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Service"
+            }
+          }
+        }
+      }
+    },
+    "/services/{id}": {
+      "get": {
+        "tags": [
+          "Service"
+        ],
+        "summary": "Get service by id",
+        "description": "Get service by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of service that we want to find",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/Service"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Service"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Service"
+        ],
+        "summary": "Update service by id",
+        "description": "Update service by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of service that we want to find",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/Service"
+            }
+          },
+          {
+            "name": "service",
+            "in": "body",
+            "description": "service with new values of properties",
+            "schema": {
+              "$ref": "#/definitions/Service"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Service"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Service"
+        ],
+        "summary": "Delete service by id",
+        "description": "Delete service by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of service that we want to delete",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/Service"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Service"
+            }
+          }
+        }
+      }
+    },
+    "/bookings": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Get all bookings in system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Booking"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bookings/service/{service}/date/{date}": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Get bookings by service and date in the system",
+        "description": "Get bookings by service and date in the system",
+        "parameters": [
+          {
+            "name": "service",
+            "in": "path",
+            "required": true,
+            "description": "ID of service related to issued bookings",
+            "type": "string"
+          },
+          {
+            "name": "date",
+            "in": "path",
+            "required": true,
+            "description": "date related to issued bookings",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Booking"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bookings/service/{service}/month/{date}": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Get bookings by service and month in the system",
+        "description": "Get bookings by service and month in the system",
+        "parameters": [
+          {
+            "name": "service",
+            "in": "path",
+            "required": true,
+            "description": "ID of service related to issued bookings",
+            "type": "string"
+          },
+          {
+            "name": "date",
+            "in": "path",
+            "required": true,
+            "description": "month related to issued bookings",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Booking"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bookings/service/{service}/user/{user}": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Get bookings by residence in the system",
+        "description": "Get bookings by residence in the system",
+        "parameters": [
+          {
+            "name": "service",
+            "in": "path",
+            "required": true,
+            "description": "ID of service related to issued bookings",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of user related to issued bookings",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Booking"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bookings/{id}": {
+      "post": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Create new booking",
+        "description": "Create new booking",
+        "parameters": [
+          {
+            "name": "booking",
+            "in": "body",
+            "description": "Booking with new values of properties",
+            "schema": {
+              "$ref": "#/definitions/Booking"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Booking"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Get booking by id",
+        "description": "Get booking by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of booking that we want to find",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/Booking"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Booking"
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Update booking by id",
+        "description": "Update booking by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of booking that we want to find",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/Booking"
+            }
+          },
+          {
+            "name": "booking",
+            "in": "body",
+            "description": "booking with new values of properties",
+            "schema": {
+              "$ref": "#/definitions/Booking"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Booking"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Delete booking by id",
+        "description": "Delete booking by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of booking that we want to delete",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/Booking"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Booking"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "required": [
+        "username",
+        "email",
+        "firstname",
+        "lastname",
+        "apartment",
+        "residence"
+      ],
+      "properties": {
+        "_id": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "hash": {
+          "type": "string",
+          "required": true
+        },
+        "email": {
+          "type": "string",
+          "required": true
+        },
+        "username": {
+          "type": "string",
+          "required": true
+        },
+        "firstname": {
+          "type": "string",
+          "required": true
+        },
+        "lastname": {
+          "type": "string",
+          "required": true
+        },
+        "apartment": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "residence": {
+          "type": "string",
+          "uniqueItems": true
+        }
+      }
+    },
+    "Users": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/User"
+      }
+    },
+    "CreateUser": {
+      "required": [
+        "username",
+        "email",
+        "password",
+        "firstname",
+        "lastname",
+        "apartment",
+        "residence"
+      ],
+      "properties": {
+        "email": {
+          "type": "string",
+          "required": true
+        },
+        "username": {
+          "type": "string",
+          "required": true
+        },
+        "firstname": {
+          "type": "string",
+          "required": true
+        },
+        "lastname": {
+          "type": "string",
+          "required": true
+        },
+        "apartment": {
+          "type": "string",
+          "required": true,
+          "uniqueItems": true
+        },
+        "residence": {
+          "type": "string",
+          "required": true,
+          "uniqueItems": true
+        }
+      }
+    },
+    "Residence": {
+      "required": [
+        "name",
+        "address"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "required": true
+        },
+        "address": {
+          "type": "string",
+          "required": true
+        }
+      }
+    },
+    "Residences": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Residence"
+      }
+    },
+    "Apartment": {
+      "required": [
+        "name",
+        "residence"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "required": true
+        },
+        "residence": {
+          "type": "string",
+          "required": true
+        }
+      }
+    },
+    "Apartments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Apartment"
+      }
+    },
+    "Service": {
+      "required": [
+        "type",
+        "name",
+        "residence"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "timeslots": {
+          "type": "array",
+          "items": {
+            "userid": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            },
+            "timeslot": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "residence": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "number"
+        }
+      }
+    },
+    "Services": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Service"
+      }
+    },
+    "Booking": {
+      "required": [
+        "service",
+        "date",
+        "timeslots"
+      ],
+      "properties": {
+        "service": {
+          "type": "string"
+        },
+        "date": {
+          "type": "date"
+        },
+        "timeslots": {
+          "type": "array",
+          "items": {
+            "userid": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            },
+            "timeslot": {
+              "type": "string",
+              "required": true
+            }
+          }
+        }
+      }
+    },
+    "Bookings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Booking"
+      }
+    }
+  }
+}

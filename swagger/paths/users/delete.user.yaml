@@ -1,0 +1,17 @@
+tags:
+- User
+summary: Delete user by id
+description: Delete user by id
+parameters:
+- name: id
+  in: path
+  required: true
+  description: ID of user that we want to delete
+  type: string
+  schema:
+    $ref: ../../definitions/users/user.yaml
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: ../../definitions/users/user.yaml

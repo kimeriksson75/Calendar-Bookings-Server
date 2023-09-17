@@ -1,0 +1,22 @@
+tags:
+- Apartment
+summary: Update apartment by id
+description: Update apartment by id
+parameters:
+- name: id
+  in: path
+  required: true
+  description: ID of apartment that we want to find
+  type: string
+  schema:
+    $ref: ../../definitions/apartments/apartment.yaml
+- name: apartment
+  in: body
+  description: apartment with new values of properties
+  schema:
+    $ref: ../../definitions/apartments/apartment.yaml
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: ../../definitions/apartments/apartment.yaml

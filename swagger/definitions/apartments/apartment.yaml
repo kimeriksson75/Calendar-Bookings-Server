@@ -1,0 +1,10 @@
+required:
+  - name
+  - residence
+properties:
+  name:
+    type: string
+    required: true
+  residence:
+    type: string
+    required: true

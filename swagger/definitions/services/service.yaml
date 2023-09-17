@@ -1,0 +1,23 @@
+required:
+  - type
+  - name
+  - residence
+properties:
+  type:
+    type: string
+  timeslots:
+    type: array
+    items:
+      userid:
+        type: string
+      username:
+        type: string
+      timeslot:
+        type: string
+        required: true
+  name:
+    type: string
+  residence:
+    type: string
+  limit:
+   type: number

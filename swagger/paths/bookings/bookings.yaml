@@ -1,0 +1,10 @@
+tags:
+- Bookings
+summary: Get all bookings in system
+responses:
+  '200':
+    description: OK
+    schema:
+      type: array
+      items:
+        $ref: ../../definitions/bookings/booking.yaml

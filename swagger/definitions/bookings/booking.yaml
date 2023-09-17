@@ -1,0 +1,19 @@
+required:
+  - service
+  - date
+  - timeslots
+properties:
+  service:
+    type: string
+  date:
+    type: date
+  timeslots:
+    type: array
+    items:
+      userid:
+        type: string
+      username:
+        type: string
+      timeslot:
+        type: string
+        required: true

@@ -1,0 +1,10 @@
+tags:
+- Users
+summary: Get all users in system
+responses:
+  '200':
+    description: OK
+    schema:
+      type: array
+      items:
+        $ref: ../../definitions/users/user.yaml

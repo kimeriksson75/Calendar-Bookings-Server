@@ -1,0 +1,10 @@
+tags:
+- Residences
+summary: Get all residences in system
+responses:
+  '200':
+    description: OK
+    schema:
+      type: array
+      items:
+        $ref: ../../definitions/residences/residence.yaml

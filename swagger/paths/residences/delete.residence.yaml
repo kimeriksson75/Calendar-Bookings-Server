@@ -1,0 +1,17 @@
+tags:
+- Residence
+summary: Delete residence by id
+description: Delete residence by id
+parameters:
+- name: id
+  in: path
+  required: true
+  description: ID of residence that we want to delete
+  type: string
+  schema:
+    $ref: ../../definitions/residences/residence.yaml
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: ../../definitions/residences/residence.yaml

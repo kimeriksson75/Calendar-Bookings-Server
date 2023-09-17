@@ -1,0 +1,15 @@
+tags:
+- Apartment
+summary: Create new apartment
+description: Create new apartment
+parameters:
+- name: apartment
+  in: body
+  description: Apartment with new values of properties
+  schema:
+    $ref: ../../definitions/apartments/apartment.yaml
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: ../../definitions/apartments/apartment.yaml

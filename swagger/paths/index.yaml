@@ -1,0 +1,76 @@
+/users:
+    get:
+      $ref: ./users/users.yaml
+    post:
+      $ref: ./users/post.user.yaml
+/users/{id}:
+    get:
+      $ref: ./users/get.user.yaml
+    put:
+      $ref: ./users/put.user.yaml
+    delete:
+      $ref: ./users/delete.user.yaml
+/residences:
+    get:
+      $ref: ./residences/residences.yaml
+    post:
+      $ref: ./residences/post.residence.yaml
+/residences/{id}:
+    get:
+      $ref: ./residences/get.residence.yaml
+    put:
+      $ref: ./residences/put.residence.yaml
+    delete:
+      $ref: ./residences/delete.residence.yaml
+/apartments:
+    get:
+      $ref: ./apartments/apartments.yaml
+    post:
+      $ref: ./apartments/post.apartment.yaml
+/apartments/residence/{residence}:
+    get:
+      $ref: ./apartments/apartments.by.residence.yaml
+/apartments/{id}:
+    get:
+      $ref: ./apartments/get.apartment.yaml
+    put:
+      $ref: ./apartments/put.apartment.yaml
+    delete:
+      $ref: ./apartments/delete.apartment.yaml
+/services:
+    get:
+      $ref: ./services/services.yaml
+/services/residence/{residence}:
+    get:
+      $ref: ./services/services.by.residence.yaml
+    post:
+      $ref: ./services/post.service.yaml
+/services/{id}:
+    get:
+      $ref: ./services/get.service.yaml
+    put:
+      $ref: ./services/put.service.yaml
+    delete:
+      $ref: ./services/delete.service.yaml
+/bookings:
+  get:
+    $ref: ./bookings/bookings.yaml
+/bookings/service/{service}/date/{date}:
+  get:
+    $ref: ./bookings/bookings.by.service.date.yaml
+/bookings/service/{service}/month/{date}:
+  get:
+    $ref: ./bookings/bookings.by.service.month.yaml
+/bookings/service/{service}/user/{user}:
+    get:
+      $ref: ./bookings/bookings.by.service.user.yaml
+/bookings/{id}:
+    post:
+      $ref: ./bookings/post.booking.yaml
+    get:
+      $ref: ./bookings/get.booking.yaml
+    patch:
+      $ref: ./bookings/patch.booking.yaml
+    delete:
+      $ref: ./bookings/delete.booking.yaml
+

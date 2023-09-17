@@ -5,5 +5,12 @@ module.exports = {
     verbose: true,
     modulePaths: [
       "<rootDir>"
-    ]
+  ],
+  collectCoverage: true,
+  collectCoverageFrom: ["./**"],
+  coverageThreshold: {
+    global: {
+      lines: 90
+    }
+  }
 }

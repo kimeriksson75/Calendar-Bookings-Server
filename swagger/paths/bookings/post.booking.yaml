@@ -1,0 +1,15 @@
+tags:
+- Booking
+summary: Create new booking
+description: Create new booking
+parameters:
+- name: booking
+  in: body
+  description: Booking with new values of properties
+  schema:
+    $ref: ../../definitions/bookings/booking.yaml
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: ../../definitions/bookings/booking.yaml

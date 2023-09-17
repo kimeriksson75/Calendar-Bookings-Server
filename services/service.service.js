@@ -23,7 +23,7 @@ const getAll = async () => {
 
 const getById = async id => {
   try {
-    const service = await Service.findOne(id);
+    const service = await Service.findById(id);
     return service;
   } catch (err) {
     throw new Error(err);

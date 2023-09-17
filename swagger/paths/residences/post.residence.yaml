@@ -1,0 +1,15 @@
+tags:
+- Residence
+summary: Create new residence
+description: Create new residence
+parameters:
+- name: residence
+  in: body
+  description: Residence with new values of properties
+  schema:
+    $ref: ../../definitions/residences/residence.yaml
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: ../../definitions/residences/residence.yaml

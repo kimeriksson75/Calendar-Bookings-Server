@@ -1,0 +1,17 @@
+tags:
+- Service
+summary: Delete service by id
+description: Delete service by id
+parameters:
+- name: id
+  in: path
+  required: true
+  description: ID of service that we want to delete
+  type: string
+  schema:
+    $ref: ../../definitions/services/service.yaml
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: ../../definitions/services/service.yaml

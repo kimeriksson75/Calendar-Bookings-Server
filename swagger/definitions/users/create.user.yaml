@@ -1,0 +1,29 @@
+required:
+  - username
+  - email
+  - password
+  - firstname
+  - lastname
+  - apartment
+  - residence
+properties:
+  email:
+    type: string
+    required: true
+  username:
+    type: string
+    required: true
+  firstname:
+    type: string
+    required: true
+  lastname:
+    type: string
+    required: true
+  apartment:
+    type: string
+    required: true
+    uniqueItems: true
+  residence:
+    type: string
+    required: true
+    uniqueItems: true

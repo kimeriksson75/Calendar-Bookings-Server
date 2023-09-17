@@ -1,0 +1,32 @@
+required:
+- username
+- email
+- firstname
+- lastname
+- apartment
+- residence
+properties:
+  _id:
+    type: string
+    uniqueItems: true
+  hash:
+    type: string
+    required: true
+  email:
+    type: string
+    required: true
+  username:
+    type: string
+    required: true
+  firstname:
+    type: string
+    required: true
+  lastname:
+    type: string
+    required: true
+  apartment:
+    type: string
+    uniqueItems: true
+  residence:
+    type: string
+    uniqueItems: true

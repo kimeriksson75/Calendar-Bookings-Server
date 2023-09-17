@@ -1,0 +1,15 @@
+tags:
+- User
+summary: Create new user
+description: Create new user
+parameters:
+- name: user
+  in: body
+  description: User with new values of properties
+  schema:
+    $ref: ../../definitions/users/create.user.yaml
+responses:
+  '200':
+    description: OK
+    schema:
+      $ref: ../../definitions/users/user.yaml
