@@ -10,7 +10,7 @@
     }
   },
   "host": "localhost:3000",
-  "basePath": "/",
+  "basePath": "/api/v1/",
   "schemes": [
     "http"
   ],

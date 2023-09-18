@@ -45,7 +45,7 @@
     "test": "jest --watchAll --detectOpenHandles",
     "test:watch": "vitest --globals",
     "coverage": "vitest --globals run --coverage",
-    "start": "npm run doc:generate && node ./server.js",
+    "start": "npm run doc:generate && nodemon ./server.js",
     "start-dev": "nodemon ./server.js",
     "build": "npm install",
     "heroku-prebuild": "npm install --production=false",

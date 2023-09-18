@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { User, Apartment} = require('_helpers/db');
+const { User, Apartment} = require('../_helpers/db');
 
 const register = async body => {
   if (await User.findOne({ username: body.username })) {

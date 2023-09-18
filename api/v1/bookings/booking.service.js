@@ -1,4 +1,4 @@
-const db = require('_helpers/db');
+const db = require('../_helpers/db');
 const moment = require('moment');
 
 const Booking = db.Booking;
@@ -65,8 +65,6 @@ const getByServiceDate = async (service, date) => {
 }
 
 const getByServiceMonth = async (service, date) => {
-  console.log('service', service, 'date', date);
-
   try {
     const start = moment(date).startOf('month');
     const end = moment(date).endOf('month');
