@@ -1,16 +1,9 @@
+const logger = require('pino')()
+
 const errorHandler = (err, req, res, next) => {
-  if (typeof (err) === 'string') {
-    //custom application error
-    return res.status(400).json({ message: err });
+  if (err?.message && err?.statusCode){ 
+    logger.error(`${err.statusCode} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}}`)
   }
-  if (err.name === 'ValidationError') {
-    // mongoose validation error
-    return res.status(400).json({ message: err.message });
-  }
-  if (err.name === 'UnauthorizedError') {
-    return res.status(402).json({ message: 'Invalid Token' });
-  }
-  //defalut
-  return res.status(500).json({ message: err.message });
+  return res.status(err.statusCode || 500).json({ message: err?.message || 'Internal Server Error'});
 }
 module.exports = errorHandler;
