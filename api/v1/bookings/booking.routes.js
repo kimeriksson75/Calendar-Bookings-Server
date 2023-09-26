@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { create, getAll, getByService, getById, getByServiceDate, getByServiceMonth, getByServiceUser, update, _delete } = require('./booking.controller');
 
-router.post('/create', create);
+router.post('/', create);
 router.get('/', getAll);
 router.get('/:id', getById);
 router.get('/service/:service', getByService);

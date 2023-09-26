@@ -1,0 +1,37 @@
+@baseUrl = http://localhost:3000
+@urlPath = api/v1/users
+POST {{baseUrl}}/{{urlPath}} HTTP/1.1
+User-Agent: rest-client
+Content-Type: application/json
+
+{
+    "email": "dario@mail.com",
+    "password": "1234",
+    "username": "darito",
+    "firstname": "Dario",
+    "lastname": "Cardio",
+    "apartment": "651075ca13b93e4bc07de008",
+    "residence": "651075a513b93e4bc07ddffd"
+}
+
+###
+
+GET {{baseUrl}}/{{urlPath}} HTTP/1.1
+User-Agent: rest-client
+Content-Type: application/json
+
+###
+@id = 6511cb9b761f988f83144a83
+PUT {{baseUrl}}/{{urlPath}}/{{id}} HTTP/1.1
+User-Agent: rest-client
+Content-Type: application/json
+
+{
+    "email": "dario@mail.com",
+    "password": "1234",
+    "username": "darito",
+    "firstname": "Dario",
+    "lastname": "Taljic",
+    "apartment": "651075ca13b93e4bc07de008",
+    "residence": "651075a513b93e4bc07ddffd"
+}

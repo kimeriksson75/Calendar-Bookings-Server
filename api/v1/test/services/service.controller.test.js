@@ -25,12 +25,12 @@ describe('ServiceController.create', () => {
         expect(ServiceService.create).toBeCalledWith(req.body);
     });
 
-    it('should return 200 response and created service data', async () => {
+    it('should return 201 response and created service data', async () => {
         ServiceService.create = jest.fn(() => Promise.resolve(mockService));
 
         req.body = mockService;
         await ServiceController.create(req, res, next);
-        expect(res.statusCode).toBe(200);
+        expect(res.statusCode).toBe(201);
         expect(res._getJSONData()).toStrictEqual(mockService);
     });
 

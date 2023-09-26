@@ -39,6 +39,15 @@ const getByResidence = async residence => {
   }
 }
 
+const update = async (id, serviceParam) => {
+  try {
+    const service = await Service.findOneAndUpdate({ _id: id }, { $set: serviceParam }, { new: true });
+    return service;
+  } catch (err) {
+    throw new Error(err);
+  }
+}
+
 const _delete = async id => {
   try {
     await Service.findByIdAndRemove(id);
@@ -53,5 +62,6 @@ module.exports = {
   getAll,
   getById,
   getByResidence,
+  update,
   delete: _delete
 };

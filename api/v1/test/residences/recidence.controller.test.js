@@ -26,12 +26,12 @@ describe('ResidenceController.create', () => {
         expect(ResidenceService.create).toBeCalledWith(req.body);
     });
 
-    it('should return 200 response and created residence data', async () => {
+    it('should return 201 response and created residence data', async () => {
         ResidenceService.create = jest.fn(() => Promise.resolve(mockResidence));
 
         req.body = mockResidence;
         await ResidenceController.create(req, res, next);
-        expect(res.statusCode).toBe(200);
+        expect(res.statusCode).toBe(201);
         expect(res._getJSONData()).toStrictEqual(mockResidence);
     });
 

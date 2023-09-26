@@ -70,28 +70,28 @@ describe('BookingService.getByService', () => {
     });
 });
 
-describe('BookingService.getByDate', () => {
-    it('should have a getByDate method', () => {
-        expect(typeof BookingService.getByDate).toBe('function');
+describe('BookingService.getByServiceDate', () => {
+    it('should have a getByServiceDate method', () => {
+        expect(typeof BookingService.getByServiceDate).toBe('function');
     });
 
     it('should call Booking.findOne()', async () => {
         const start = moment(mockBooking.date).startOf('day');
         const end = moment(mockBooking.date).endOf('day');
-        await BookingService.getByDate(mockBooking.service, mockBooking.date);
+        await BookingService.getByServiceDate(mockBooking.service, mockBooking.date);
         expect(Booking.findOne).toBeCalled();
         expect(Booking.findOne).toBeCalledWith({ service: mockBooking.service, date: { '$gte': start, '$lte': end } });
     });
 
     it('should return the booking for issued service and date', async () => {
         Booking.findOne.mockReturnValue(mockBooking);
-        const result = await BookingService.getByDate(mockBooking.service, mockBooking.date);
+        const result = await BookingService.getByServiceDate(mockBooking.service, mockBooking.date);
         expect(result).toEqual(mockBooking);
     });
 
     it('should catch errors', async () => {
         Booking.findOne.mockRejectedValue('Error getting booking');
-        await expect(BookingService.getByDate(mockBooking.service, mockBooking.date)).rejects.toThrow('Error getting booking');
+        await expect(BookingService.getByServiceDate(mockBooking.service, mockBooking.date)).rejects.toThrow('Error getting booking');
     });
 
     afterAll(async () => {
@@ -99,29 +99,29 @@ describe('BookingService.getByDate', () => {
     });
 });
 
-describe('BookingService.getByMonth', () => {
-    it('should have a getByMonth method', () => {
-        expect(typeof BookingService.getByMonth).toBe('function');
+describe('BookingService.getByServiceMonth', () => {
+    it('should have a getByServiceMonth method', () => {
+        expect(typeof BookingService.getByServiceMonth).toBe('function');
     });
 
     it('should call Booking.find()', async () => {
         const start = moment(mockBooking.date).startOf('month');
         const end = moment(mockBooking.date).endOf('month');
         Booking.find.mockReturnValue(mockBookings);
-        await BookingService.getByMonth(mockBooking.service, mockBooking.date);
+        await BookingService.getByServiceMonth(mockBooking.service, mockBooking.date);
         expect(Booking.find).toBeCalled();
         expect(Booking.find).toBeCalledWith({ service: mockBooking.service, date: { '$gte': start, '$lte': end } });
     });
 
     it('should return all bookings for issued service and month', async () => {
         Booking.find.mockReturnValue(mockBookings);
-        const result = await BookingService.getByMonth(mockBooking.service, mockBooking.date);
+        const result = await BookingService.getByServiceMonth(mockBooking.service, mockBooking.date);
         expect(result).toEqual(mockBookings);
     });
 
     it('should catch errors', async () => {
         Booking.find.mockRejectedValue('Error getting bookings');
-        await expect(BookingService.getByMonth(mockBooking.service, mockBooking.date)).rejects.toThrow('Error getting bookings');
+        await expect(BookingService.getByServiceMonth(mockBooking.service, mockBooking.date)).rejects.toThrow('Error getting bookings');
     });
 
     afterAll(async () => {
@@ -129,27 +129,27 @@ describe('BookingService.getByMonth', () => {
     });
 });
 
-describe('BookingService.getByUser', () => {
-    it('should have a getByUser method', () => {
-        expect(typeof BookingService.getByUser).toBe('function');
+describe('BookingService.getByServiceUser', () => {
+    it('should have a getByServiceUser method', () => {
+        expect(typeof BookingService.getByServiceUser).toBe('function');
     });
 
     it('should call Booking.find()', async () => {
         Booking.find.mockReturnValue(mockBookings);
-        await BookingService.getByUser(mockBooking.service, mockBooking.timeslots[0].userId);
+        await BookingService.getByServiceUser(mockBooking.service, mockBooking.timeslots[0].userId);
         expect(Booking.find).toBeCalled();
-        expect(Booking.find).toBeCalledWith({ service: mockBooking.service, 'timeslots.userId': mockBooking.timeslots[0].userId });
+        expect(Booking.find).toBeCalledWith({ service: mockBooking.service, 'timeslots.userid': mockBooking.timeslots[0].userId });
     });
 
     it('should return all bookings for issued service and user', async () => {
         Booking.find.mockReturnValue(mockBookings);
-        const result = await BookingService.getByUser(mockBooking.service, mockBooking.timeslots[0].userId);
+        const result = await BookingService.getByServiceUser(mockBooking.service, mockBooking.timeslots[0].userId);
         expect(result).toEqual(mockBookings);
     });
 
     it('should catch errors', async () => {
         Booking.find.mockRejectedValue('Error getting bookings');
-        await expect(BookingService.getByUser(mockBooking.service, mockBooking.timeslots[0].userId)).rejects.toThrow('Error getting bookings');
+        await expect(BookingService.getByServiceUser(mockBooking.service, mockBooking.timeslots[0].userId)).rejects.toThrow('Error getting bookings');
     });
 
     afterAll(async () => {
@@ -167,7 +167,7 @@ describe('BookingService.update', () => {
         Booking.findById.mockReturnValue(mockBooking);
         Booking.findOneAndUpdate.mockReturnValue(mockBooking);
         await BookingService.update(mockBooking.id, mockBooking);
-        expect(Booking.findOneAndUpdate).toBeCalledWith({ _id: mockBooking.id }, { $set: mockBooking });
+        expect(Booking.findOneAndUpdate).toBeCalledWith({ _id: mockBooking.id }, { $set: mockBooking }, { new: true });
     });
 
     it('should return the updated booking', async () => {

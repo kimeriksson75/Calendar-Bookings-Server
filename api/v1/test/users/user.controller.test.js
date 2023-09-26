@@ -45,46 +45,46 @@ describe('UserController.authenticate', () => {
     });
 });
 
-describe('UserController.register', () => {
-    it('should have a register method', () => {
-        expect(typeof UserController.register).toBe('function');
+describe('UserController.create', () => {
+    it('should have a create method', () => {
+        expect(typeof UserController.create).toBe('function');
     });
 
-    it('should call UserService.register', () => {
-        UserService.register = jest.fn(() => Promise.resolve(mockUser));
+    it('should call UserService.create', () => {
+        UserService.create = jest.fn(() => Promise.resolve(mockUser));
 
-        UserController.register(req, res, next);
-        expect(UserService.register).toBeCalledWith(req.body);
+        UserController.create(req, res, next);
+        expect(UserService.create).toBeCalledWith(req.body);
     });
 
-    it('should return 200 response and registered user data', async () => {
-        UserService.register = jest.fn(() => Promise.resolve(mockUser));
+    it('should return 200 response and createed user data', async () => {
+        UserService.create = jest.fn(() => Promise.resolve(mockUser));
 
         req.body = mockUser;
-        await UserController.register(req, res, next);
-        expect(res.statusCode).toBe(200);
+        await UserController.create(req, res, next);
+        expect(res.statusCode).toBe(201);
         expect(res._getJSONData()).toStrictEqual(mockUser);
     });
 
     it('should handle errors', async () => {
-        const errorMessage = { status: 400, message: 'Error while registering user' };
+        const errorMessage = { status: 400, message: 'Error while createing user' };
         const rejectedPromise = Promise.reject(errorMessage);
-        UserService.register = jest.fn(() => rejectedPromise);
-        await UserController.register(req, res, next);
+        UserService.create = jest.fn(() => rejectedPromise);
+        await UserController.create(req, res, next);
         expect(next).toBeCalledWith(errorMessage);
     });
 
     it('should return 400 when user already exists', async () => {
-        UserService.register = jest.fn(() => Promise.resolve(null));
-        await UserController.register(req, res, next);
+        UserService.create = jest.fn(() => Promise.resolve(null));
+        await UserController.create(req, res, next);
         expect(res.statusCode).toBe(400);
     });
 
     it('should return 400 when apartment is not found', async () => {
         const errorMessage = { status: 400, message: 'Apartment is not found' };
         const rejectedPromise = Promise.reject(errorMessage);
-        UserService.register = jest.fn(() => rejectedPromise);
-        await UserController.register(req, res, next);
+        UserService.create = jest.fn(() => rejectedPromise);
+        await UserController.create(req, res, next);
         expect(next).toBeCalledWith(errorMessage);
     });
     

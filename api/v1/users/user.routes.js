@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { authenticate, register, getAll, getById, update, _delete } = require('./user.controller');
+const { authenticate, create, getAll, getById, update, _delete } = require('./user.controller');
 
 router.post('/authenticate', authenticate);
-router.post('/', register);
+router.post('/', create);
 router.get('/', getAll);
 router.get('/:id', getById);
 router.put('/:id', update);

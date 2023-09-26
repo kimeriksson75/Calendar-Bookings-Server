@@ -5,8 +5,8 @@ exports.authenticate = (req, res, next) => userService.authenticate(req.body)
   .then(user => user ? res.status(200).json(user) : res.status(400).json({ message: 'Username or password is incorrect' }))
   .catch(err => next(err));
 
-exports.register = (req, res, next) => userService.register(req.body)
-  .then((user) => user ? res.status(200).json(user) : res.status(400).json({ message: 'Invalid user data' }))
+exports.create = (req, res, next) => userService.create(req.body)
+  .then((user) => user ? res.status(201).json(user) : res.status(400).json({ message: 'Error while creating user' }))
   .catch(err => next(err));
 
 exports.getAll = (req, res, next) => userService.getAll()

@@ -19,7 +19,7 @@ const update = async (id, bookingParam) => {
   }
 
   try {
-    const updatedBooking = await Booking.findOneAndUpdate({ _id: id }, { $set: bookingParam });
+    const updatedBooking = await Booking.findOneAndUpdate({ _id: id }, { $set: bookingParam }, { new: true });
     return updatedBooking || {};
   } catch (err) {
     throw new Error(err);

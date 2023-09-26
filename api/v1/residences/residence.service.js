@@ -29,6 +29,16 @@ const getById = async id => {
   }
 }
 
+const update = async (id, residenceParam) => {
+  try {
+    const residence = await Residence.findOneAndUpdate({ _id: id }, { $set: residenceParam }, { new: true });
+    return residence;
+  } catch (err) {
+    throw new Error(err);
+  }
+}
+
+
 const _delete = async id => {
   try {
     await Residence.findByIdAndRemove(id);
@@ -41,5 +51,6 @@ module.exports = {
   create,
   getAll,
   getById,
+  update,
   delete: _delete
 };

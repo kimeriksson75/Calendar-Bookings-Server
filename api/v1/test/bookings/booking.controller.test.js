@@ -21,7 +21,6 @@ describe('BookingController.create', () => {
 
     it('should call BookingService.create', () => {
         BookingService.create = jest.fn(() => Promise.resolve(mockBooking));
-
         BookingController.create(req, res, next);
         expect(BookingService.create).toBeCalledWith(req.body);
     });
@@ -81,22 +80,22 @@ describe('BookingController.getByService', () => {
     });
 });
 
-describe('BookingController.getByDate', () => {
-    it('should have a getByDate method', () => {
-        expect(typeof BookingController.getByDate).toBe('function');
+describe('BookingController.getByServiceDate', () => {
+    it('should have a getByServiceDate method', () => {
+        expect(typeof BookingController.getByServiceDate).toBe('function');
     });
 
-    it('should call BookingService.getByDate', () => {
-        BookingService.getByDate = jest.fn(() => Promise.resolve(mockBooking));
+    it('should call BookingService.getByServiceDate', () => {
+        BookingService.getByServiceDate = jest.fn(() => Promise.resolve(mockBooking));
         req.params.service = mockBooking.service;
         req.params.date = mockBooking.date;
-        BookingController.getByDate(req, res, next);
-        expect(BookingService.getByDate).toBeCalledWith(req.params.service, req.params.date);
+        BookingController.getByServiceDate(req, res, next);
+        expect(BookingService.getByServiceDate).toBeCalledWith(req.params.service, req.params.date);
     });
 
     it('should return response with status 200 and booking', async () => {
-        BookingService.getByDate = jest.fn(() => Promise.resolve(mockBooking));
-        await BookingController.getByDate(req, res, next);
+        BookingService.getByServiceDate = jest.fn(() => Promise.resolve(mockBooking));
+        await BookingController.getByServiceDate(req, res, next);
         expect(res.statusCode).toBe(200);
         expect(res._getJSONData()).toStrictEqual(mockBooking);
         expect(res._isEndCalled()).toBeTruthy();
@@ -105,8 +104,8 @@ describe('BookingController.getByDate', () => {
     it('should handle errors', async () => {
         const errorMessage = { status: 400, message: 'Error while getting booking' };
         const rejectedPromise = Promise.reject(errorMessage);
-        BookingService.getByDate = jest.fn(() => rejectedPromise);
-        await BookingController.getByDate(req, res, next);
+        BookingService.getByServiceDate = jest.fn(() => rejectedPromise);
+        await BookingController.getByServiceDate(req, res, next);
         expect(next).toBeCalledWith(errorMessage);
     });
 
@@ -115,22 +114,22 @@ describe('BookingController.getByDate', () => {
     });
 });
 
-describe('BookingController.getByMonth', () => {
-    it('should have a getByMonth method', () => {
-        expect(typeof BookingController.getByMonth).toBe('function');
+describe('BookingController.getByServiceMonth', () => {
+    it('should have a getByServiceMonth method', () => {
+        expect(typeof BookingController.getByServiceMonth).toBe('function');
     });
 
-    it('should call BookingService.getByMonth', () => {
-        BookingService.getByMonth = jest.fn(() => Promise.resolve(mockBookings));
+    it('should call BookingService.getByServiceMonth', () => {
+        BookingService.getByServiceMonth = jest.fn(() => Promise.resolve(mockBookings));
         req.params.service = mockBooking.service;
         req.params.date = mockBooking.date;
-        BookingController.getByMonth(req, res, next);
-        expect(BookingService.getByMonth).toBeCalledWith(req.params.service, req.params.date);
+        BookingController.getByServiceMonth(req, res, next);
+        expect(BookingService.getByServiceMonth).toBeCalledWith(req.params.service, req.params.date);
     });
 
     it('should return response with status 200 and booking', async () => {
-        BookingService.getByMonth = jest.fn(() => Promise.resolve(mockBookings));
-        await BookingController.getByMonth(req, res, next);
+        BookingService.getByServiceMonth = jest.fn(() => Promise.resolve(mockBookings));
+        await BookingController.getByServiceMonth(req, res, next);
         expect(res.statusCode).toBe(200);
         expect(res._getJSONData()).toStrictEqual(mockBookings);
         expect(res._isEndCalled()).toBeTruthy();
@@ -139,8 +138,8 @@ describe('BookingController.getByMonth', () => {
     it('should handle errors', async () => {
         const errorMessage = { status: 400, message: 'Error while getting booking' };
         const rejectedPromise = Promise.reject(errorMessage);
-        BookingService.getByMonth = jest.fn(() => rejectedPromise);
-        await BookingController.getByMonth(req, res, next);
+        BookingService.getByServiceMonth = jest.fn(() => rejectedPromise);
+        await BookingController.getByServiceMonth(req, res, next);
         expect(next).toBeCalledWith(errorMessage);
     });
 
@@ -149,22 +148,22 @@ describe('BookingController.getByMonth', () => {
     });
 });
 
-describe('BookingController.getByUser', () => {
-    it('should have a getByUser method', () => {
-        expect(typeof BookingController.getByUser).toBe('function');
+describe('BookingController.getByServiceUser', () => {
+    it('should have a getByServiceUser method', () => {
+        expect(typeof BookingController.getByServiceUser).toBe('function');
     });
 
-    it('should call BookingService.getByUser', () => {
-        BookingService.getByUser = jest.fn(() => Promise.resolve(mockBookings));
+    it('should call BookingService.getByServiceUser', () => {
+        BookingService.getByServiceUser = jest.fn(() => Promise.resolve(mockBookings));
         req.params.service = mockBooking.service;
         req.params.id = mockBooking.timeslots[0].userId;
-        BookingController.getByUser(req, res, next);
-        expect(BookingService.getByUser).toBeCalledWith(req.params.service, req.params.id);
+        BookingController.getByServiceUser(req, res, next);
+        expect(BookingService.getByServiceUser).toBeCalledWith(req.params.service, req.params.id);
     });
 
     it('should return response with status 200 and booking', async () => {
-        BookingService.getByUser = jest.fn(() => Promise.resolve(mockBookings));
-        await BookingController.getByUser(req, res, next);
+        BookingService.getByServiceUser = jest.fn(() => Promise.resolve(mockBookings));
+        await BookingController.getByServiceUser(req, res, next);
         expect(res.statusCode).toBe(200);
         expect(res._getJSONData()).toStrictEqual(mockBookings);
         expect(res._isEndCalled()).toBeTruthy();
@@ -173,8 +172,8 @@ describe('BookingController.getByUser', () => {
     it('should handle errors', async () => {
         const errorMessage = { status: 400, message: 'Error while getting booking' };
         const rejectedPromise = Promise.reject(errorMessage);
-        BookingService.getByUser = jest.fn(() => rejectedPromise);
-        await BookingController.getByUser(req, res, next);
+        BookingService.getByServiceUser = jest.fn(() => rejectedPromise);
+        await BookingController.getByServiceUser(req, res, next);
         expect(next).toBeCalledWith(errorMessage);
     });
 

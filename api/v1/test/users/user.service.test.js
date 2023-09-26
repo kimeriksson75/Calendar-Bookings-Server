@@ -1,53 +1,137 @@
 const UserService = require('../../users/user.service');
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const { compareSync, hashSync } = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { User, Apartment } = require('../../_helpers/db');
+const { User, Apartment, Residence } = require('../../_helpers/db');
+User.create = jest.fn();
 User.find = jest.fn();
 User.findOne = jest.fn();
 User.findById = jest.fn();
 User.findOneAndUpdate = jest.fn();
-User.findOneAndRemove = jest.fn();
-Apartment.findOne = jest.fn();
+User.findByIdAndRemove = jest.fn();
+Residence.findById = jest.fn();
+Apartment.findById = jest.fn();
 
 
 const mockUser = require('../mock-data/user.json');
+
+const mockUsers = require('../mock-data/users.json');
+const mockUserWithoutIdAndHash = { ...mockUser };
+delete mockUserWithoutIdAndHash._id;
+delete mockUserWithoutIdAndHash.hash;
+
 const mockUserUpdate = {
-    ...mockUser,
+    ...mockUserWithoutIdAndHash,
     username: 'updated username',
     firstname: 'updated firstname',
     lastname: 'updated lastname'
 }
-const mockUsers = require('../mock-data/users.json');
 const mockApartment = require('../mock-data/apartment.json')
+const mockResidence = require('../mock-data/residence.json');
 
+jest.mock('bcryptjs', () => ({
+    compareSync: jest.fn(),
+    hashSync: jest.fn(() => 'hashed password')
+}));
+    
 const user = new User(mockUser);
 user.save = jest.fn();
 
 beforeEach(() => {
     jest.useFakeTimers();
+    jest.restoreAllMocks();
 });
-describe('UserService.register', () => { 
-    it('should have a register method', () => {
-        expect(typeof UserService.register).toBe('function');
+
+afterEach(() => {
+    jest.clearAllMocks();
+});
+describe('UserService.create', () => { 
+    it('should have a create method', () => {
+        expect(typeof UserService.create).toBe('function');
     });
 
-    /*
     it('should call User.findOne', async () => {
-        User.findOne.mockReturnValueOnce(null)
-            .mockReturnValueOnce(null);
-        Apartment.findOne.mockReturnValueOnce(mockApartment);
+        User.create.mockReturnValue(mockUser);
+        User.findOne.mockReturnValue(null)
+        Residence.findById.mockReturnValueOnce(mockResidence);
+        Apartment.findById.mockReturnValueOnce(mockApartment);
         
-        user.save.mockReturnValue(mockUser);
-        await UserService.register(mockUser);
+        await UserService.create(mockUserWithoutIdAndHash);
         expect(User.findOne).toBeCalledWith({ username: mockUser.username });    
         expect(User.findOne).toBeCalledWith({ apartment: mockUser.apartment });
-        expect(Apartment.findOne).toBeCalledWith({ _id: mockUser.apartment });
+        expect(Residence.findById).toBeCalledWith(mockUser.residence);
+        expect(Apartment.findById).toBeCalledWith(mockUser.apartment);
     });
 
-    */
-    
+    it('should call User.create', async () => {
+        User.create.mockReturnValue(mockUser);
+        User.findOne.mockReturnValue(null)
+        Residence.findById.mockReturnValueOnce(mockResidence);
+        Apartment.findById.mockReturnValueOnce(mockApartment);
+
+        await UserService.create(mockUserWithoutIdAndHash);
+        const returnedUser = {
+            ...mockUserWithoutIdAndHash,
+            hash: 'hashed password'
+        }
+        expect(User.create).toBeCalledWith(returnedUser);
+    });
+
+    it.skip('should return the created user', async () => {
+        const createUserMock = User.create.mockReturnValue(mockUser);
+        User.findOne.mockReturnValue(null)
+        Residence.findById.mockReturnValueOnce(mockResidence);
+        Apartment.findById.mockReturnValueOnce(mockApartment);
+
+
+        const result = await UserService.create(mockUserWithoutIdAndHash);
+        const returnedUser = {
+            ...mockUser,
+            hash: 'hashed password'
+        }
+
+        expect(createUserMock).toHaveBeenCalledTimes(1);
+        expect(createUserMock).toHaveBeenCalledWith({
+            ...mockUserWithoutIdAndHash,
+            hash: 'hashed password'
+        });
+
+        expect(result).toEqual(returnedUser);
+    });
+
+    it('should catch errors', async () => {
+        User.create.mockReturnValue(mockUser);
+        User.findOne.mockReturnValue(null)
+        Residence.findById.mockReturnValueOnce(mockResidence);
+        Apartment.findById.mockReturnValueOnce(mockApartment);
+        User.create.mockImplementation(() => {
+            throw new Error('Error creating user');
+        });
+        await expect(UserService.create(mockUserWithoutIdAndHash)).rejects.toThrow('Error creating user');
+    });
+
+    it('should throw an error if the user already exists', async () => {
+        User.create.mockReturnValue(mockUser);
+        User.findOne.mockReturnValue(mockUser)
+        await expect(UserService.create(mockUserWithoutIdAndHash)).rejects.toThrow(`Username ${mockUser.username} is already taken`);
+    });
+
+    it('should throw an error if the residence does not exist', async () => {
+        User.create.mockReturnValue(mockUser);
+        User.findOne.mockReturnValue(null)
+        Residence.findById.mockReturnValueOnce(null);
+        await expect(UserService.create(mockUserWithoutIdAndHash)).rejects.toThrow(`Residence ${mockUser.residence} does not exist`);
+    });
+
+    it('should throw an error if the apartment does not exist', async () => {
+        User.create.mockReturnValue(mockUser);
+        User.findOne.mockReturnValue(null)
+        Residence.findById.mockReturnValueOnce(mockResidence);
+        Apartment.findById.mockReturnValueOnce(null);
+        await expect(UserService.create(mockUserWithoutIdAndHash)).rejects.toThrow(`Apartment ${mockUser.apartment} does not exist`);
+    });
+
     afterAll(async () => {
         await mongoose.connection.close();
     });
@@ -60,7 +144,7 @@ describe.skip('UserService.authenticate', () => {
 
     it('should call User.findOne', async () => {
         User.findOne.mockReturnValue(mockUser);
-        bcrypt.compareSync = jest.fn().mockReturnValue(true);
+        bcryptjsompareSync = jest.fn().mockReturnValue(true);
         jwt.sign = jest.fn().mockResolvedValue('token');
         await UserService.authenticate(mockUser);
         expect(User.findOne).toBeCalledWith({ username: mockUser.username });
@@ -68,7 +152,7 @@ describe.skip('UserService.authenticate', () => {
 
     it('should return user data', async () => {
         User.findOne.mockReturnValue(mockUser);
-        bcrypt.compareSync = jest.fn().mockReturnValue(true);
+        bcryptjsompareSync = jest.fn().mockReturnValue(true);
         jwt.sign = jest.fn().mockResolvedValue('token');
         const result = await UserService.authenticate(mockUser);
         expect(result).toEqual({
@@ -79,7 +163,7 @@ describe.skip('UserService.authenticate', () => {
 
     it('should return user without hash', async () => {
         User.findOne.mockReturnValue(mockUser);
-        bcrypt.compareSync = jest.fn().mockReturnValue(true);
+        bcryptjsompareSync = jest.fn().mockReturnValue(true);
         jwt.sign = jest.fn().mockResolvedValue('token');
         const result = await UserService.authenticate(mockUser);
         expect(result.token).toEqual('token');
@@ -97,7 +181,7 @@ describe.skip('UserService.authenticate', () => {
             password: 'invalid password'
         }
         User.findOne.mockReturnValue(invalidmockUser);
-        bcrypt.compareSync = jest.fn().mockReturnValue(false);
+        bcryptjsompareSync = jest.fn().mockReturnValue(false);
         jwt.sign = jest.fn().mockResolvedValue('token');
         await expect(UserService.authenticate(invalidmockUser)).rejects.toThrow('Password is incorrect');
     });
@@ -111,12 +195,11 @@ describe('UserService.update', () => {
     it('should have a update method', () => {
         expect(typeof UserService.update).toBe('function');
     });
-
     it('should call User.findOneAndUpdate', async () => {
-        User.findOneAndUpdate.mockReturnValue(mockUser);
-        bcrypt.hashSync = jest.fn().mockReturnValue('hashed password');
-        await UserService.update(mockUserUpdate.id, mockUserUpdate);
-        expect(User.findOneAndUpdate).toBeCalledWith({ _id: mockUserUpdate.id }, { $set: mockUserUpdate }, { new: true });
+        User.findOneAndUpdate.mockReturnValue(mockUserUpdate);
+        bcryptjsashSync = jest.fn().mockReturnValue('hashed password');
+        await UserService.update(mockUser._id, mockUserUpdate);
+        expect(User.findOneAndUpdate).toBeCalledWith({ _id: mockUser._id }, { $set: mockUserUpdate }, { new: true });
     });
 
     it('should return user data', async () => {
@@ -125,20 +208,25 @@ describe('UserService.update', () => {
             ...mockUser,
             ...mockUserUpdate
         });
-        bcrypt.hashSync = jest.fn().mockResolvedValueOnce('hashed password');
+        //bcryptjsashSync = jest.fn().mockResolvedValueOnce('hashed password');
 
-        const result = await UserService.update(mockUserUpdate.id, mockUserUpdate);
-        expect(result).toEqual(mockUserUpdate);
+        const result = await UserService.update(mockUser._id, mockUserUpdate);
+        expect(result).toEqual({
+            ...mockUser,
+            ...mockUserUpdate
+        });
     });
 
     it('should throw an error if user is not found', async () => {
         User.findOneAndUpdate.mockReturnValue(null);
-        await expect(UserService.update(mockUserUpdate.id, mockUserUpdate)).rejects.toThrow(`User with id ${mockUserUpdate.id} does not exist`);
+        await expect(UserService.update(mockUser._id, mockUserUpdate)).rejects.toThrow(`User id ${mockUser._id} does not exist`);
     });
 
     it('should catch errors', async () => {
-        User.findOneAndUpdate.mockRejectedValue('Error updating user');
-        await expect(UserService.update(mockUserUpdate.id, mockUserUpdate)).rejects.toThrow('Error updating user');
+        User.findOneAndUpdate.mockImplementation(() => {
+            throw new Error('Error updating user');
+        });
+        await expect(UserService.update(mockUser._id, mockUserUpdate)).rejects.toThrow('Error updating user');
     });
 });
 
@@ -160,7 +248,9 @@ describe('UserService.getAll', () => {
     });
 
     it('should catch errors', async () => {
-        User.find.mockRejectedValue('Error getting users');
+        User.find.mockImplementation(() => {
+            throw new Error('Error getting users');
+        });
         await expect(UserService.getAll()).rejects.toThrow('Error getting users');
     });
 });
@@ -172,24 +262,26 @@ describe('UserService.getById', () => {
 
     it('should call User.findById', async () => {
         User.findById.mockReturnValue(mockUser);
-        await UserService.getById(mockUser.id);
-        expect(User.findById).toBeCalledWith(mockUser.id);
+        await UserService.getById(mockUser._id);
+        expect(User.findById).toBeCalledWith(mockUser._id);
     });
 
     it('should return the user', async () => {
         User.findById.mockReturnValue(mockUser);
-        const result = await UserService.getById(mockUser.id);
+        const result = await UserService.getById(mockUser._id);
         expect(result).toEqual(mockUser);
     });
 
     it('should throw an error if the user does not exist', async () => {
         User.findById.mockReturnValue(null);
-        await expect(UserService.getById(mockUser.id)).rejects.toThrow(`User with id ${mockUser.id} does not exist`);
+        await expect(UserService.getById(mockUser._id)).rejects.toThrow(`User id ${mockUser._id} does not exist`);
     });
 
     it('should catch errors', async () => {
-        User.findById.mockRejectedValue('Error deleting user');
-        await expect(UserService.getById(mockUser.id)).rejects.toThrow('Error deleting user');
+        User.findById.mockImplementation(() => {
+            throw new Error('Error getting user');
+        });
+        await expect(UserService.getById(mockUser._id)).rejects.toThrow('Error getting user');
     });
 
     afterAll(async () => {
@@ -202,20 +294,22 @@ describe('UserService.delete', () => {
         expect(typeof UserService.delete).toBe('function');
     });
 
-    it('should call User.findOneAndRemove', async () => {
-        User.findOneAndRemove.mockReturnValue(mockUser);
-        await UserService.delete(mockUser.id);
-        expect(User.findOneAndRemove).toBeCalledWith(mockUser.id);
+    it('should call User.findByIdAndRemove', async () => {
+        User.findByIdAndRemove.mockReturnValue(mockUser);
+        await UserService.delete(mockUser._id);
+        expect(User.findByIdAndRemove).toBeCalledWith(mockUser._id);
     });
 
     it('should throw an error if the user does not exist', async () => {
-        User.findOneAndRemove.mockReturnValue(null);
-        await expect(UserService.delete(mockUser.id)).rejects.toThrow(`User with id ${mockUser.id} does not exist`);
+        User.findByIdAndRemove.mockReturnValue(null);
+        await expect(UserService.delete(mockUser._id)).rejects.toThrow(`User id ${mockUser._id} does not exist`);
     });
 
     it('should catch errors', async () => {
-        User.findOneAndRemove.mockRejectedValue('Error deleting user');
-        await expect(UserService.delete(mockUser.id)).rejects.toThrow('Error deleting user');
+        User.findByIdAndRemove.mockImplementation(() => {
+            throw new Error('Error deleting user');
+        });
+        await expect(UserService.delete(mockUser._id)).rejects.toThrow('Error deleting user');
     });
 
     afterAll(async () => {

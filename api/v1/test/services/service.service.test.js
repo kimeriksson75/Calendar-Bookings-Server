@@ -9,7 +9,7 @@ const mockServices = require('../mock-data/services.json')
 
 Service.create = jest.fn();
 Service.find = jest.fn();
-Service.findOne = jest.fn();
+Service.findById = jest.fn();
 Service.findByIdAndRemove = jest.fn();
 
 describe('ServiceService.create', () => {
@@ -71,17 +71,17 @@ describe('ServiceService.getById', () => {
 
     it('should call Service.findById', async () => {
         await ServiceService.getById(mockService.id);
-        expect(Service.findOne).toBeCalledWith(mockService.id);
+        expect(Service.findById).toBeCalledWith(mockService.id);
     });
 
     it('should return the service', async () => {
-        Service.findOne.mockReturnValue(mockService);
+        Service.findById.mockReturnValue(mockService);
         const result = await ServiceService.getById(mockService.id);
         expect(result).toEqual(mockService);
     });
 
     it('should catch errors', async () => {
-        Service.findOne.mockRejectedValue('Error getting service');
+        Service.findById.mockRejectedValue('Error getting service');
         expect(ServiceService.getById(mockService.id)).rejects.toThrow('Error getting service');
     });
 
