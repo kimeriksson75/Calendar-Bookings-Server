@@ -1,11 +1,17 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { create, getAll, getById, update, _delete } = require('./residence.controller');
+const {
+  create,
+  getAll,
+  getById,
+  update,
+  _delete,
+} = require("./residence.controller");
 
-router.post('/', create);
-router.get('/', getAll);
-router.get('/:id', getById);
-router.patch('/:id', update);
-router.delete('/:id', _delete);
+router.post("/", create);
+router.get("/", getAll);
+router.get("/:id", getById);
+router.patch("/:id", update);
+router.delete("/:id", _delete);
 
 module.exports = router;

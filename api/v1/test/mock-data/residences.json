@@ -1,14 +1,14 @@
 [
-    {
-        "name": "Läslampan 1",
-        "address": "Finn Malmgrens väg 79"
-    },
-    {
-        "name": "Läslampan 2",
-        "address": "Finn Malmgrens väg 81"
-    },
-    {
-        "name": "Läslampan 3",
-        "address": "Finn Malmgrens väg 83"
-    }
+  {
+    "name": "Läslampan 1",
+    "address": "Finn Malmgrens väg 79"
+  },
+  {
+    "name": "Läslampan 2",
+    "address": "Finn Malmgrens väg 81"
+  },
+  {
+    "name": "Läslampan 3",
+    "address": "Finn Malmgrens väg 83"
+  }
 ]

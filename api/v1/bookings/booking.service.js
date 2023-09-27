@@ -1,96 +1,142 @@
-const db = require('../_helpers/db');
-const moment = require('moment');
+const db = require("../_helpers/db");
+const moment = require("moment");
+const {
+  NotFoundError,
+  ValidationError,
+} = require("../../../_helpers/customErrors/customErrors");
+const { validate, bookingSchema } = require("../_helpers/db.schema.validation");
+const { isValidObjectId } = require("../_helpers/db.document.validation");
 
 const Booking = db.Booking;
+const Service = db.Service;
+const User = db.User;
 
-const create = async bookingParam => {
-  try {
-    const booking = await Booking.create(bookingParam);
-    return booking || {};
-  } catch (err) {
-    throw new Error(err);
+const create = async (bookingParam) => {
+  await validate(bookingSchema, bookingParam);
+  const booking = await Booking.create(bookingParam);
+  if (booking) {
+    return booking;
   }
-}
+  throw new ValidationError(`Error while creating booking`);
+};
 
 const update = async (id, bookingParam) => {
+  await validate(bookingSchema, bookingParam);
   const existingBooking = await Booking.findById(id);
-  if(!existingBooking) {
-    throw new Error(`Booking with id ${bookingParam.id} does not exists`);
+  if (!existingBooking) {
+    throw new NotFoundError(`Booking with id ${id} does not exists`);
   }
-
-  try {
-    const updatedBooking = await Booking.findOneAndUpdate({ _id: id }, { $set: bookingParam }, { new: true });
-    return updatedBooking || {};
-  } catch (err) {
-    throw new Error(err);
+  const updatedBooking = await Booking.findByIdAndUpdate(
+    id,
+    { $set: bookingParam },
+    { new: true },
+  );
+  if (updatedBooking) {
+    return updatedBooking;
   }
-}
+  throw new ValidationError(`Error while updating booking`);
+};
 
-const getById = async (service, id) => {
-  try {
-    const booking = await Booking.findById({ service, id });
+const getById = async (id) => {
+  isValidObjectId(id);
+  const booking = await Booking.findById(id);
+  if (booking) {
     return booking;
-  } catch (err) {
-    throw new Error(err);
   }
-}
+  throw new NotFoundError(`Booking with id ${id} does not exists`);
+};
 
 const getAll = async () => {
-  try {
-    const bookings = await Booking.find();
-    return bookings || [];
-  } catch (err) {
-    throw new Error(err);
+  const bookings = await Booking.find();
+  if (bookings) {
+    return bookings;
   }
-}
+  throw new ValidationError(`Error while getting bookings`);
+};
 
-const getByService = async service => {
-  try {
-    const bookings = await Booking.find({ service });
-    return bookings || [];
-  } catch (err) {
-    throw new Error(err);
+const getByService = async (service) => {
+  isValidObjectId(service);
+  const existingService = await Service.findById(service);
+  if (!existingService) {
+    throw new NotFoundError(`Service with id ${service} does not exists`);
   }
-}
+
+  const bookings = await Booking.find({ service });
+  if (bookings && bookings.length > 0) {
+    return bookings;
+  }
+  throw new ValidationError(`Error while getting bookings`);
+};
 
 const getByServiceDate = async (service, date) => {
-  try {
-    const start = moment(date).startOf('day');
-    const end = moment(date).endOf('day');
-    const booking = await Booking.findOne({ service, date: { '$gte': start, '$lte': end } });
-    return booking || {};
-  } catch (err) {
-    throw new Error(err);
+  isValidObjectId(service);
+  const existingService = await Service.findById(service);
+  if (!existingService) {
+    throw new NotFoundError(`Service with id ${service} does not exists`);
   }
-}
+  const start = moment(date).startOf("day");
+  const end = moment(date).endOf("day");
+  const booking = await Booking.findOne({
+    service,
+    date: { $gte: start, $lte: end },
+  });
+  if (booking) {
+    return booking;
+  }
+  throw new NotFoundError(
+    `Booking related to service ${service} and date ${date} does not exists`,
+  );
+};
 
 const getByServiceMonth = async (service, date) => {
-  try {
-    const start = moment(date).startOf('month');
-    const end = moment(date).endOf('month');
-    const bookings = await Booking.find({ service, date: { '$gte': start, '$lte': end } });
-    return bookings || [];
-  } catch (err) {
-    throw new Error(err);
+  isValidObjectId(service);
+  const existingService = await Service.findById(service);
+  if (!existingService) {
+    throw new NotFoundError(`Service with id ${service} does not exists`);
   }
-}
+  const start = moment(date).startOf("month");
+  const end = moment(date).endOf("month");
+  const bookings = await Booking.find({
+    service,
+    date: { $gte: start, $lte: end },
+  });
+  if (bookings && bookings.length > 0) {
+    return bookings;
+  }
+  throw new NotFoundError(
+    `Booking with service ${service} and date ${date} does not exists`,
+  );
+};
 const getByServiceUser = async (service, id) => {
-  try {
-    const bookings = await Booking.find({ service, 'timeslots.userid': id })
-    return bookings || [];
-  } catch (err) {
-    throw new Error(err);
+  isValidObjectId(service);
+  isValidObjectId(id);
+  const existingService = await Service.findById(service);
+  if (!existingService) {
+    throw new NotFoundError(`Service with id ${service} does not exists`);
   }
-}
 
-const _delete = async id => {
-  try {
-    const booking = await Booking.findOneAndRemove(id);
-    return booking || {};
-  } catch (err) {
-    throw new Error(err);
+  const existingUser = await User.findById(id);
+  if (!existingUser) {
+    throw new NotFoundError(`User with id ${id} does not exists`);
   }
-}
+
+  const bookings = await Booking.find({ service, "timeslots.userid": id });
+  if (bookings && bookings.length > 0) {
+    return bookings;
+  }
+  throw new NotFoundError(
+    `Booking with service ${service} and user ${id} does not exists`,
+  );
+};
+
+const _delete = async (id) => {
+  isValidObjectId(id);
+  const booking = await Booking.findByIdAndRemove(id);
+  if (booking) {
+    return booking;
+  }
+  throw new NotFoundError(`Booking with id ${id} does not exists`);
+};
 
 module.exports = {
   create,
@@ -101,5 +147,5 @@ module.exports = {
   getByServiceMonth,
   getByServiceUser,
   update,
-  delete: _delete
+  delete: _delete,
 };

@@ -1,26 +1,61 @@
-const request = require('supertest');
-const app = require('../../../app');
+const request = require("supertest");
+const app = require("../../../app");
 
 const deleteDocument = async (collection, id) => {
-    await request(app)
-      .delete(`/api/v1/${collection}/${id}`)
-      .expect(200);
-}
+  await request(app).delete(`/api/v1/${collection}/${id}`).expect(200);
+};
 
-const createDocument = async (collection, document) => {
-    let createdDocumentId;
-    await request(app)
-      .post(`/api/v1/${collection}`)
-      .send(document)
-      .expect(201)
-      .expect('Content-Type', /json/)
-      .expect(res => {
-          createdDocumentId = res.body._id;
-      });
-    return createdDocumentId;
-}
+const authDeleteDocument = async (collection, id, token) => {
+  await request(app)
+    .delete(`/api/v1/${collection}/${id}`)
+    .auth(token, { type: "bearer" })
+    .expect(200);
+};
+
+const createDocument = async (collection, document, id = true) => {
+  let returnValue;
+  await request(app)
+    .post(`/api/v1/${collection}`)
+    .send(document)
+    .expect(201)
+    .expect("Content-Type", /json/)
+    .expect((res) => {
+      returnValue = id ? res.body._id : res.body;
+    });
+  return returnValue;
+};
+
+const authCreateDocument = async (collection, document, token, id = true) => {
+  let returnValue;
+  await request(app)
+    .post(`/api/v1/${collection}`)
+    .auth(token, { type: "bearer" })
+    .send(document)
+    .expect(201)
+    .expect("Content-Type", /json/)
+    .expect((res) => {
+      returnValue = id ? res.body._id : res.body;
+    });
+  return returnValue;
+};
+
+const authenticate = async (user) => {
+  let returnValue;
+  await request(app)
+    .post("/api/v1/users/authenticate")
+    .send(user)
+    .expect(200)
+    .expect("Content-Type", /json/)
+    .expect((res) => {
+      returnValue = res.body.token;
+    });
+  return returnValue;
+};
 
 module.exports = {
-    deleteDocument,
-    createDocument
-}
+  deleteDocument,
+  authDeleteDocument,
+  createDocument,
+  authCreateDocument,
+  authenticate,
+};
