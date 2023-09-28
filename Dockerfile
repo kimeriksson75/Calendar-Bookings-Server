@@ -1,25 +1,12 @@
-# Use the official Node.js image as parent image
-FROM node:latest
+FROM jenkins/jenkins:lts
+USER root
 
-# Set the working directory. If it doesn't exists, it'll be created
-WORKDIR /app
+RUN mkdir -p /tmp/download && \
+ curl -L https://download.docker.com/linux/static/stable/x86_64/docker-18.03.1-ce.tgz | tar -xz -C /tmp/download && \
+ rm -rf /tmp/download/docker/dockerd && \
+ mv /tmp/download/docker/docker* /usr/local/bin/ && \
+ rm -rf /tmp/download && \
+ groupadd -g 999 docker && \
+ usermod -aG staff,docker jenkins
 
-# Define the env variable `PORT`
-ENV PORT 3000
-
-# Expose the port 3000
-EXPOSE ${PORT}
-
-# Copy the file `package.json` from current folder
-# inside our image in the folder `/app`
-COPY ./package.json /app/package.json
-
-# Install the dependencies
-RUN npm install
-
-# Copy all files from current folder
-# inside our image in the folder `/app`
-COPY . /app
-
-# Start the app
-ENTRYPOINT ["npm", "start"]
+USER jenkins
