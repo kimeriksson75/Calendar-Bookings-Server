@@ -220,8 +220,6 @@ describe("UserService.update", () => {
       ...mockUser,
       ...mockUserUpdate,
     });
-    //bcryptjsashSync = jest.fn().mockResolvedValueOnce('hashed password');
-
     const result = await UserService.update(mockUser._id, mockUserUpdate);
     expect(result).toEqual({
       ...mockUser,

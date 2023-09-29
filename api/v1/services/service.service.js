@@ -3,9 +3,20 @@ const {
   ValidationError,
   NotFoundError,
 } = require("../../../_helpers/customErrors/customErrors");
-const Service = db.Service;
+const { validate, serviceSchema } = require("../_helpers/db.schema.validation");
+const { isValidObjectId } = require("../_helpers/db.document.validation");
 
+const Service = db.Service;
+const Residence = db.Residence;
 const create = async (serviceParam) => {
+  await validate(serviceSchema, serviceParam)
+  await isValidObjectId(serviceParam.residence);
+  const existingResidence = await Residence.findById(serviceParam.residence);
+  if (!existingResidence) {
+    throw new NotFoundError(
+      `Residence with id ${serviceParam.residence} does not exists`,
+    );
+  }
   const service = await Service.create(serviceParam);
   if (service) {
     return service;
@@ -13,33 +24,9 @@ const create = async (serviceParam) => {
   throw new ValidationError(`Error while creating service`);
 };
 
-const getAll = async () => {
-  const services = await Service.find();
-  if (services) {
-    return services;
-  }
-  throw new ValidationError(`Error while getting services`);
-};
-
-const getById = async (id) => {
-  const service = await Service.findById(id);
-  if (service) {
-    return service;
-  }
-  throw new NotFoundError(`Service with id ${id} does not exists`);
-};
-
-const getByResidence = async (residence) => {
-  const services = await Service.find({ residence });
-  if (services) {
-    return services;
-  }
-  throw new ValidationError(
-    `Error while getting services by residence id ${residence}`,
-  );
-};
-
 const update = async (id, serviceParam) => {
+  await validate(serviceSchema, serviceParam)
+  await isValidObjectId(id);
   const service = await Service.findOneAndUpdate(
     { _id: id },
     { $set: serviceParam },
@@ -51,7 +38,36 @@ const update = async (id, serviceParam) => {
   throw new NotFoundError(`Service with id ${id} does not exists`);
 };
 
+const getAll = async () => {
+  const services = await Service.find();
+  if (services) {
+    return services;
+  }
+  throw new ValidationError(`Error while getting services`);
+};
+
+const getById = async (id) => {
+  await isValidObjectId(id);
+  const service = await Service.findById(id);
+  if (service) {
+    return service;
+  }
+  throw new NotFoundError(`Service with id ${id} does not exists`);
+};
+
+const getByResidence = async (residence) => {
+  await isValidObjectId(residence);
+  const services = await Service.find({ residence });
+  if (services) {
+    return services;
+  }
+  throw new ValidationError(
+    `Error while getting services by residence id ${residence}`,
+  );
+};
+
 const _delete = async (id) => {
+  await isValidObjectId(id);
   const service = await Service.findByIdAndRemove(id);
   if (service) {
     return service;

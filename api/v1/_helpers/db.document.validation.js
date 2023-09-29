@@ -35,7 +35,16 @@ const isValidObjectId = (id) => {
   return result;
 };
 
+const isValidDate = (date) => {
+  const result = new Date(date).toString() !== "Invalid Date";
+  if (!result) {
+    throw new ValidationError(`Invalid date ${date}`);
+  }
+  return result;
+} 
+
 module.exports = {
   existingDocumentById,
   isValidObjectId,
+  isValidDate
 };

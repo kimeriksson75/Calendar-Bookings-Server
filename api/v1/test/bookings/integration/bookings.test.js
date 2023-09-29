@@ -108,6 +108,52 @@ describe("POST /api/v1/bookings", () => {
       });
   });
 
+  it("should return 404 Not Found while service does not exist", async () => {
+    const invalidServiceId = "6512e2046e6a3c3d399cff6e";
+    return request(app)
+      .post("/api/v1/bookings")
+      .auth(createdUserToken, { type: "bearer" })
+      .send({ ...mockBooking, service: invalidServiceId })
+      .expect(404)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          `Service with id ${invalidServiceId} does not exists`,
+        );
+      });
+  });
+  it("should return 400 Bad Request while invalid service id", async () => {
+    const invalidServiceId = "invalid id";
+    return request(app)
+      .post("/api/v1/bookings")
+      .auth(createdUserToken, { type: "bearer" })
+      .send({ ...mockBooking, service: invalidServiceId })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          '"service" must only contain hexadecimal characters',
+        );
+      });
+  });
+
+  it("should return 400 Bad Request while invalid booking param", async () => {
+    return request(app)
+      .post("/api/v1/bookings")
+      .auth(createdUserToken, { type: "bearer" })
+      .send({
+        ...mockBooking,
+        timeslots: [{ ...mockTimeSlots[0], userid: "invalid id" }],
+      })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          '"timeslots[0].userid" must only contain hexadecimal characters',
+        );
+      });
+  });
+
   it("should return 201 and created booking", async () => {
     return request(app)
       .post("/api/v1/bookings")
@@ -127,6 +173,8 @@ describe("POST /api/v1/bookings", () => {
         createdBooking = res.body;
       });
   });
+
+  
 });
 
 describe("PATCH /api/v1/bookings", () => {
@@ -171,6 +219,70 @@ describe("PATCH /api/v1/bookings", () => {
       .expect((res) => {
         expect(res.body.message).toEqual(
           `Booking with id ${invalidBookingId} does not exists`,
+        );
+      });
+  });
+
+  it("should return 400 Bad Request while invalid booking id", async () => {
+    const invalidBookingId = "invalid id";
+    return request(app)
+      .patch(`/api/v1/bookings/${invalidBookingId}`)
+      .auth(createdUserToken, { type: "bearer" })
+      .send(mockBooking)
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          "Invalid id invalid id",
+        );
+      });
+  });
+
+  it("should return 400 Bad Request while invalid service id", async () => {
+    const invalidServiceId = "invalid id";
+    return request(app)
+      .patch(`/api/v1/bookings/${createdMockBooking._id}`)
+      .auth(createdUserToken, { type: "bearer" })
+      .send({ ...mockBooking, service: invalidServiceId })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          '"service" must only contain hexadecimal characters',
+        );
+      });
+  });
+
+  it("should return 404 Not Found while service does not exist", async () => {
+    const invalidServiceId = "6512e2046e6a3c3d399cff6e";
+    return request(app)
+      .patch(`/api/v1/bookings/${createdMockBooking._id}`)
+      .auth(createdUserToken, { type: "bearer" })
+      .send({ ...mockBooking, service: invalidServiceId })
+      .expect(404)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          `Service with id ${invalidServiceId} does not exists`,
+        );
+      });
+  });
+
+  it("should return 200 and updated booking", async () => {
+    return request(app)
+      .patch(`/api/v1/bookings/${createdMockBooking._id}`)
+      .auth(createdUserToken, { type: "bearer" })
+      .send({ ...mockBooking, date: "2023-09-12T17:21:47.228Z" })
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.service).toEqual(mockBooking.service);
+        expect(res.body.date).toEqual("2023-09-12T17:21:47.228Z");
+        expect(res.body.timeslots[0].userid).toEqual(
+          mockBooking.timeslots[0].userid,
+        );
+        expect(res.body.timeslots[0].username).toEqual(
+          mockBooking.timeslots[0].username,
         );
       });
   });
@@ -238,6 +350,20 @@ describe("GET /api/v1/bookings/:id", () => {
       });
   });
 
+  it("should return 400 Bad Request while invalid booking id", async () => {
+    const invalidBookingId = "invalid id";
+    return request(app)
+      .get(`/api/v1/bookings/${invalidBookingId}`)
+      .auth(createdUserToken, { type: "bearer" })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          "Invalid id invalid id",
+        );
+      });
+  });
+
   it("should return 404 Not Found if booking does not exist", async () => {
     const invalidBookingId = "6512e2046e6a3c3d399cff6e";
     return request(app)
@@ -264,13 +390,6 @@ describe("GET /api/v1/bookings/service/:service", () => {
     );
   });
 
-  afterAll(async () => {
-    await authDeleteDocument(
-      "bookings",
-      createdMockBooking._id,
-      createdUserToken,
-    );
-  });
   it("should return 200 and bookings related to service", async () => {
     return request(app)
       .get(`/api/v1/bookings/service/${createdMockBooking.service}`)
@@ -285,7 +404,7 @@ describe("GET /api/v1/bookings/service/:service", () => {
   });
 
   it("should return 404 Not Found if service does not exist", async () => {
-    const invalidServiceId = "6512e2046e6a3c3d399cff6e";
+    const invalidServiceId = "6513e49f9d90819b61ef5bbf";
     return request(app)
       .get(`/api/v1/bookings/service/${invalidServiceId}`)
       .auth(createdUserToken, { type: "bearer" })
@@ -295,6 +414,37 @@ describe("GET /api/v1/bookings/service/:service", () => {
         expect(res.body.message).toEqual(
           `Service with id ${invalidServiceId} does not exists`,
         );
+      });
+  });
+
+  it("should return 400 Bad Request while invalid service id", async () => {
+    const invalidServiceId = "invalid id";
+    return request(app)
+      .get(`/api/v1/bookings/service/${invalidServiceId}`)
+      .auth(createdUserToken, { type: "bearer" })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          "Invalid id invalid id",
+        );
+      });
+  });
+
+  it("should return 200 and empty bookings array if bookings related to service does not exist", async () => {
+    await authDeleteDocument(
+      "bookings",
+      createdMockBooking._id,
+      createdUserToken,
+    );
+
+    return request(app)
+      .get(`/api/v1/bookings/service/${createdMockBooking.service}`)
+      .auth(createdUserToken, { type: "bearer" })
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.length).toEqual(0);
       });
   });
 });
@@ -310,13 +460,6 @@ describe("GET /api/v1/bookings/service/:service/date/:date", () => {
     );
   });
 
-  afterAll(async () => {
-    await authDeleteDocument(
-      "bookings",
-      createdMockBooking._id,
-      createdUserToken,
-    );
-  });
   it("should return 200 and booking related to service and date", async () => {
     return request(app)
       .get(
@@ -346,19 +489,68 @@ describe("GET /api/v1/bookings/service/:service/date/:date", () => {
       });
   });
 
-  it("should return 404 Not Found if bookings related to issued date does not exist", async () => {
+  it("should return 400 Bad Request while invalid service id", async () => {
+    const invalidServiceId = "invalid id";
+    return request(app)
+      .get(
+        `/api/v1/bookings/service/${invalidServiceId}/date/${createdMockBooking.date}`,
+    )
+      .auth(createdUserToken, { type: "bearer" })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          "Invalid id invalid id",
+        );
+      });
+  });
+
+  it("should return 200 and empty booking if booking related to issued date does not exist", async () => {
     const invalidDate = "2000-09-12T17:21:47.228Z";
     return request(app)
       .get(
         `/api/v1/bookings/service/${createdMockBooking.service}/date/${invalidDate}`,
       )
       .auth(createdUserToken, { type: "bearer" })
-      .expect(404)
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body).toEqual({});
+      });
+  });
+
+  it("should return 400 Bad Request while invalid date", async () => {
+    const invalidDate = "invalid date";
+    return request(app)
+      .get(
+        `/api/v1/bookings/service/${createdMockBooking.service}/date/${invalidDate}`,
+    )
+      .auth(createdUserToken, { type: "bearer" })
+      .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
         expect(res.body.message).toEqual(
-          `Booking related to service ${createdMockBooking.service} and date ${invalidDate} does not exists`,
+          "Invalid date invalid date",
         );
+      });
+  });
+
+  it("should return 200 and empty booking if booking related to service and date does not exist", async () => {
+    await authDeleteDocument(
+      "bookings",
+      createdMockBooking._id,
+      createdUserToken,
+    );
+
+    return request(app)
+      .get(
+        `/api/v1/bookings/service/${createdMockBooking.service}/date/${createdMockBooking.date}`,
+      )
+      .auth(createdUserToken, { type: "bearer" })
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body).toEqual({});
       });
   });
 });
@@ -413,18 +605,48 @@ describe("GET /api/v1/bookings/service/:service/month/:date", () => {
       });
   });
 
-  it("should return 404 Not Found if bookings related to issued month does not exist", async () => {
+  it("should return 400 Bad Request while invalid service id", async () => {
+    const invalidServiceId = "invalid id"; 
+    return request(app)
+      .get(
+        `/api/v1/bookings/service/${invalidServiceId}/month/${createdMockBooking.date}`,
+    )
+      .auth(createdUserToken, { type: "bearer" })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          "Invalid id invalid id",
+        );
+      });
+  });
+
+  it("should return 200 and empty bookings array if bookings related to issued month does not exist", async () => {
     const invalidDate = "2000-09-12T17:21:47.228Z";
     return request(app)
       .get(
         `/api/v1/bookings/service/${createdMockBooking.service}/month/${invalidDate}`,
       )
       .auth(createdUserToken, { type: "bearer" })
-      .expect(404)
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body).toEqual([]);
+      });
+  });
+
+  it("should return 400 Bad Request while invalid date", async () => {
+    const invalidDate = "invalid date";
+    return request(app)
+      .get(
+        `/api/v1/bookings/service/${createdMockBooking.service}/month/${invalidDate}`,
+      )
+      .auth(createdUserToken, { type: "bearer" })
+      .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
         expect(res.body.message).toEqual(
-          `Booking with service ${createdMockBooking.service} and date ${invalidDate} does not exists`,
+          "Invalid date invalid date",
         );
       });
   });
@@ -472,6 +694,22 @@ describe("GET /api/v1/bookings/service/:service/user/:id", () => {
       });
   });
 
+  it("should return 400 Bad Request while invalid service id", async () => {
+    const invalidServiceId = "invalid id";
+    return request(app)
+      .get(
+        `/api/v1/bookings/service/${invalidServiceId}/user/${createdMockBooking.timeslots[0].userid}`,
+    )
+      .auth(createdUserToken, { type: "bearer" })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          "Invalid id invalid id",
+        );
+      });
+  });
+
   it("should return 404 Not Found if user does not exist", async () => {
     const invalidUserId = "6512e2046e6a3c3d399cff6e";
     return request(app)
@@ -488,7 +726,23 @@ describe("GET /api/v1/bookings/service/:service/user/:id", () => {
       });
   });
 
-  it("should return 404 Not Found if bookings related to service and user does not exist", async () => {
+  it("should return 400 Bad Request while invalid user id", async () => {
+    const invalidUserId = "invalid id";
+    return request(app)
+      .get(
+        `/api/v1/bookings/service/${createdMockBooking.service}/user/${invalidUserId}`,
+      )
+      .auth(createdUserToken, { type: "bearer" })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          "Invalid id invalid id",
+        );
+      });
+  });
+
+  it("should return 200 and empty bookings array if bookings related to service and user does not exist", async () => {
     await authDeleteDocument(
       "bookings",
       createdMockBooking._id,
@@ -500,12 +754,10 @@ describe("GET /api/v1/bookings/service/:service/user/:id", () => {
         `/api/v1/bookings/service/${createdMockBooking.service}/user/${createdMockBooking.timeslots[0].userid}`,
       )
       .auth(createdUserToken, { type: "bearer" })
-      .expect(404)
+      .expect(200)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(
-          `Booking with service ${createdMockBooking.service} and user ${createdMockBooking.timeslots[0].userid} does not exists`,
-        );
+        expect(res.body).toEqual([]);
       });
   });
 });

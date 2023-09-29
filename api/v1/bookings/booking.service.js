@@ -5,7 +5,7 @@ const {
   ValidationError,
 } = require("../../../_helpers/customErrors/customErrors");
 const { validate, bookingSchema } = require("../_helpers/db.schema.validation");
-const { isValidObjectId } = require("../_helpers/db.document.validation");
+const { isValidObjectId, isValidDate } = require("../_helpers/db.document.validation");
 
 const Booking = db.Booking;
 const Service = db.Service;
@@ -13,6 +13,13 @@ const User = db.User;
 
 const create = async (bookingParam) => {
   await validate(bookingSchema, bookingParam);
+  isValidObjectId(bookingParam.service);
+  const existingService = await Service.findById(bookingParam.service);
+  if (!existingService) {
+    throw new NotFoundError(
+      `Service with id ${bookingParam.service} does not exists`,
+    );
+  }
   const booking = await Booking.create(bookingParam);
   if (booking) {
     return booking;
@@ -22,6 +29,13 @@ const create = async (bookingParam) => {
 
 const update = async (id, bookingParam) => {
   await validate(bookingSchema, bookingParam);
+  isValidObjectId(id);
+  const existingService = await Service.findById(bookingParam.service);
+  if (!existingService) {
+    throw new NotFoundError(
+      `Service with id ${bookingParam.service} does not exists`,
+    );
+  }
   const existingBooking = await Booking.findById(id);
   if (!existingBooking) {
     throw new NotFoundError(`Booking with id ${id} does not exists`);
@@ -49,6 +63,7 @@ const getById = async (id) => {
 const getAll = async () => {
   const bookings = await Booking.find();
   if (bookings) {
+    console.log('bookings', bookings);
     return bookings;
   }
   throw new ValidationError(`Error while getting bookings`);
@@ -62,7 +77,7 @@ const getByService = async (service) => {
   }
 
   const bookings = await Booking.find({ service });
-  if (bookings && bookings.length > 0) {
+  if (bookings) {
     return bookings;
   }
   throw new ValidationError(`Error while getting bookings`);
@@ -70,6 +85,7 @@ const getByService = async (service) => {
 
 const getByServiceDate = async (service, date) => {
   isValidObjectId(service);
+  isValidDate(date);
   const existingService = await Service.findById(service);
   if (!existingService) {
     throw new NotFoundError(`Service with id ${service} does not exists`);
@@ -80,16 +96,12 @@ const getByServiceDate = async (service, date) => {
     service,
     date: { $gte: start, $lte: end },
   });
-  if (booking) {
-    return booking;
-  }
-  throw new NotFoundError(
-    `Booking related to service ${service} and date ${date} does not exists`,
-  );
+  return booking || {};
 };
 
 const getByServiceMonth = async (service, date) => {
   isValidObjectId(service);
+  isValidDate(date);
   const existingService = await Service.findById(service);
   if (!existingService) {
     throw new NotFoundError(`Service with id ${service} does not exists`);
@@ -100,7 +112,7 @@ const getByServiceMonth = async (service, date) => {
     service,
     date: { $gte: start, $lte: end },
   });
-  if (bookings && bookings.length > 0) {
+  if (bookings) {
     return bookings;
   }
   throw new NotFoundError(
@@ -121,7 +133,7 @@ const getByServiceUser = async (service, id) => {
   }
 
   const bookings = await Booking.find({ service, "timeslots.userid": id });
-  if (bookings && bookings.length > 0) {
+  if (bookings) {
     return bookings;
   }
   throw new NotFoundError(

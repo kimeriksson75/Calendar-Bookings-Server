@@ -3,6 +3,10 @@ const {
   ValidationError,
 } = require("../../../_helpers/customErrors/customErrors");
 
+const residenceSchema = Joi.object({
+  name: Joi.string().required(),
+  address: Joi.string().required(),
+});
 const apartmentSchema = Joi.object({
   name: Joi.string().required(),
   residence: Joi.string().hex().length(24).required(),
@@ -19,16 +23,34 @@ const userSchema = Joi.object({
   hash: Joi.string(),
 });
 
-const bookingSchema = Joi.object({
-  service: Joi.string().hex().length(24).required(),
-  date: Joi.date().required(),
+const serviceSchema = Joi.object({
+  type: Joi.string().required(),
   timeslots: Joi.array().items(
     Joi.object({
       userid: Joi.string().hex().length(24).allow(null),
       username: Joi.string().allow(""),
       timeslot: Joi.string().required(),
+      _id: Joi.string().hex().length(24).allow(null),
     }),
   ),
+  name: Joi.string().required(),
+  residence: Joi.string().hex().length(24).required(),
+  limit: Joi.number().allow(null),
+  __v: Joi.number().allow(null),
+});
+
+const bookingSchema = Joi.object({
+  service: Joi.string().hex().length(24).required(),
+  date: Joi.date().allow(null),
+  timeslots: Joi.array().items(
+    Joi.object({
+      userid: Joi.string().hex().length(24).allow(null),
+      username: Joi.string().allow(""),
+      timeslot: Joi.string().required(),
+      _id: Joi.string().hex().length(24).allow(null),
+    }),
+  ),
+  __v: Joi.number().allow(null),
 });
 
 const validate = async (schema, params) => {
@@ -49,7 +71,9 @@ const validate = async (schema, params) => {
 
 module.exports = {
   validate,
+  residenceSchema,
   apartmentSchema,
   userSchema,
+  serviceSchema,
   bookingSchema,
 };

@@ -1,16 +1,25 @@
 const ResidenceService = require("../../residences/residence.service");
-const mongoose = require("mongoose");
-
 const { Residence } = require("../../_helpers/db");
-
 const mockResidence = require("../mock-data/residence.json");
 const mockResidences = require("../mock-data/residences.json");
-
+const { isValidObjectId } = require("../../_helpers/db.document.validation");
+const { validate } = require("../../_helpers/db.schema.validation");
 Residence.create = jest.fn();
 Residence.find = jest.fn();
 Residence.findById = jest.fn();
+Residence.findByIdAndUpdate = jest.fn();
 Residence.findByIdAndRemove = jest.fn();
+jest.mock('../../_helpers/db.document.validation', () => ({
+  isValidObjectId: jest.fn().mockImplementation(() => true),
+}));
+jest.mock("../../_helpers/db.schema.validation", () => ({
+  validate: jest.fn().mockImplementation(() => null),
+}));
+afterEach(() => {
+  jest.clearAllMocks();
+});
 
+const validResidenceId = "6513e49f9d90819b61ef5bbf"
 describe("ResidenceService.create", () => {
   it("should have a create method", () => {
     expect(typeof ResidenceService.create).toBe("function");
@@ -29,16 +38,76 @@ describe("ResidenceService.create", () => {
   });
 
   it("should catch errors", async () => {
-    Residence.create.mockImplementation(() => {
+    Residence.create.mockImplementationOnce(() => {
       throw new Error("Error creating residence");
     });
     await expect(ResidenceService.create(mockResidence)).rejects.toThrow(
       "Error creating residence",
     );
   });
+  
+  it("should throw an error if the residence is not valid", async () => {
+    validate.mockImplementationOnce(() => {
+      throw new Error("Error validating residence");
+    });
+    await expect(ResidenceService.create({
+      ...mockResidence,
+      name: "",
+    })).rejects.toThrow(
+      "Error validating residence"
+    );
+  });
+});
 
-  afterAll(async () => {
-    await mongoose.connection.close();
+describe("ResidenceService.update", () => {
+  it("should have a update method", () => {
+    expect(typeof ResidenceService.update).toBe("function");
+  });
+
+  it("should call Residence.findByIdAndUpdate()", async () => {
+    Residence.findByIdAndUpdate.mockReturnValue(mockResidence);
+    await ResidenceService.update(validResidenceId, mockResidence);
+    expect(Residence.findByIdAndUpdate).toBeCalledWith(
+      validResidenceId,
+      { $set: mockResidence },
+      { new: true },
+    );
+  });
+
+  it("should return the updated residence", async () => {
+    Residence.findByIdAndUpdate.mockReturnValue(mockResidence);
+    const result = await ResidenceService.update(
+      validResidenceId,
+      mockResidence,
+    );
+    expect(result).toEqual(mockResidence);
+  });
+
+  it("should catch errors", async () => {
+    Residence.findByIdAndUpdate.mockImplementation(() => {
+      throw new Error("Error updating residence");
+    });
+    await expect(
+      ResidenceService.update(validResidenceId, mockResidence),
+    ).rejects.toThrow("Error updating residence");
+  });
+
+  it("should throw an error if the residence id is not valid", async () => {
+    isValidObjectId.mockImplementationOnce(() => {
+      throw new Error("Error validating residence id");
+    });
+    await expect(
+      ResidenceService.update("invalid-residence-id", mockResidence),
+    ).rejects.toThrow("Error validating residence id");
+  });
+
+  it("should throw an error if the residence is not valid", async () => {
+    validate.mockImplementationOnce(() => {
+      throw new Error("Error validating residence");
+    });
+    await expect(
+      ResidenceService.update(validResidenceId, mockResidence),
+    ).rejects.toThrowError();
   });
 });
 
@@ -67,10 +136,6 @@ describe("ResidenceService.getAll", () => {
       "Error getting residences",
     );
   });
-
-  afterAll(async () => {
-    await mongoose.connection.close();
-  });
 });
 
 describe("ResidenceService.getById", () => {
@@ -80,13 +145,13 @@ describe("ResidenceService.getById", () => {
 
   it("should call Residence.findById()", async () => {
     Residence.findById.mockReturnValue(mockResidence);
-    await ResidenceService.getById(mockResidence.id);
-    expect(Residence.findById).toBeCalledWith(mockResidence.id);
+    await ResidenceService.getById(validResidenceId);
+    expect(Residence.findById).toBeCalledWith(validResidenceId);
   });
 
   it("should return the residence", async () => {
     Residence.findById.mockReturnValue(mockResidence);
-    const result = await ResidenceService.getById(mockResidence.id);
+    const result = await ResidenceService.getById(validResidenceId);
     expect(result).toEqual(mockResidence);
   });
 
@@ -94,13 +159,17 @@ describe("ResidenceService.getById", () => {
     Residence.findById.mockImplementation(() => {
       throw new Error("Error getting residence");
     });
-    await expect(ResidenceService.getById(mockResidence._id)).rejects.toThrow(
+    await expect(ResidenceService.getById(validResidenceId)).rejects.toThrow(
       "Error getting residence",
     );
   });
-
-  afterAll(async () => {
-    await mongoose.connection.close();
+  it("should throw an error if the residence id is not valid", async () => {
+    isValidObjectId.mockImplementationOnce(() => {
+      throw new Error("Error validating id");
+    });
+      await expect(
+      ResidenceService.getById("invalid-residence-id"),
+    ).rejects.toThrow("Error validating id");
   });
 });
 
@@ -130,7 +199,12 @@ describe("ResidenceService.delete", () => {
     );
   });
 
-  afterAll(async () => {
-    await mongoose.connection.close();
+  it("should throw an error if the id is not valid", async () => {
+    isValidObjectId.mockImplementationOnce(() => {
+      throw new Error("Error validating id");
+    });
+    await expect(
+      ResidenceService.delete(mockResidence.id),
+    ).rejects.toThrow("Error validating id");
   });
 });

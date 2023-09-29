@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const moment = require("moment");
 
 const { Booking, Service, User } = require("../../_helpers/db");
-
+const { isValidObjectId, isValidDate } = require("../../_helpers/db.document.validation");
+const { validate } = require("../../_helpers/db.schema.validation");
 const mockBooking = require("../mock-data/booking.json");
 const mockBookings = require("../mock-data/bookings.json");
 
@@ -20,6 +21,17 @@ Booking.findByIdAndRemove = jest.fn();
 Service.findById = jest.fn();
 User.findById = jest.fn();
 
+jest.mock('../../_helpers/db.document.validation', () => ({
+  isValidObjectId: jest.fn().mockImplementation(() => true),
+  isValidDate: jest.fn().mockImplementation(() => true),
+}));
+jest.mock("../../_helpers/db.schema.validation", () => ({
+  validate: jest.fn().mockImplementation(() => null),
+}));
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
 });
@@ -29,21 +41,20 @@ describe("BookingService.create", () => {
   });
 
   it("should call Booking.create", async () => {
-    Booking.findById.mockReturnValue(null);
     Booking.create.mockReturnValue(mockBooking);
+    Service.findById.mockReturnValue(mockService);
     await BookingService.create(mockBooking);
     expect(Booking.create).toBeCalledWith(mockBooking);
   });
 
   it("should return the created booking", async () => {
-    Booking.findById.mockReturnValue(null);
     Booking.create.mockReturnValue(mockBooking);
+    Service.findById.mockReturnValue(mockService);
     const result = await BookingService.create(mockBooking);
     expect(result).toEqual(mockBooking);
   });
 
   it("should catch errors", async () => {
-    Booking.findById.mockReturnValue(null);
     Booking.create.mockImplementation(() => {
       throw new Error("Error creating booking");
     });
@@ -51,8 +62,127 @@ describe("BookingService.create", () => {
       "Error creating booking",
     );
   });
+
+  it("should throw an error while invalid booking parans", async () => {
+    validate.mockImplementationOnce(() => {
+      throw new Error("Error validating booking params");
+    });
+    await expect(
+      BookingService.create({
+        ...mockBooking,
+        date: "2021-02-30",
+      })).rejects.toThrowError(
+        "Error validating booking params",
+    );
+  });
+
+  it("should throw an error if the service does not exist", async () => {
+    Booking.create.mockReturnValue(mockBooking);
+    Service.findById.mockReturnValue(null);
+    await expect(BookingService.create(mockBooking)).rejects.toThrow(
+      `Service with id ${mockBooking.service} does not exists`,
+    );
+  });
+
+  it("should throw an error while invalid service id", async () => {
+    isValidObjectId.mockImplementationOnce(() => {
+      throw new Error("Error validating service id");
+    });
+    await expect(
+      BookingService.create(mockBooking)).rejects.toThrowError(
+      "Error validating service id",
+    );
+  });
 });
 
+describe("BookingService.update", () => {
+  const mockBookingId = "6513209a435bc80cc05154772";
+  it("should have a update method", () => {
+    Booking.create.mockReturnValue(mockBooking);
+    Service.findById.mockReturnValue(mockService);
+    expect(typeof BookingService.update).toBe("function");
+  });
+
+  it("should call Booking.update", async () => {
+    Booking.findById.mockReturnValue(mockBooking);
+    Booking.findByIdAndUpdate.mockReturnValue(mockBooking);
+    await BookingService.update(mockBookingId, mockBooking);
+    expect(Booking.findByIdAndUpdate).toBeCalledWith(
+      mockBookingId,
+      { $set: mockBooking },
+      { new: true },
+    );
+  });
+
+  it("should return the updated booking", async () => {
+    Booking.findById.mockReturnValue(mockBooking);
+    Booking.findByIdAndUpdate.mockReturnValue(mockBooking);
+    const result = await BookingService.update(mockBookingId, mockBooking);
+    expect(result).toEqual(mockBooking);
+  });
+
+  it("should catch errors", async () => {
+    Booking.findById.mockReturnValue(mockBooking);
+    Booking.findByIdAndUpdate.mockImplementation(() => {
+      throw new Error("Error updating booking");
+    });
+    await expect(
+      BookingService.update(mockBookingId, mockBooking),
+    ).rejects.toThrow("Error updating booking");
+  });
+
+  it("should throw an error if the booking does not exist", async () => {
+    Booking.findById.mockReturnValue(null);
+    Booking.findByIdAndUpdate.mockReturnValue(mockBooking);
+    await expect(
+      BookingService.update(mockBookingId, mockBooking),
+    ).rejects.toThrow(`Booking with id ${mockBookingId} does not exist`);
+  });
+
+  it("should throw an error while invalid booking id", async () => {
+    isValidObjectId.mockImplementationOnce(() => {
+      throw new Error("Error validating booking id");
+    });
+    await expect(
+      BookingService.update(mockBookingId, mockBooking),
+    ).rejects.toThrowError(
+      "Error validating booking id",
+    );
+  });
+
+  it("should throw an error while invalid booking params", async () => {
+    validate.mockImplementationOnce(() => {
+      throw new Error("Error validating booking params");
+    });
+    await expect(
+      BookingService.update(mockBookingId, {
+        ...mockBooking,
+        date: "2021-02-30",
+      })).rejects.toThrowError(
+        "Error validating booking params",
+      );
+  });
+
+  it("should throw an error if the service does not exist", async () => {
+    Booking.findById.mockReturnValue(mockBooking);
+    Service.findById.mockReturnValue(null);
+    await expect(
+      BookingService.update(mockBookingId, mockBooking),
+    ).rejects.toThrow(`Service with id ${mockBooking.service} does not exists`);
+  });
+
+  it("should throw an error while invalid service id", async () => {
+    Booking.findById.mockReturnValue(mockBooking);
+    isValidObjectId.mockImplementationOnce(() => {
+      throw new Error("Error validating service id");
+    });
+    await expect(
+      BookingService.update(mockBookingId, mockBooking),
+    ).rejects.toThrowError(
+      "Error validating service id",
+    );
+  });
+});
 describe("BookingService.getByService", () => {
   it("should have a getByService method", () => {
     expect(typeof BookingService.getByService).toBe("function");
@@ -73,6 +203,26 @@ describe("BookingService.getByService", () => {
     expect(result).toEqual(mockBookings);
   });
 
+  it("should catch errors", async () => {
+    Booking.find.mockImplementation(() => {
+      throw new Error("Error getting bookings");
+    });
+    await expect(
+      BookingService.getByService(mockBooking.service),
+    ).rejects.toThrow("Error getting bookings");
+  });
+
+  it("should throw an error while invalid service id", async () => {
+    isValidObjectId.mockImplementationOnce(() => {
+      throw new Error("Error validating service id");
+    });
+    await expect(
+      BookingService.getByService(mockBooking.service),
+    ).rejects.toThrowError(
+      "Error validating service id",
+    );
+  });
+
   it("should throw an error if service does not exist", async () => {
     Service.findById.mockImplementation(() => {
       throw new Error("Service does not exist");
@@ -81,6 +231,7 @@ describe("BookingService.getByService", () => {
       BookingService.getByService(mockBooking.service),
     ).rejects.toThrow("Service does not exist");
   });
+  
 });
 
 describe("BookingService.getByServiceDate", () => {
@@ -114,6 +265,15 @@ describe("BookingService.getByServiceDate", () => {
     expect(result).toEqual(mockBooking);
   });
 
+  it("should catch errors", async () => {
+    Service.findById.mockReturnValue(mockService);
+    Booking.findOne.mockImplementation(() => {
+      throw new Error("Error getting booking");
+    });
+    await expect(
+      BookingService.getByServiceDate(mockBooking.service, mockBooking.date),
+    ).rejects.toThrow("Error getting booking");
+  });
   it("should throw an error if service does not exist", async () => {
     Service.findById.mockImplementation(() => {
       throw new Error("Service does not exist");
@@ -123,14 +283,26 @@ describe("BookingService.getByServiceDate", () => {
     ).rejects.toThrow("Service does not exist");
   });
 
-  it("should catch errors", async () => {
-    Service.findById.mockReturnValue(mockService);
-    Booking.findOne.mockImplementation(() => {
-      throw new Error("Error getting booking");
+  it("should throw an error while invalid service id", async () => {
+    isValidObjectId.mockImplementationOnce(() => {
+      throw new Error("Error validating service id");
     });
     await expect(
       BookingService.getByServiceDate(mockBooking.service, mockBooking.date),
-    ).rejects.toThrow("Error getting booking");
+    ).rejects.toThrowError(
+      "Error validating service id",
+    );
+  });
+
+  it("should throw an error while invalid date", async () => {
+    isValidDate.mockImplementationOnce(() => {
+      throw new Error("Error validating date");
+    });
+    await expect(
+      BookingService.getByServiceDate(mockBooking.service, mockBooking.date),
+    ).rejects.toThrowError(
+      "Error validating date",
+    );
   });
 });
 
@@ -165,6 +337,15 @@ describe("BookingService.getByServiceMonth", () => {
     expect(result).toEqual(mockBookings);
   });
 
+  it("should catch errors", async () => {
+    Service.findById.mockReturnValue(mockService);
+    Booking.find.mockImplementation(() => {
+      throw new Error("Error getting bookings");
+    });
+    await expect(
+      BookingService.getByServiceMonth(mockBooking.service, mockBooking.date),
+    ).rejects.toThrow("Error getting bookings");
+  });
   it("should throw an error if service does not exist", async () => {
     Service.findById.mockImplementation(() => {
       throw new Error("Service does not exist");
@@ -174,14 +355,26 @@ describe("BookingService.getByServiceMonth", () => {
     ).rejects.toThrow("Service does not exist");
   });
 
-  it("should catch errors", async () => {
-    Service.findById.mockReturnValue(mockService);
-    Booking.find.mockImplementation(() => {
-      throw new Error("Error getting bookings");
+  it("should throw an error while invalid service id", async () => {
+    isValidObjectId.mockImplementationOnce(() => {
+      throw new Error("Error validating service id");
     });
     await expect(
       BookingService.getByServiceMonth(mockBooking.service, mockBooking.date),
-    ).rejects.toThrow("Error getting bookings");
+    ).rejects.toThrowError(
+      "Error validating service id",
+    );
+  });
+
+  it("should throw an error while invalid date", async () => {
+    isValidDate.mockImplementationOnce(() => {
+      throw new Error("Error validating date");
+    });
+    await expect(
+      BookingService.getByServiceMonth(mockBooking.service, mockBooking.date),
+    ).rejects.toThrowError(
+      "Error validating date",
+    );
   });
 });
 
@@ -229,49 +422,56 @@ describe("BookingService.getByServiceUser", () => {
       ),
     ).rejects.toThrow("Error getting bookings");
   });
-});
 
-describe("BookingService.update", () => {
-  const mockBookingId = "6513209a435bc80cc05154772";
-  it("should have a update method", () => {
-    expect(typeof BookingService.update).toBe("function");
+  it("should throw an error if service does not exist", async () => {
+    Service.findById.mockReturnValue(null);
+    await expect(
+      BookingService.getByServiceUser(
+        mockBooking.service,
+        mockBooking.timeslots[0].userid,
+      ),
+    ).rejects.toThrow(`Service with id ${mockBooking.service} does not exist`);
   });
 
-  it("should call Booking.update", async () => {
-    Booking.findById.mockReturnValue(mockBooking);
-    Booking.findByIdAndUpdate.mockReturnValue(mockBooking);
-    await BookingService.update(mockBookingId, mockBooking);
-    expect(Booking.findByIdAndUpdate).toBeCalledWith(
-      mockBookingId,
-      { $set: mockBooking },
-      { new: true },
+  it("should throw an error while invalid service id", async () => {
+    isValidObjectId.mockImplementationOnce(() => {
+      throw new Error("Error validating service id");
+    });
+    await expect(
+      BookingService.getByServiceUser(
+        mockBooking.service,
+        mockBooking.timeslots[0].userid,
+      ),
+    ).rejects.toThrowError(
+      "Error validating service id",
     );
   });
 
-  it("should return the updated booking", async () => {
-    Booking.findById.mockReturnValue(mockBooking);
-    Booking.findByIdAndUpdate.mockReturnValue(mockBooking);
-    const result = await BookingService.update(mockBookingId, mockBooking);
-    expect(result).toEqual(mockBooking);
+  it("should throw an error if user does not exist", async () => {
+    Service.findById.mockReturnValue(mockService);
+    User.findById.mockReturnValue(null);
+    await expect(
+      BookingService.getByServiceUser(
+        mockBooking.service,
+        mockBooking.timeslots[0].userid,
+      ),
+    ).rejects.toThrow(`User with id ${mockBooking.timeslots[0].userid} does not exists`);
   });
 
-  it("should catch errors", async () => {
-    Booking.findById.mockReturnValue(mockBooking);
-    Booking.findByIdAndUpdate.mockImplementation(() => {
-      throw new Error("Error updating booking");
+  it("should throw an error while invalid user id", async () => {
+    isValidObjectId.mockImplementationOnce(() => {
+      throw new Error("Error validating user id");
     });
     await expect(
-      BookingService.update(mockBookingId, mockBooking),
-    ).rejects.toThrow("Error updating booking");
+      BookingService.getByServiceUser(
+        mockBooking.service,
+        mockBooking.timeslots[0].userid,
+      ),
+    ).rejects.toThrowError(
+      "Error validating user id",
+    );
   });
 
-  it("should throw an error if the booking does not exist", async () => {
-    Booking.findById.mockReturnValue(null);
-    Booking.findByIdAndUpdate.mockReturnValue(mockBooking);
-    await expect(
-      BookingService.update(mockBookingId, mockBooking),
-    ).rejects.toThrow(`Booking with id ${mockBookingId} does not exist`);
-  });
 });
 
 describe("BookingService.delete", () => {
@@ -295,5 +495,23 @@ describe("BookingService.delete", () => {
     await expect(BookingService.delete(mockBookingId)).rejects.toThrow(
       "Error deleting booking",
     );
+  });
+
+  it("should throw an error while invalid booking id", async () => {
+    isValidObjectId.mockImplementationOnce(() => {
+      throw new Error("Error validating booking id");
+    });
+    await expect(
+      BookingService.delete(mockBookingId),
+    ).rejects.toThrowError(
+      "Error validating booking id",
+    );
+  });
+
+  it("should throw an error if the booking does not exist", async () => {
+    Booking.findByIdAndRemove.mockReturnValue(null);
+    await expect(
+      BookingService.delete(mockBookingId),
+    ).rejects.toThrow(`Booking with id ${mockBookingId} does not exists`);
   });
 });

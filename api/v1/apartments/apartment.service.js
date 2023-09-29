@@ -4,6 +4,7 @@ const {
   NotFoundError,
 } = require("../../../_helpers/customErrors/customErrors");
 const Apartment = db.Apartment;
+const Residence = db.Residence;
 const {
   validate,
   apartmentSchema,
@@ -12,7 +13,13 @@ const { isValidObjectId } = require("../_helpers/db.document.validation");
 
 const create = async (apartmentParam) => {
   await validate(apartmentSchema, apartmentParam);
-
+  await isValidObjectId(apartmentParam.residence);
+  const existingResidence = await Residence.findById(apartmentParam.residence);
+  if (!existingResidence) {
+    throw new NotFoundError(
+      `Residence with id ${apartmentParam.residence} does not exists`,
+    );
+  }
   const apartment = Apartment.create(apartmentParam);
   if (apartment) {
     return apartment;
@@ -28,7 +35,28 @@ const getAll = async () => {
   throw new ValidationError(`Error while getting apartments`);
 };
 
+const update = async (id, apartmentParam) => {
+  await validate(apartmentSchema, apartmentParam);
+  isValidObjectId(id);
+  const existingResidence = await Residence.findById(apartmentParam.residence);
+  if (!existingResidence) {
+    throw new NotFoundError(
+      `Residence with id ${apartmentParam.residence} does not exists`,
+    );
+  }
+  const apartment = await Apartment.findByIdAndUpdate(
+    id,
+    { $set: apartmentParam },
+    { new: true },
+  );
+  if (apartment) {
+    return apartment;
+  }
+  throw new NotFoundError(`Apartment with id ${id} does not exists`);
+};
+
 const getByResidence = async (residence) => {
+  isValidObjectId(residence);
   const apartments = await Apartment.find({ residence });
   if (apartments) {
     return apartments;
@@ -40,23 +68,7 @@ const getByResidence = async (residence) => {
 
 const getById = async (id) => {
   isValidObjectId(id);
-
   const apartment = await Apartment.findById(id);
-  if (apartment) {
-    return apartment;
-  }
-  throw new NotFoundError(`Apartment with id ${id} does not exists`);
-};
-
-const update = async (id, apartmentParam) => {
-  await validate(apartmentSchema, apartmentParam);
-  isValidObjectId(id);
-
-  const apartment = await Apartment.findOneAndUpdate(
-    { _id: id },
-    { $set: apartmentParam },
-    { new: true },
-  );
   if (apartment) {
     return apartment;
   }

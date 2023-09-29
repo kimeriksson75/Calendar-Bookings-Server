@@ -7,22 +7,22 @@ let mockService = {
     {
       timeslot: "07.00 - 10.00",
       userid: null,
-      username: null,
+      username: "",
     },
     {
       timeslot: "10.00 - 14.00",
       userid: null,
-      username: null,
+      username: "",
     },
     {
       timeslot: "14.00 - 18.00",
       userid: null,
-      username: null,
+      username: "",
     },
     {
       timeslot: "18.00 - 22.00",
       userid: null,
-      username: null,
+      username: "",
     },
   ],
   name: "Laundry Service 1",
@@ -65,6 +65,35 @@ describe("POST /api/v1/services", () => {
         createdServiceId = res.body._id;
       });
   });
+
+  it("should return 400 Bad Request while invalid service data", async () => {
+    return request(app)
+      .post("/api/v1/services")
+      .send({
+        ...mockService,
+        type: "",
+      })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual('"type" is not allowed to be empty');
+      });
+  });
+
+  it("should return 404 Not Found if the residence id is not found", async () => {
+    const invalidResidenceId = "65107e73aa73a5f383574a05";
+    return request(app)
+      .post("/api/v1/services")
+      .send({
+        ...mockService,
+        residence: invalidResidenceId,
+      })
+      .expect(404)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(`Residence with id ${invalidResidenceId} does not exists`);
+      });
+  });
 });
 
 describe("GET /api/v1/services", () => {
@@ -90,17 +119,86 @@ describe("GET /api/v1/services/:id", () => {
         expect(res.body.residence).toEqual(createdResidenceId);
       });
   });
+
+  it("should return 404 Not Found if the service id is not found", async () => {
+    const invalidServiceId = "65107e73aa73a5f383574a05";
+    return request(app)
+      .get(`/api/v1/services/${invalidServiceId}`)
+      .expect(404)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(`Service with id ${invalidServiceId} does not exists`);
+      });
+  });
+
+  it("should return 400 Bad Request if the service id is not valid", async () => {
+    const invalidServiceId = "invalidId";
+    return request(app)
+      .get(`/api/v1/services/${invalidServiceId}`)
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(`Invalid id ${invalidServiceId}`);
+      });
+  });
 });
 
 describe("PATCH /api/v1/services/:id", () => {
   it("should return 200 OK", async () => {
     return request(app)
       .patch(`/api/v1/services/${createdServiceId}`)
-      .send({ name: "Laundry Service 2" })
+      .send({
+        ...mockService,
+        name: "Laundry Service 2"
+      })
       .expect(200)
       .expect("Content-Type", /json/)
       .expect((res) => {
         expect(res.body.name).toEqual("Laundry Service 2");
+      });
+  });
+
+  it("should return 400 Bad Request while invalid service data", async () => {
+    return request(app)
+      .patch(`/api/v1/services/${createdServiceId}`)
+      .send({
+        ...mockService,
+        type: "",
+      })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual('"type" is not allowed to be empty');
+      });
+  });
+  
+  it("should return 404 Not Found if the service id is not found", async () => {
+    const invalidServiceId = "65107e73aa73a5f383574a05";
+    return request(app)
+      .patch(`/api/v1/services/${invalidServiceId}`)
+      .send({
+        ...mockService,
+        name: "Laundry Service 2"
+      })
+      .expect(404)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(`Service with id ${invalidServiceId} does not exists`);
+      });
+  });
+
+  it("should return 400 Bad Request if the service id is not valid", async () => {
+    const invalidServiceId = "invalidId";
+    return request(app)
+      .patch(`/api/v1/services/${invalidServiceId}`)
+      .send({
+        ...mockService,
+        name: "Laundry Service 2"
+      })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(`Invalid id ${invalidServiceId}`);
       });
   });
 });
@@ -110,5 +208,27 @@ describe("DELETE /api/v1/services/:id", () => {
     return request(app)
       .delete(`/api/v1/services/${createdServiceId}`)
       .expect(200);
+  });
+
+  it("should return 404 Not Found if the service id is not found", async () => {
+    const invalidServiceId = "65107e73aa73a5f383574a05";
+    return request(app)
+      .delete(`/api/v1/services/${invalidServiceId}`)
+      .expect(404)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(`Service with id ${invalidServiceId} does not exists`);
+      });
+  });
+
+  it("should return 400 Bad Request if the service id is not valid", async () => {
+    const invalidServiceId = "invalidId";
+    return request(app)
+      .delete(`/api/v1/services/${invalidServiceId}`)
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(`Invalid id ${invalidServiceId}`);
+      });
   });
 });

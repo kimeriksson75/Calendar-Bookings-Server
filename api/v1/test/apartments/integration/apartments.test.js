@@ -53,6 +53,33 @@ describe("POST /api/v1/apartments", () => {
         );
       });
   });
+
+  it("should return 404 Not Found if residence id is not found", async () => {
+    const invalidResidenceId = "65107e73aa73a5f383574a05";
+    return request(app)
+      .post("/api/v1/apartments")
+      .send({ ...mockApartment, residence: invalidResidenceId })
+      .expect(404)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          `Residence with id ${invalidResidenceId} does not exists`,
+        );
+      });
+  });
+
+  it("should return 400 Bad Request while invalid residence id", async () => {
+    return request(app)
+      .post("/api/v1/apartments")
+      .send({ ...mockApartment, residence: "invalid" })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          '"residence" must only contain hexadecimal characters',
+        );
+      });
+  });
 });
 
 describe("GET /api/v1/apartments", () => {
@@ -85,7 +112,7 @@ describe("GET /api/v1/apartments", () => {
 });
 
 describe("GET /api/v1/apartments/:id", () => {
-  it("should return an apartment if valid id is provided", async () => {
+  it("should return an apartment while valid id is provided", async () => {
     return request(app)
       .get(`/api/v1/apartments/${createdApartmentId}`)
       .expect(200)
@@ -96,7 +123,7 @@ describe("GET /api/v1/apartments/:id", () => {
       });
   });
 
-  it("should return 400 Bad request if invalid id is provided", async () => {
+  it("should return 400 Bad request while invalid id is provided", async () => {
     return request(app)
       .get("/api/v1/apartments/invalid")
       .expect(400)
@@ -106,7 +133,7 @@ describe("GET /api/v1/apartments/:id", () => {
       });
   });
 
-  it("should return 404 Not Found if id is not found", async () => {
+  it("should return 404 Not Found if apartment does not exist", async () => {
     return request(app)
       .get(`/api/v1/apartments/650991a92ad13cb743a28e92`)
       .expect(404)
@@ -132,7 +159,7 @@ describe("PATCH /api/v1/apartments/:id", () => {
       });
   });
 
-  it("should return 400 Bad request if invalid id is provided", async () => {
+  it("should return 400 Bad request while invalid id is provided", async () => {
     return request(app)
       .patch("/api/v1/apartments/invalid")
       .send({ name: "Apartment 2", residence: createdResidenceId })
@@ -143,20 +170,21 @@ describe("PATCH /api/v1/apartments/:id", () => {
       });
   });
 
-  it("should return 404 Not found if id does not exist", async () => {
+  it("should return 404 Not Found if apartment does not exist", async () => {
+    const invalidApartmentId = "650991a92ad13cb743a28e92";
     return request(app)
-      .patch("/api/v1/apartments/650991a92ad13cb743a28e92")
+      .patch(`/api/v1/apartments/${invalidApartmentId}`)
       .send({ name: "Apartment 2", residence: createdResidenceId })
       .expect(404)
       .expect("Content-Type", /json/)
       .expect((res) => {
         expect(res.body.message).toEqual(
-          "Apartment with id 650991a92ad13cb743a28e92 does not exists",
+          `Apartment with id ${invalidApartmentId} does not exists`,
         );
       });
   });
 
-  it("should return 400 Bad Request if invalid apartment params are provided", async () => {
+  it("should return 400 Bad Request while invalid apartment params", async () => {
     return request(app)
       .patch(`/api/v1/apartments/${createdApartmentId}`)
       .send({ name: "Apartment 2", residence: "invalid" })
@@ -165,6 +193,33 @@ describe("PATCH /api/v1/apartments/:id", () => {
       .expect((res) => {
         expect(res.body.message).toEqual(
           '"residence" must only contain hexadecimal characters',
+        );
+      });
+  });
+
+  it("should return 400 Bad Request while invalid residence id", async () => {
+    return request(app)
+      .patch(`/api/v1/apartments/${createdApartmentId}`)
+      .send({ name: "Apartment 2", residence: "invalid" })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          '"residence" must only contain hexadecimal characters',
+        );
+      });
+  });
+
+  it("should return 404 Not Found if residence does not exist", async () => {
+    const invalidResidenceId = "65107e73aa73a5f383574a05";
+    return request(app)
+      .patch(`/api/v1/apartments/${createdApartmentId}`)
+      .send({ name: "Apartment 2", residence: invalidResidenceId })
+      .expect(404)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          `Residence with id ${invalidResidenceId} does not exists`,
         );
       });
   });

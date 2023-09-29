@@ -11,13 +11,21 @@
   },
   "host": "localhost:3000",
   "basePath": "/api/v1/",
-  "schemes": ["http"],
-  "consumes": ["application/json"],
-  "produces": ["application/json"],
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "paths": {
     "/users": {
       "get": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Get all users in system",
         "responses": {
           "200": {
@@ -32,7 +40,9 @@
         }
       },
       "post": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "Create new user",
         "description": "Create new user",
         "parameters": [
@@ -57,7 +67,9 @@
     },
     "/users/{id}": {
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "Get user by id",
         "description": "Get user by id",
         "parameters": [
@@ -82,7 +94,9 @@
         }
       },
       "put": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "Update user by id",
         "description": "Update user by id",
         "parameters": [
@@ -115,7 +129,9 @@
         }
       },
       "delete": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "Delete user by id",
         "description": "Delete user by id",
         "parameters": [
@@ -142,7 +158,9 @@
     },
     "/residences": {
       "get": {
-        "tags": ["Residences"],
+        "tags": [
+          "Residences"
+        ],
         "summary": "Get all residences in system",
         "responses": {
           "200": {
@@ -157,7 +175,9 @@
         }
       },
       "post": {
-        "tags": ["Residence"],
+        "tags": [
+          "Residence"
+        ],
         "summary": "Create new residence",
         "description": "Create new residence",
         "parameters": [
@@ -182,7 +202,9 @@
     },
     "/residences/{id}": {
       "get": {
-        "tags": ["Residence"],
+        "tags": [
+          "Residence"
+        ],
         "summary": "Get residence by id",
         "description": "Get residence by id",
         "parameters": [
@@ -207,7 +229,9 @@
         }
       },
       "put": {
-        "tags": ["Residence"],
+        "tags": [
+          "Residence"
+        ],
         "summary": "Update residence by id",
         "description": "Update residence by id",
         "parameters": [
@@ -240,7 +264,9 @@
         }
       },
       "delete": {
-        "tags": ["Residence"],
+        "tags": [
+          "Residence"
+        ],
         "summary": "Delete residence by id",
         "description": "Delete residence by id",
         "parameters": [
@@ -267,7 +293,9 @@
     },
     "/apartments": {
       "get": {
-        "tags": ["Apartments"],
+        "tags": [
+          "Apartments"
+        ],
         "summary": "Get all apartments in system",
         "responses": {
           "200": {
@@ -282,7 +310,9 @@
         }
       },
       "post": {
-        "tags": ["Apartment"],
+        "tags": [
+          "Apartment"
+        ],
         "summary": "Create new apartment",
         "description": "Create new apartment",
         "parameters": [
@@ -307,7 +337,9 @@
     },
     "/apartments/residence/{residence}": {
       "get": {
-        "tags": ["Apartments"],
+        "tags": [
+          "Apartments"
+        ],
         "summary": "Get apartments by residence in the system",
         "description": "Get apartments by residence in the system",
         "parameters": [
@@ -334,7 +366,9 @@
     },
     "/apartments/{id}": {
       "get": {
-        "tags": ["Apartment"],
+        "tags": [
+          "Apartment"
+        ],
         "summary": "Get apartment by id",
         "description": "Get apartment by id",
         "parameters": [
@@ -359,7 +393,9 @@
         }
       },
       "put": {
-        "tags": ["Apartment"],
+        "tags": [
+          "Apartment"
+        ],
         "summary": "Update apartment by id",
         "description": "Update apartment by id",
         "parameters": [
@@ -392,7 +428,9 @@
         }
       },
       "delete": {
-        "tags": ["Apartment"],
+        "tags": [
+          "Apartment"
+        ],
         "summary": "Delete apartment by id",
         "description": "Delete apartment by id",
         "parameters": [
@@ -419,7 +457,9 @@
     },
     "/services": {
       "get": {
-        "tags": ["Services"],
+        "tags": [
+          "Services"
+        ],
         "summary": "Get all services in system",
         "responses": {
           "200": {
@@ -436,7 +476,9 @@
     },
     "/services/residence/{residence}": {
       "get": {
-        "tags": ["Services"],
+        "tags": [
+          "Services"
+        ],
         "summary": "Get services by residence in the system",
         "description": "Get services by residence in the system",
         "parameters": [
@@ -461,7 +503,9 @@
         }
       },
       "post": {
-        "tags": ["Service"],
+        "tags": [
+          "Service"
+        ],
         "summary": "Create new service",
         "description": "Create new service",
         "parameters": [
@@ -486,7 +530,9 @@
     },
     "/services/{id}": {
       "get": {
-        "tags": ["Service"],
+        "tags": [
+          "Service"
+        ],
         "summary": "Get service by id",
         "description": "Get service by id",
         "parameters": [
@@ -511,7 +557,9 @@
         }
       },
       "put": {
-        "tags": ["Service"],
+        "tags": [
+          "Service"
+        ],
         "summary": "Update service by id",
         "description": "Update service by id",
         "parameters": [
@@ -544,7 +592,9 @@
         }
       },
       "delete": {
-        "tags": ["Service"],
+        "tags": [
+          "Service"
+        ],
         "summary": "Delete service by id",
         "description": "Delete service by id",
         "parameters": [
@@ -571,7 +621,9 @@
     },
     "/bookings": {
       "get": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Get all bookings in system",
         "responses": {
           "200": {
@@ -588,7 +640,9 @@
     },
     "/bookings/service/{service}/date/{date}": {
       "get": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Get bookings by service and date in the system",
         "description": "Get bookings by service and date in the system",
         "parameters": [
@@ -622,7 +676,9 @@
     },
     "/bookings/service/{service}/month/{date}": {
       "get": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Get bookings by service and month in the system",
         "description": "Get bookings by service and month in the system",
         "parameters": [
@@ -656,7 +712,9 @@
     },
     "/bookings/service/{service}/user/{user}": {
       "get": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Get bookings by residence in the system",
         "description": "Get bookings by residence in the system",
         "parameters": [
@@ -690,7 +748,9 @@
     },
     "/bookings/{id}": {
       "post": {
-        "tags": ["Booking"],
+        "tags": [
+          "Booking"
+        ],
         "summary": "Create new booking",
         "description": "Create new booking",
         "parameters": [
@@ -713,7 +773,9 @@
         }
       },
       "get": {
-        "tags": ["Booking"],
+        "tags": [
+          "Booking"
+        ],
         "summary": "Get booking by id",
         "description": "Get booking by id",
         "parameters": [
@@ -738,7 +800,9 @@
         }
       },
       "patch": {
-        "tags": ["Booking"],
+        "tags": [
+          "Booking"
+        ],
         "summary": "Update booking by id",
         "description": "Update booking by id",
         "parameters": [
@@ -771,7 +835,9 @@
         }
       },
       "delete": {
-        "tags": ["Booking"],
+        "tags": [
+          "Booking"
+        ],
         "summary": "Delete booking by id",
         "description": "Delete booking by id",
         "parameters": [
@@ -888,7 +954,10 @@
       }
     },
     "Residence": {
-      "required": ["name", "address"],
+      "required": [
+        "name",
+        "address"
+      ],
       "properties": {
         "name": {
           "type": "string",
@@ -907,7 +976,10 @@
       }
     },
     "Apartment": {
-      "required": ["name", "residence"],
+      "required": [
+        "name",
+        "residence"
+      ],
       "properties": {
         "name": {
           "type": "string",
@@ -926,7 +998,11 @@
       }
     },
     "Service": {
-      "required": ["type", "name", "residence"],
+      "required": [
+        "type",
+        "name",
+        "residence"
+      ],
       "properties": {
         "type": {
           "type": "string"
@@ -964,7 +1040,11 @@
       }
     },
     "Booking": {
-      "required": ["service", "date", "timeslots"],
+      "required": [
+        "service",
+        "date",
+        "timeslots"
+      ],
       "properties": {
         "service": {
           "type": "string"
