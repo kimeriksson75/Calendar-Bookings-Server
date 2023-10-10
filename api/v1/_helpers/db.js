@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-
+const { MONGODB_URI } = require('../../../config')
 const monogoUri =
-  process.env.MONGODB_URI ??
+  MONGODB_URI ??
   "mongodb://localhost/node-mongo-registration-login-api";
 // connect
 mongoose
