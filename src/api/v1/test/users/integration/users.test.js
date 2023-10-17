@@ -111,7 +111,7 @@ describe("POST /api/v1/users", () => {
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual("Username User 1 is already taken");
+        expect(res.body.message).toEqual("User User 1, user1@mail.com already exists");
       });
   });
 

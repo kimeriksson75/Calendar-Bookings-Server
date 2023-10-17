@@ -57,7 +57,7 @@ describe("UserService.create", () => {
     Apartment.findById.mockReturnValueOnce(mockApartment);
 
     await UserService.create(mockUserWithoutIdAndHash);
-    expect(User.findOne).toBeCalledWith({ username: mockUser.username });
+    expect(User.findOne).toBeCalledWith({ username: mockUser.username, email: mockUser.email });
     expect(User.findOne).toBeCalledWith({ apartment: mockUser.apartment });
     expect(Residence.findById).toBeCalledWith(mockUser.residence);
     expect(Apartment.findById).toBeCalledWith(mockUser.apartment);
@@ -115,7 +115,7 @@ describe("UserService.create", () => {
     User.create.mockReturnValue(mockUser);
     User.findOne.mockReturnValue(mockUser);
     await expect(UserService.create(mockUserWithoutIdAndHash)).rejects.toThrow(
-      `Username ${mockUser.username} is already taken`,
+      `User ${mockUser.username}, ${mockUser.email} already exists`,
     );
   });
 

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const jwt = require("_helpers/jwt");
+const jwt = require("../../_helpers/jwt");
 
 router.get("/_health", (req, res) => {
   res.status(200).json({ status: "ok" });

@@ -9,40 +9,41 @@ const { isValidObjectId } = require("../_helpers/db.document.validation");
 
 const { User, Residence, Apartment } = require("../_helpers/db");
 
-const create = async (userparams) => {
-  await validate(userSchema, userparams);
+const create = async (params) => {
+  await validate(userSchema, params);
 
   const existingUserName = await User.findOne({
-    username: userparams.username,
+    username: params.username,
+    email: params.email,
   });
   if (existingUserName) {
     throw new ValidationError(
-      `Username ${userparams.username} is already taken`,
+      `User ${params.username}, ${params.email} already exists`,
     );
   }
 
   const existingUserApartment = await User.findOne({
-    apartment: userparams.apartment,
+    apartment: params.apartment,
   });
   if (existingUserApartment) {
     throw new ValidationError(
-      `Apartment ${userparams.apartment} is already taken`,
+      `Apartment ${params.apartment} is already taken`,
     );
   }
 
-  const existingResidence = await Residence.findById(userparams.residence);
+  const existingResidence = await Residence.findById(params.residence);
   if (!existingResidence) {
-    throw new NotFoundError(`Residence ${userparams.residence} does not exist`);
+    throw new NotFoundError(`Residence ${params.residence} does not exist`);
   }
 
-  const existingApartment = await Apartment.findById(userparams.apartment);
+  const existingApartment = await Apartment.findById(params.apartment);
   if (!existingApartment) {
-    throw new NotFoundError(`Apartment ${userparams.apartment} does not exist`);
+    throw new NotFoundError(`Apartment ${params.apartment} does not exist`);
   }
 
-  const user = { ...userparams };
-  if (userparams.password) {
-    user.hash = bcrypt.hashSync(userparams.password, 10);
+  const user = { ...params };
+  if (params.password) {
+    user.hash = bcrypt.hashSync(params.password, 10);
   }
 
   const createdUser = await User.create(user);

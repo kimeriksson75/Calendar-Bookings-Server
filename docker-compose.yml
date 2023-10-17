@@ -1,12 +1,26 @@
-version: '3.4'
+version: '3.9'
 
 services:
-  server:
-    image: server
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    environment:
-      NODE_ENV: production
+  # Mongodb service
+  mongo_db:
+    container_name: db_container
+    image: mongo:latest
+    restart: always
+    volumes:
+      - mongo_data:/data/db
+
+  # Node api service
+  api:
+    build: .
     ports:
-      - 3000:3000
+      # local->container
+      - 4000:3000
+    environment:
+      PORT: 3000
+      MONGODB_URI: mongodb://mongo_db:27017
+      DB_NAME: calendar-bookings
+    depends_on: 
+      - mongo_db
+
+volumes:
+  mongo_data: {}
