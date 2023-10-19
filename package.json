@@ -59,6 +59,7 @@
     "start": "npm run doc:generate && nodemon ./src/server.js",
     "start-dev": "nodemon ./src/server.js",
     "build": "npm install",
+    "vercel-build": "node ./src/server.js --output public",
     "heroku-prebuild": "npm install --production=false",
     "doc:generate": "swagger-cli bundle src/swagger/index.yaml --outfile src/swagger/index.json"
   },
