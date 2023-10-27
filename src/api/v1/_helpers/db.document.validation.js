@@ -41,10 +41,10 @@ const isValidDate = (date) => {
     throw new ValidationError(`Invalid date ${date}`);
   }
   return result;
-} 
+};
 
 module.exports = {
   existingDocumentById,
   isValidObjectId,
-  isValidDate
+  isValidDate,
 };

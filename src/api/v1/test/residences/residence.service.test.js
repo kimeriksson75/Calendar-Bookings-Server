@@ -9,7 +9,7 @@ Residence.find = jest.fn();
 Residence.findById = jest.fn();
 Residence.findByIdAndUpdate = jest.fn();
 Residence.findByIdAndRemove = jest.fn();
-jest.mock('../../_helpers/db.document.validation', () => ({
+jest.mock("../../_helpers/db.document.validation", () => ({
   isValidObjectId: jest.fn().mockImplementation(() => true),
 }));
 jest.mock("../../_helpers/db.schema.validation", () => ({
@@ -19,7 +19,7 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-const validResidenceId = "6513e49f9d90819b61ef5bbf"
+const validResidenceId = "6513e49f9d90819b61ef5bbf";
 describe("ResidenceService.create", () => {
   it("should have a create method", () => {
     expect(typeof ResidenceService.create).toBe("function");
@@ -45,17 +45,17 @@ describe("ResidenceService.create", () => {
       "Error creating residence",
     );
   });
-  
+
   it("should throw an error if the residence is not valid", async () => {
     validate.mockImplementationOnce(() => {
       throw new Error("Error validating residence");
     });
-    await expect(ResidenceService.create({
-      ...mockResidence,
-      name: "",
-    })).rejects.toThrow(
-      "Error validating residence"
-    );
+    await expect(
+      ResidenceService.create({
+        ...mockResidence,
+        name: "",
+      }),
+    ).rejects.toThrow("Error validating residence");
   });
 });
 
@@ -167,7 +167,7 @@ describe("ResidenceService.getById", () => {
     isValidObjectId.mockImplementationOnce(() => {
       throw new Error("Error validating id");
     });
-      await expect(
+    await expect(
       ResidenceService.getById("invalid-residence-id"),
     ).rejects.toThrow("Error validating id");
   });
@@ -203,8 +203,8 @@ describe("ResidenceService.delete", () => {
     isValidObjectId.mockImplementationOnce(() => {
       throw new Error("Error validating id");
     });
-    await expect(
-      ResidenceService.delete(mockResidence.id),
-    ).rejects.toThrow("Error validating id");
+    await expect(ResidenceService.delete(mockResidence.id)).rejects.toThrow(
+      "Error validating id",
+    );
   });
 });

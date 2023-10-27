@@ -12,7 +12,7 @@ Service.findById = jest.fn();
 Service.findOneAndUpdate = jest.fn();
 Service.findByIdAndRemove = jest.fn();
 Residence.findById = jest.fn();
-jest.mock('../../_helpers/db.document.validation', () => ({
+jest.mock("../../_helpers/db.document.validation", () => ({
   isValidObjectId: jest.fn().mockImplementation(() => true),
 }));
 jest.mock("../../_helpers/db.schema.validation", () => ({
@@ -22,7 +22,7 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-const validServiceId = "6513e49f9d90819b61ef5bbf"
+const validServiceId = "6513e49f9d90819b61ef5bbf";
 describe("ServiceService.create", () => {
   it("should have a create method", () => {
     expect(typeof ServiceService.create).toBe("function");
@@ -55,24 +55,24 @@ describe("ServiceService.create", () => {
     validate.mockImplementationOnce(() => {
       throw new Error("Error validating service");
     });
-    await expect(ServiceService.create({
-      ...mockService,
-      name: "",
-    })).rejects.toThrow(
-      "Error validating service"
-    );
+    await expect(
+      ServiceService.create({
+        ...mockService,
+        name: "",
+      }),
+    ).rejects.toThrow("Error validating service");
   });
 
   it("should throw an error if the residence id is not valid", async () => {
     isValidObjectId.mockImplementationOnce(() => {
       throw new Error("Error validating residence id");
     });
-    await expect(ServiceService.create({
-      ...mockService,
-      residence: "invalidId",
-    })).rejects.toThrow(
-      "Error validating residence id",
-    );
+    await expect(
+      ServiceService.create({
+        ...mockService,
+        residence: "invalidId",
+      }),
+    ).rejects.toThrow("Error validating residence id");
   });
 
   it("should throw an error if the residence does not exist", async () => {
@@ -117,21 +117,21 @@ describe("ServiceService.update", () => {
     validate.mockImplementationOnce(() => {
       throw new Error("Error validating service");
     });
-    await expect(ServiceService.update(validServiceId, {
-      ...mockService,
-      name: "",
-    })).rejects.toThrow(
-      "Error validating service"
-    );
+    await expect(
+      ServiceService.update(validServiceId, {
+        ...mockService,
+        name: "",
+      }),
+    ).rejects.toThrow("Error validating service");
   });
 
   it("should throw an error if the service id is not valid", async () => {
     isValidObjectId.mockImplementationOnce(() => {
       throw new Error("Error validating service id");
     });
-    await expect(ServiceService.update("invalidId", mockService)).rejects.toThrow(
-      "Error validating service id",
-    );
+    await expect(
+      ServiceService.update("invalidId", mockService),
+    ).rejects.toThrow("Error validating service id");
   });
 });
 describe("ServiceService.getAll", () => {

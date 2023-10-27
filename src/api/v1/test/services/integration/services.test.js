@@ -91,7 +91,9 @@ describe("POST /api/v1/services", () => {
       .expect(404)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(`Residence with id ${invalidResidenceId} does not exists`);
+        expect(res.body.message).toEqual(
+          `Residence with id ${invalidResidenceId} does not exists`,
+        );
       });
   });
 });
@@ -127,7 +129,9 @@ describe("GET /api/v1/services/:id", () => {
       .expect(404)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(`Service with id ${invalidServiceId} does not exists`);
+        expect(res.body.message).toEqual(
+          `Service with id ${invalidServiceId} does not exists`,
+        );
       });
   });
 
@@ -149,7 +153,7 @@ describe("PATCH /api/v1/services/:id", () => {
       .patch(`/api/v1/services/${createdServiceId}`)
       .send({
         ...mockService,
-        name: "Laundry Service 2"
+        name: "Laundry Service 2",
       })
       .expect(200)
       .expect("Content-Type", /json/)
@@ -171,19 +175,21 @@ describe("PATCH /api/v1/services/:id", () => {
         expect(res.body.message).toEqual('"type" is not allowed to be empty');
       });
   });
-  
+
   it("should return 404 Not Found if the service id is not found", async () => {
     const invalidServiceId = "65107e73aa73a5f383574a05";
     return request(app)
       .patch(`/api/v1/services/${invalidServiceId}`)
       .send({
         ...mockService,
-        name: "Laundry Service 2"
+        name: "Laundry Service 2",
       })
       .expect(404)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(`Service with id ${invalidServiceId} does not exists`);
+        expect(res.body.message).toEqual(
+          `Service with id ${invalidServiceId} does not exists`,
+        );
       });
   });
 
@@ -193,7 +199,7 @@ describe("PATCH /api/v1/services/:id", () => {
       .patch(`/api/v1/services/${invalidServiceId}`)
       .send({
         ...mockService,
-        name: "Laundry Service 2"
+        name: "Laundry Service 2",
       })
       .expect(400)
       .expect("Content-Type", /json/)
@@ -217,7 +223,9 @@ describe("DELETE /api/v1/services/:id", () => {
       .expect(404)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(`Service with id ${invalidServiceId} does not exists`);
+        expect(res.body.message).toEqual(
+          `Service with id ${invalidServiceId} does not exists`,
+        );
       });
   });
 

@@ -26,11 +26,11 @@ const userSchema = Joi.object({
 const authenticateSchema = Joi.object({
   username: Joi.string().required(),
   password: Joi.string().min(4),
-})
+});
 
 const refreshTokenSchema = Joi.object({
   refreshToken: Joi.string().required().label("Refresh Token"),
-})
+});
 
 const serviceSchema = Joi.object({
   type: Joi.string().required(),
@@ -68,7 +68,7 @@ const tokenSchema = Joi.object({
   expiresAt: Joi.date().allow(null),
   _id: Joi.string().hex().length(24).allow(null),
   __v: Joi.number().allow(null),
-})
+});
 
 const validate = async (schema, params) => {
   try {

@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
-const { MONGODB_URI } = require('../../../config')
+const { MONGODB_URI } = require("../../../config");
 const monogoUri =
-  MONGODB_URI ??
-  "mongodb://localhost/node-mongo-registration-login-api";
+  MONGODB_URI ?? "mongodb://localhost/node-mongo-registration-login-api";
 // connect
 mongoose
   .connect(monogoUri, { useUnifiedTopology: true, useNewUrlParser: true })

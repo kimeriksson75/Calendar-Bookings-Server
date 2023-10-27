@@ -58,7 +58,10 @@ describe.skip("UserService.create", () => {
     Apartment.findById.mockReturnValueOnce(mockApartment);
 
     await UserService.create(mockUserWithoutIdAndHash);
-    expect(User.findOne).toBeCalledWith({ username: mockUser.username, email: mockUser.email });
+    expect(User.findOne).toBeCalledWith({
+      username: mockUser.username,
+      email: mockUser.email,
+    });
     expect(User.findOne).toBeCalledWith({ apartment: mockUser.apartment });
     expect(Residence.findById).toBeCalledWith(mockUser.residence);
     expect(Apartment.findById).toBeCalledWith(mockUser.apartment);
@@ -92,7 +95,7 @@ describe.skip("UserService.create", () => {
     expect(createUserMock).toHaveBeenCalledTimes(1);
     const calledUser = {
       ...mockUserWithoutIdAndHash,
-    }
+    };
     delete calledUser.password;
     expect(createUserMock).toHaveBeenCalledWith({
       ...calledUser,

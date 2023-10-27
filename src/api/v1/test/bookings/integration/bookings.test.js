@@ -174,8 +174,6 @@ describe("POST /api/v1/bookings", () => {
         createdBooking = res.body;
       });
   });
-
-  
 });
 
 describe("PATCH /api/v1/bookings", () => {
@@ -190,11 +188,7 @@ describe("PATCH /api/v1/bookings", () => {
   });
 
   afterAll(async () => {
-    await authDeleteDocument(
-      "bookings",
-      createdMockBooking._id,
-      accessToken,
-    );
+    await authDeleteDocument("bookings", createdMockBooking._id, accessToken);
   });
 
   it("should return 400 Bad Request while invalid booking param", async () => {
@@ -233,9 +227,7 @@ describe("PATCH /api/v1/bookings", () => {
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(
-          "Invalid id invalid id",
-        );
+        expect(res.body.message).toEqual("Invalid id invalid id");
       });
   });
 
@@ -301,11 +293,7 @@ describe("GET /api/v1/bookings", () => {
   });
 
   afterAll(async () => {
-    await authDeleteDocument(
-      "bookings",
-      createdMockBooking._id,
-      accessToken,
-    );
+    await authDeleteDocument("bookings", createdMockBooking._id, accessToken);
   });
   it("should return 200 and all bookings in the database", async () => {
     return request(app)
@@ -334,11 +322,7 @@ describe("GET /api/v1/bookings/:id", () => {
   });
 
   afterAll(async () => {
-    await authDeleteDocument(
-      "bookings",
-      createdMockBooking._id,
-      accessToken,
-    );
+    await authDeleteDocument("bookings", createdMockBooking._id, accessToken);
   });
   it("should return 200 and booking with id", async () => {
     return request(app)
@@ -359,9 +343,7 @@ describe("GET /api/v1/bookings/:id", () => {
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(
-          "Invalid id invalid id",
-        );
+        expect(res.body.message).toEqual("Invalid id invalid id");
       });
   });
 
@@ -426,18 +408,12 @@ describe("GET /api/v1/bookings/service/:service", () => {
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(
-          "Invalid id invalid id",
-        );
+        expect(res.body.message).toEqual("Invalid id invalid id");
       });
   });
 
   it("should return 200 and empty bookings array if bookings related to service does not exist", async () => {
-    await authDeleteDocument(
-      "bookings",
-      createdMockBooking._id,
-      accessToken,
-    );
+    await authDeleteDocument("bookings", createdMockBooking._id, accessToken);
 
     return request(app)
       .get(`/api/v1/bookings/service/${createdMockBooking.service}`)
@@ -495,14 +471,12 @@ describe("GET /api/v1/bookings/service/:service/date/:date", () => {
     return request(app)
       .get(
         `/api/v1/bookings/service/${invalidServiceId}/date/${createdMockBooking.date}`,
-    )
+      )
       .auth(accessToken, { type: "bearer" })
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(
-          "Invalid id invalid id",
-        );
+        expect(res.body.message).toEqual("Invalid id invalid id");
       });
   });
 
@@ -525,23 +499,17 @@ describe("GET /api/v1/bookings/service/:service/date/:date", () => {
     return request(app)
       .get(
         `/api/v1/bookings/service/${createdMockBooking.service}/date/${invalidDate}`,
-    )
+      )
       .auth(accessToken, { type: "bearer" })
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(
-          "Invalid date invalid date",
-        );
+        expect(res.body.message).toEqual("Invalid date invalid date");
       });
   });
 
   it("should return 200 and empty booking if booking related to service and date does not exist", async () => {
-    await authDeleteDocument(
-      "bookings",
-      createdMockBooking._id,
-      accessToken,
-    );
+    await authDeleteDocument("bookings", createdMockBooking._id, accessToken);
 
     return request(app)
       .get(
@@ -568,11 +536,7 @@ describe("GET /api/v1/bookings/service/:service/month/:date", () => {
   });
 
   afterAll(async () => {
-    await authDeleteDocument(
-      "bookings",
-      createdMockBooking._id,
-      accessToken,
-    );
+    await authDeleteDocument("bookings", createdMockBooking._id, accessToken);
   });
 
   it("should return 200 and bookings related to service and month", async () => {
@@ -607,18 +571,16 @@ describe("GET /api/v1/bookings/service/:service/month/:date", () => {
   });
 
   it("should return 400 Bad Request while invalid service id", async () => {
-    const invalidServiceId = "invalid id"; 
+    const invalidServiceId = "invalid id";
     return request(app)
       .get(
         `/api/v1/bookings/service/${invalidServiceId}/month/${createdMockBooking.date}`,
-    )
+      )
       .auth(accessToken, { type: "bearer" })
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(
-          "Invalid id invalid id",
-        );
+        expect(res.body.message).toEqual("Invalid id invalid id");
       });
   });
 
@@ -646,9 +608,7 @@ describe("GET /api/v1/bookings/service/:service/month/:date", () => {
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(
-          "Invalid date invalid date",
-        );
+        expect(res.body.message).toEqual("Invalid date invalid date");
       });
   });
 });
@@ -700,14 +660,12 @@ describe("GET /api/v1/bookings/service/:service/user/:id", () => {
     return request(app)
       .get(
         `/api/v1/bookings/service/${invalidServiceId}/user/${createdMockBooking.timeslots[0].userid}`,
-    )
+      )
       .auth(accessToken, { type: "bearer" })
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(
-          "Invalid id invalid id",
-        );
+        expect(res.body.message).toEqual("Invalid id invalid id");
       });
   });
 
@@ -737,18 +695,12 @@ describe("GET /api/v1/bookings/service/:service/user/:id", () => {
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(
-          "Invalid id invalid id",
-        );
+        expect(res.body.message).toEqual("Invalid id invalid id");
       });
   });
 
   it("should return 200 and empty bookings array if bookings related to service and user does not exist", async () => {
-    await authDeleteDocument(
-      "bookings",
-      createdMockBooking._id,
-      accessToken,
-    );
+    await authDeleteDocument("bookings", createdMockBooking._id, accessToken);
 
     return request(app)
       .get(

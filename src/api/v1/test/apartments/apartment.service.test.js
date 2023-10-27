@@ -13,7 +13,7 @@ Apartment.findByIdAndUpdate = jest.fn();
 Apartment.findByIdAndRemove = jest.fn();
 Residence.findById = jest.fn();
 
-jest.mock('../../_helpers/db.document.validation', () => ({
+jest.mock("../../_helpers/db.document.validation", () => ({
   isValidObjectId: jest.fn().mockImplementation(() => true),
 }));
 jest.mock("../../_helpers/db.schema.validation", () => ({
@@ -48,9 +48,9 @@ describe("ApartmentService.create", () => {
     Apartment.create.mockImplementation(() => {
       throw new Error("Error creating apartment");
     });
-    await expect(
-      ApartmentService.create(mockApartment),
-    ).rejects.toThrow("Error creating apartment");
+    await expect(ApartmentService.create(mockApartment)).rejects.toThrow(
+      "Error creating apartment",
+    );
   });
 
   it("should throw an error while invalid apartment params", async () => {
@@ -69,16 +69,14 @@ describe("ApartmentService.create", () => {
     isValidObjectId.mockImplementationOnce(() => {
       throw new Error("Error validating residence id");
     });
-    await expect(
-      ApartmentService.create(mockApartment),
-    ).rejects.toThrowError("Error validating residence id");
+    await expect(ApartmentService.create(mockApartment)).rejects.toThrowError(
+      "Error validating residence id",
+    );
   });
 
   it("should throw an error if the residence does not exists", async () => {
     Residence.findById.mockReturnValue(null);
-    await expect(
-      ApartmentService.create(mockApartment),
-    ).rejects.toThrowError(
+    await expect(ApartmentService.create(mockApartment)).rejects.toThrowError(
       `Residence with id ${mockApartment.residence} does not exists`,
     );
   });
@@ -189,7 +187,7 @@ describe("ApartmentService.getAll", () => {
     await expect(ApartmentService.getAll()).rejects.toThrow(
       "Error requesting apartments",
     );
-  })
+  });
 });
 
 describe("ApartmentService.getByResidence", () => {
@@ -213,9 +211,9 @@ describe("ApartmentService.getByResidence", () => {
     Apartment.find.mockImplementation(() => {
       throw new Error("Error requesting apartments");
     });
-    await expect(ApartmentService.getByResidence(validResidenceId)).rejects.toThrow(
-      "Error requesting apartments",
-    );
+    await expect(
+      ApartmentService.getByResidence(validResidenceId),
+    ).rejects.toThrow("Error requesting apartments");
   });
 
   it("should throw an error if the residence id is not valid", async () => {
@@ -248,9 +246,7 @@ describe("ApartmentService.getById", () => {
 
   it("should catch errors", async () => {
     Apartment.findById.mockImplementation(() => {
-      throw new Error(
-        `Error requesting apartment with id ${validApartmentId}`,
-      );
+      throw new Error(`Error requesting apartment with id ${validApartmentId}`);
     });
     await expect(ApartmentService.getById(validApartmentId)).rejects.toThrow(
       `Error requesting apartment with id ${validApartmentId}`,

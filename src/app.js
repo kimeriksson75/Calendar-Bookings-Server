@@ -1,7 +1,7 @@
 "use strict";
 
 require("dotenv").config();
-const { API_VERSION = 'v1' } = require('./config');
+const { API_VERSION = "v1" } = require("./config");
 
 require("rootpath")();
 const express = require("express");
@@ -17,7 +17,7 @@ const AdminBro = require("admin-bro");
 const mongooseAdminBro = require("@admin-bro/mongoose");
 const expressAdminBro = require("@admin-bro/express");
 const swaggerUi = require("swagger-ui-express"),
-swaggerDocument = require("./swagger/index.json");
+  swaggerDocument = require("./swagger/index.json");
 app.set("view engine", "ejs");
 app.use(helmet());
 app.use(compression({ filter: compressFilter }));
@@ -29,13 +29,9 @@ app.use(express.json());
 app.use(`/api/${API_VERSION}`, require(`./api/${API_VERSION}/`));
 app.use(errorHandler);
 
-const {
-  User,
-  Apartment,
-  Booking,
-  Residence,
-  Service,
-} = require(`./api/${API_VERSION}/_helpers/db`);
+const { User, Apartment, Booking, Residence, Service } = require(
+  `./api/${API_VERSION}/_helpers/db`,
+);
 
 AdminBro.registerAdapter(mongooseAdminBro);
 const AdminBroOptions = {

@@ -4,7 +4,7 @@ const {
   createDocument,
   deleteDocument,
   authenticate,
-  findAndRemoveUserToken
+  findAndRemoveUserToken,
 } = require("../../../_helpers/db.integration");
 
 describe("POST /api/v1/users", () => {
@@ -114,7 +114,9 @@ describe("POST /api/v1/users", () => {
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual("User User 1, user1@mail.com already exists");
+        expect(res.body.message).toEqual(
+          "User User 1, user1@mail.com already exists",
+        );
       });
   });
 
@@ -158,8 +160,8 @@ describe("POST /api/v1/users/authenticate", () => {
 
   let authenticateUser = {
     username: mockUser.username,
-    password: mockUser.password
-  }
+    password: mockUser.password,
+  };
 
   let createdUserId;
   let createdResidenceId;
@@ -182,8 +184,6 @@ describe("POST /api/v1/users/authenticate", () => {
 
     mockUser.residence = createdResidenceId;
     mockUser.apartment = createdApartmentId;
-
-    
   });
 
   afterAll(async () => {
@@ -203,9 +203,7 @@ describe("POST /api/v1/users/authenticate", () => {
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(
-          "Invalid password",
-        );
+        expect(res.body.message).toEqual("Invalid password");
       });
   });
   it("should return 404 Not found if user could not be found", async () => {
@@ -279,7 +277,6 @@ describe("POST /api/v1/users/reset-password-link", () => {
     await deleteDocument("residences", createdResidenceId);
     await deleteDocument("users", createdUserId);
     await findAndRemoveUserToken(createdUserId);
-
   });
 
   it("should return 404 Not found while missing email param", async () => {
@@ -292,9 +289,7 @@ describe("POST /api/v1/users/reset-password-link", () => {
       .expect(404)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(
-          "User with email  not found",
-        );
+        expect(res.body.message).toEqual("User with email  not found");
       });
   });
 
@@ -317,7 +312,7 @@ describe("POST /api/v1/users/reset-password-link", () => {
   });
 });
 
-describe('POST /api/v1/users/reset-password/:id/:token', () => {
+describe("POST /api/v1/users/reset-password/:id/:token", () => {
   let mockUser = {
     username: "User 1",
     password: "new password",
@@ -327,7 +322,6 @@ describe('POST /api/v1/users/reset-password/:id/:token', () => {
     residence: "",
     apartment: "",
   };
-
 
   let createdUserId;
   let createdResidenceId;
@@ -370,9 +364,7 @@ describe('POST /api/v1/users/reset-password/:id/:token', () => {
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(
-          "Password is required",
-        );
+        expect(res.body.message).toEqual("Password is required");
       });
   });
 
@@ -402,9 +394,7 @@ describe('POST /api/v1/users/reset-password/:id/:token', () => {
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(
-          "Invalid token",
-        );
+        expect(res.body.message).toEqual("Invalid token");
       });
   });
 
@@ -418,9 +408,7 @@ describe('POST /api/v1/users/reset-password/:id/:token', () => {
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.message).toEqual(
-          "Invalid id invalid-id",
-        );
+        expect(res.body.message).toEqual("Invalid id invalid-id");
       });
   });
 

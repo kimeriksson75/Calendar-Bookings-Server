@@ -3,11 +3,20 @@ const {
   ValidationError,
   NotFoundError,
 } = require("../../../_helpers/customErrors/customErrors");
-const { validate, userSchema, authenticateSchema, refreshTokenSchema } = require("../_helpers/db.schema.validation");
+const {
+  validate,
+  userSchema,
+  authenticateSchema,
+  refreshTokenSchema,
+} = require("../_helpers/db.schema.validation");
 const { isValidObjectId } = require("../_helpers/db.document.validation");
 const { User, Residence, Apartment, Token } = require("../_helpers/db");
 const { sendEmail } = require("./user.email");
-const { verifyToken, verifyRefreshToken, generateTokens } = require("../_helpers/token.validation")
+const {
+  verifyToken,
+  verifyRefreshToken,
+  generateTokens,
+} = require("../_helpers/token.validation");
 const { BASE_URL, API_VERSION } = require("../../../config");
 
 const create = async (params) => {
@@ -26,9 +35,7 @@ const create = async (params) => {
     apartment: params.apartment,
   });
   if (existingUserApartment) {
-    throw new ValidationError(
-      `Apartment ${params.apartment} is already taken`,
-    );
+    throw new ValidationError(`Apartment ${params.apartment} is already taken`);
   }
 
   const existingResidence = await Residence.findById(params.residence);
@@ -67,10 +74,10 @@ const authenticate = async (params) => {
   if (!user) {
     throw new NotFoundError(`Username ${username} is not found`);
   }
-  
+
   const verifiedPassword = bcrypt.compareSync(password, user.hash);
   if (!verifiedPassword) {
-    throw new ValidationError(`Invalid password`)
+    throw new ValidationError(`Invalid password`);
   }
   // eslint-disable-next-line no-unused-vars
   const { hash, ...userWithoutHash } = user.toObject();
@@ -79,44 +86,45 @@ const authenticate = async (params) => {
   return {
     ...userWithoutHash,
     refreshToken,
-    accessToken
-  };  
+    accessToken,
+  };
 };
 
 const refreshToken = async (params) => {
   await validate(refreshTokenSchema, params);
-  return await verifyRefreshToken(params.refreshToken)
-}
+  return await verifyRefreshToken(params.refreshToken);
+};
 const signOut = async (params) => {
   await validate(refreshTokenSchema, params);
 
-  const userToken = await Token.findOneAndRemove({ token: params.refreshToken });
+  const userToken = await Token.findOneAndRemove({
+    token: params.refreshToken,
+  });
   if (!userToken) {
-    throw new ValidationError("Invalid token")
+    throw new ValidationError("Invalid token");
   }
 
   return null;
-}
+};
 
 const resetPasswordLink = async (userParam) => {
-    const user = await User.findOne({ email: userParam.email });
-    if (!user) {
-      throw new NotFoundError(`User with email ${userParam.email} not found`);
-    }
-    const token = await verifyToken(user);
-    const link = `${BASE_URL}/api/${API_VERSION}/users/reset-password-form/${user._id}/${token.token}`;
-    console.log('link', link)
-    await sendEmail(user.email, "Password reset", link);
+  const user = await User.findOne({ email: userParam.email });
+  if (!user) {
+    throw new NotFoundError(`User with email ${userParam.email} not found`);
+  }
+  const token = await verifyToken(user);
+  const link = `${BASE_URL}/api/${API_VERSION}/users/reset-password-form/${user._id}/${token.token}`;
+  console.log("link", link);
+  await sendEmail(user.email, "Password reset", link);
   return user;
 };
 
 const resetPassword = async (id, token, params) => {
   const { password, verifyPassword } = params;
   if (password !== verifyPassword) {
-    throw new ValidationError("Passwords do not match")
+    throw new ValidationError("Passwords do not match");
   }
-  
-  console.log('params', params)
+
   isValidObjectId(id);
   const user = await User.findById(id);
   if (!user) {
@@ -130,20 +138,22 @@ const resetPassword = async (id, token, params) => {
   if (!_token) {
     throw new ValidationError(`Invalid or expired token`);
   }
-  
+
   if (new Date(_token.expiresAt) < new Date()) {
     throw new ValidationError(`Token expired`);
   }
 
-  if(!password) {
+  if (!password) {
     throw new ValidationError(`Password is required`);
   }
 
-  const nonUniquePassword = await bcrypt.compare(password, user.hash)
+  const nonUniquePassword = await bcrypt.compare(password, user.hash);
   if (nonUniquePassword) {
-    throw new ValidationError(`Password can not be the same as the old password`);
+    throw new ValidationError(
+      `Password can not be the same as the old password`,
+    );
   }
-  
+
   user.hash = bcrypt.hashSync(password, 10);
 
   await user.save();

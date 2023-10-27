@@ -5,7 +5,10 @@ const {
   ValidationError,
 } = require("../../../_helpers/customErrors/customErrors");
 const { validate, bookingSchema } = require("../_helpers/db.schema.validation");
-const { isValidObjectId, isValidDate } = require("../_helpers/db.document.validation");
+const {
+  isValidObjectId,
+  isValidDate,
+} = require("../_helpers/db.document.validation");
 
 const Booking = db.Booking;
 const Service = db.Service;
@@ -63,7 +66,7 @@ const getById = async (id) => {
 const getAll = async () => {
   const bookings = await Booking.find();
   if (bookings) {
-    console.log('bookings', bookings);
+    console.log("bookings", bookings);
     return bookings;
   }
   throw new ValidationError(`Error while getting bookings`);

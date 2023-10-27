@@ -25,7 +25,7 @@ const userSchema = new Schema({
     type: [String],
     enum: ["user", "admin", "superAdmin"],
     default: ["user"],
-  }
+  },
 });
 
 userSchema.set("toJSON", { virtuals: true });

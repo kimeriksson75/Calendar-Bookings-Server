@@ -9,7 +9,7 @@ const { isValidObjectId } = require("../_helpers/db.document.validation");
 const Service = db.Service;
 const Residence = db.Residence;
 const create = async (serviceParam) => {
-  await validate(serviceSchema, serviceParam)
+  await validate(serviceSchema, serviceParam);
   await isValidObjectId(serviceParam.residence);
   const existingResidence = await Residence.findById(serviceParam.residence);
   if (!existingResidence) {
@@ -25,7 +25,7 @@ const create = async (serviceParam) => {
 };
 
 const update = async (id, serviceParam) => {
-  await validate(serviceSchema, serviceParam)
+  await validate(serviceSchema, serviceParam);
   await isValidObjectId(id);
   const service = await Service.findOneAndUpdate(
     { _id: id },

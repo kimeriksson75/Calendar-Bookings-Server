@@ -39,11 +39,11 @@ const authCreateDocument = async (collection, document, token, id = true) => {
   return returnValue;
 };
 
-const authenticate = async ({username, password}) => {
+const authenticate = async ({ username, password }) => {
   let returnValue;
   await request(app)
     .post("/api/v1/users/authenticate")
-    .send({username, password})
+    .send({ username, password })
     .expect(200)
     .expect("Content-Type", /json/)
     .expect((res) => {
@@ -60,12 +60,10 @@ const findAndRemoveUserToken = async (userId) => {
     .expect(async (res) => {
       if (!res.body) {
         return;
-      } 
-      await request(app)
-        .delete(`/api/v1/tokens/${res.body._id}`)
-        .expect(200);
+      }
+      await request(app).delete(`/api/v1/tokens/${res.body._id}`).expect(200);
     });
-}
+};
 
 module.exports = {
   deleteDocument,
