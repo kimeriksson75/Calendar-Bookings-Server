@@ -7,7 +7,8 @@ const userSchema = new Schema({
   username: { type: String, unique: true, required: true },
   email: { type: mongoose.SchemaTypes.Email, unique: true, required: true },
   hash: { type: String, unique: true },
-  password: { type: String, required: true },
+  token: { type: String, allowNull: true },
+  password: { type: String },
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
   apartment: {
@@ -20,6 +21,11 @@ const userSchema = new Schema({
     ref: "Residence",
     required: true,
   },
+  roles: {
+    type: [String],
+    enum: ["user", "admin", "superAdmin"],
+    default: ["user"],
+  }
 });
 
 userSchema.set("toJSON", { virtuals: true });

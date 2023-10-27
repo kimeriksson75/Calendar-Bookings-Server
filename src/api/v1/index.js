@@ -20,5 +20,6 @@ router.use(
 router.use("/residences", require("./residences/residence.routes"));
 router.use("/apartments", require("./apartments/apartment.routes"));
 router.use("/services", require("./services/service.routes"));
+router.use("/tokens", require("./tokens/token.routes"));
 
 module.exports = router;

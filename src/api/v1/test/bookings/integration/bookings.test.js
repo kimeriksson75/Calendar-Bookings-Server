@@ -57,7 +57,7 @@ let createdUserId;
 let createdResidenceId;
 let createdApartmentId;
 let createdServiceId;
-let createdUserToken;
+let accessToken;
 let createdBooking;
 
 beforeAll(async () => {
@@ -79,7 +79,8 @@ beforeAll(async () => {
     apartment: createdApartmentId,
   });
 
-  createdUserToken = await authenticate(mockUser);
+  const tokens = await authenticate(mockUser);
+  accessToken = tokens.accessToken;
   mockBooking.service = createdServiceId;
   mockBooking.timeslots[0].userid = createdUserId;
   mockBooking.timeslots[0].username = mockUser.username;
@@ -94,12 +95,12 @@ afterAll(async () => {
 
 describe("POST /api/v1/bookings", () => {
   afterAll(async () => {
-    await authDeleteDocument("bookings", createdBooking._id, createdUserToken);
+    await authDeleteDocument("bookings", createdBooking._id, accessToken);
   });
   it("should return 400 Bad Request while invalid booking param", async () => {
     return request(app)
       .post("/api/v1/bookings")
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .send({ ...mockBooking, date: "invalid date" })
       .expect(400)
       .expect("Content-Type", /json/)
@@ -112,7 +113,7 @@ describe("POST /api/v1/bookings", () => {
     const invalidServiceId = "6512e2046e6a3c3d399cff6e";
     return request(app)
       .post("/api/v1/bookings")
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .send({ ...mockBooking, service: invalidServiceId })
       .expect(404)
       .expect("Content-Type", /json/)
@@ -126,7 +127,7 @@ describe("POST /api/v1/bookings", () => {
     const invalidServiceId = "invalid id";
     return request(app)
       .post("/api/v1/bookings")
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .send({ ...mockBooking, service: invalidServiceId })
       .expect(400)
       .expect("Content-Type", /json/)
@@ -140,7 +141,7 @@ describe("POST /api/v1/bookings", () => {
   it("should return 400 Bad Request while invalid booking param", async () => {
     return request(app)
       .post("/api/v1/bookings")
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .send({
         ...mockBooking,
         timeslots: [{ ...mockTimeSlots[0], userid: "invalid id" }],
@@ -157,7 +158,7 @@ describe("POST /api/v1/bookings", () => {
   it("should return 201 and created booking", async () => {
     return request(app)
       .post("/api/v1/bookings")
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .send(mockBooking)
       .expect(201)
       .expect("Content-Type", /json/)
@@ -183,7 +184,7 @@ describe("PATCH /api/v1/bookings", () => {
     createdMockBooking = await authCreateDocument(
       "bookings",
       mockBooking,
-      createdUserToken,
+      accessToken,
       false,
     );
   });
@@ -192,14 +193,14 @@ describe("PATCH /api/v1/bookings", () => {
     await authDeleteDocument(
       "bookings",
       createdMockBooking._id,
-      createdUserToken,
+      accessToken,
     );
   });
 
   it("should return 400 Bad Request while invalid booking param", async () => {
     return request(app)
       .patch(`/api/v1/bookings/${createdMockBooking._id}`)
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .send({ ...mockBooking, date: "invalid date" })
       .expect(400)
       .expect("Content-Type", /json/)
@@ -212,7 +213,7 @@ describe("PATCH /api/v1/bookings", () => {
     const invalidBookingId = "6512e2046e6a3c3d399cff6e";
     return request(app)
       .patch(`/api/v1/bookings/${invalidBookingId}`)
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .send(mockBooking)
       .expect(404)
       .expect("Content-Type", /json/)
@@ -227,7 +228,7 @@ describe("PATCH /api/v1/bookings", () => {
     const invalidBookingId = "invalid id";
     return request(app)
       .patch(`/api/v1/bookings/${invalidBookingId}`)
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .send(mockBooking)
       .expect(400)
       .expect("Content-Type", /json/)
@@ -242,7 +243,7 @@ describe("PATCH /api/v1/bookings", () => {
     const invalidServiceId = "invalid id";
     return request(app)
       .patch(`/api/v1/bookings/${createdMockBooking._id}`)
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .send({ ...mockBooking, service: invalidServiceId })
       .expect(400)
       .expect("Content-Type", /json/)
@@ -257,7 +258,7 @@ describe("PATCH /api/v1/bookings", () => {
     const invalidServiceId = "6512e2046e6a3c3d399cff6e";
     return request(app)
       .patch(`/api/v1/bookings/${createdMockBooking._id}`)
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .send({ ...mockBooking, service: invalidServiceId })
       .expect(404)
       .expect("Content-Type", /json/)
@@ -271,7 +272,7 @@ describe("PATCH /api/v1/bookings", () => {
   it("should return 200 and updated booking", async () => {
     return request(app)
       .patch(`/api/v1/bookings/${createdMockBooking._id}`)
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .send({ ...mockBooking, date: "2023-09-12T17:21:47.228Z" })
       .expect(200)
       .expect("Content-Type", /json/)
@@ -294,7 +295,7 @@ describe("GET /api/v1/bookings", () => {
     createdMockBooking = await authCreateDocument(
       "bookings",
       mockBooking,
-      createdUserToken,
+      accessToken,
       false,
     );
   });
@@ -303,13 +304,13 @@ describe("GET /api/v1/bookings", () => {
     await authDeleteDocument(
       "bookings",
       createdMockBooking._id,
-      createdUserToken,
+      accessToken,
     );
   });
   it("should return 200 and all bookings in the database", async () => {
     return request(app)
       .get("/api/v1/bookings")
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(200)
       .expect("Content-Type", /json/)
       .then((res) => {
@@ -327,7 +328,7 @@ describe("GET /api/v1/bookings/:id", () => {
     createdMockBooking = await authCreateDocument(
       "bookings",
       mockBooking,
-      createdUserToken,
+      accessToken,
       false,
     );
   });
@@ -336,13 +337,13 @@ describe("GET /api/v1/bookings/:id", () => {
     await authDeleteDocument(
       "bookings",
       createdMockBooking._id,
-      createdUserToken,
+      accessToken,
     );
   });
   it("should return 200 and booking with id", async () => {
     return request(app)
       .get(`/api/v1/bookings/${createdMockBooking._id}`)
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(200)
       .expect("Content-Type", /json/)
       .then((res) => {
@@ -354,7 +355,7 @@ describe("GET /api/v1/bookings/:id", () => {
     const invalidBookingId = "invalid id";
     return request(app)
       .get(`/api/v1/bookings/${invalidBookingId}`)
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -368,7 +369,7 @@ describe("GET /api/v1/bookings/:id", () => {
     const invalidBookingId = "6512e2046e6a3c3d399cff6e";
     return request(app)
       .get(`/api/v1/bookings/${invalidBookingId}`)
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(404)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -385,7 +386,7 @@ describe("GET /api/v1/bookings/service/:service", () => {
     createdMockBooking = await authCreateDocument(
       "bookings",
       mockBooking,
-      createdUserToken,
+      accessToken,
       false,
     );
   });
@@ -393,7 +394,7 @@ describe("GET /api/v1/bookings/service/:service", () => {
   it("should return 200 and bookings related to service", async () => {
     return request(app)
       .get(`/api/v1/bookings/service/${createdMockBooking.service}`)
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(200)
       .expect("Content-Type", /json/)
       .then((res) => {
@@ -407,7 +408,7 @@ describe("GET /api/v1/bookings/service/:service", () => {
     const invalidServiceId = "6513e49f9d90819b61ef5bbf";
     return request(app)
       .get(`/api/v1/bookings/service/${invalidServiceId}`)
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(404)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -421,7 +422,7 @@ describe("GET /api/v1/bookings/service/:service", () => {
     const invalidServiceId = "invalid id";
     return request(app)
       .get(`/api/v1/bookings/service/${invalidServiceId}`)
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -435,12 +436,12 @@ describe("GET /api/v1/bookings/service/:service", () => {
     await authDeleteDocument(
       "bookings",
       createdMockBooking._id,
-      createdUserToken,
+      accessToken,
     );
 
     return request(app)
       .get(`/api/v1/bookings/service/${createdMockBooking.service}`)
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(200)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -455,7 +456,7 @@ describe("GET /api/v1/bookings/service/:service/date/:date", () => {
     createdMockBooking = await authCreateDocument(
       "bookings",
       mockBooking,
-      createdUserToken,
+      accessToken,
       false,
     );
   });
@@ -465,7 +466,7 @@ describe("GET /api/v1/bookings/service/:service/date/:date", () => {
       .get(
         `/api/v1/bookings/service/${createdMockBooking.service}/date/${createdMockBooking.date}`,
       )
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(200)
       .expect("Content-Type", /json/)
       .then((res) => {
@@ -479,7 +480,7 @@ describe("GET /api/v1/bookings/service/:service/date/:date", () => {
       .get(
         `/api/v1/bookings/service/${invalidServiceId}/date/${createdMockBooking.date}`,
       )
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(404)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -495,7 +496,7 @@ describe("GET /api/v1/bookings/service/:service/date/:date", () => {
       .get(
         `/api/v1/bookings/service/${invalidServiceId}/date/${createdMockBooking.date}`,
     )
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -511,7 +512,7 @@ describe("GET /api/v1/bookings/service/:service/date/:date", () => {
       .get(
         `/api/v1/bookings/service/${createdMockBooking.service}/date/${invalidDate}`,
       )
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(200)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -525,7 +526,7 @@ describe("GET /api/v1/bookings/service/:service/date/:date", () => {
       .get(
         `/api/v1/bookings/service/${createdMockBooking.service}/date/${invalidDate}`,
     )
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -539,14 +540,14 @@ describe("GET /api/v1/bookings/service/:service/date/:date", () => {
     await authDeleteDocument(
       "bookings",
       createdMockBooking._id,
-      createdUserToken,
+      accessToken,
     );
 
     return request(app)
       .get(
         `/api/v1/bookings/service/${createdMockBooking.service}/date/${createdMockBooking.date}`,
       )
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(200)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -561,7 +562,7 @@ describe("GET /api/v1/bookings/service/:service/month/:date", () => {
     createdMockBooking = await authCreateDocument(
       "bookings",
       mockBooking,
-      createdUserToken,
+      accessToken,
       false,
     );
   });
@@ -570,7 +571,7 @@ describe("GET /api/v1/bookings/service/:service/month/:date", () => {
     await authDeleteDocument(
       "bookings",
       createdMockBooking._id,
-      createdUserToken,
+      accessToken,
     );
   });
 
@@ -579,7 +580,7 @@ describe("GET /api/v1/bookings/service/:service/month/:date", () => {
       .get(
         `/api/v1/bookings/service/${createdMockBooking.service}/month/${createdMockBooking.date}`,
       )
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(200)
       .expect("Content-Type", /json/)
       .then((res) => {
@@ -595,7 +596,7 @@ describe("GET /api/v1/bookings/service/:service/month/:date", () => {
       .get(
         `/api/v1/bookings/service/${invalidServiceId}/month/${createdMockBooking.date}`,
       )
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(404)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -611,7 +612,7 @@ describe("GET /api/v1/bookings/service/:service/month/:date", () => {
       .get(
         `/api/v1/bookings/service/${invalidServiceId}/month/${createdMockBooking.date}`,
     )
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -627,7 +628,7 @@ describe("GET /api/v1/bookings/service/:service/month/:date", () => {
       .get(
         `/api/v1/bookings/service/${createdMockBooking.service}/month/${invalidDate}`,
       )
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(200)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -641,7 +642,7 @@ describe("GET /api/v1/bookings/service/:service/month/:date", () => {
       .get(
         `/api/v1/bookings/service/${createdMockBooking.service}/month/${invalidDate}`,
       )
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -658,7 +659,7 @@ describe("GET /api/v1/bookings/service/:service/user/:id", () => {
     createdMockBooking = await authCreateDocument(
       "bookings",
       mockBooking,
-      createdUserToken,
+      accessToken,
       false,
     );
   });
@@ -668,7 +669,7 @@ describe("GET /api/v1/bookings/service/:service/user/:id", () => {
       .get(
         `/api/v1/bookings/service/${createdMockBooking.service}/user/${createdMockBooking.timeslots[0].userid}`,
       )
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(200)
       .expect("Content-Type", /json/)
       .then((res) => {
@@ -684,7 +685,7 @@ describe("GET /api/v1/bookings/service/:service/user/:id", () => {
       .get(
         `/api/v1/bookings/service/${invalidServiceId}/user/${createdMockBooking.timeslots[0].userid}`,
       )
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(404)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -700,7 +701,7 @@ describe("GET /api/v1/bookings/service/:service/user/:id", () => {
       .get(
         `/api/v1/bookings/service/${invalidServiceId}/user/${createdMockBooking.timeslots[0].userid}`,
     )
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -716,7 +717,7 @@ describe("GET /api/v1/bookings/service/:service/user/:id", () => {
       .get(
         `/api/v1/bookings/service/${createdMockBooking.service}/user/${invalidUserId}`,
       )
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(404)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -732,7 +733,7 @@ describe("GET /api/v1/bookings/service/:service/user/:id", () => {
       .get(
         `/api/v1/bookings/service/${createdMockBooking.service}/user/${invalidUserId}`,
       )
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -746,14 +747,14 @@ describe("GET /api/v1/bookings/service/:service/user/:id", () => {
     await authDeleteDocument(
       "bookings",
       createdMockBooking._id,
-      createdUserToken,
+      accessToken,
     );
 
     return request(app)
       .get(
         `/api/v1/bookings/service/${createdMockBooking.service}/user/${createdMockBooking.timeslots[0].userid}`,
       )
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(200)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -768,7 +769,7 @@ describe("DELETE /api/v1/bookings/:id", () => {
     createdMockBooking = await authCreateDocument(
       "bookings",
       mockBooking,
-      createdUserToken,
+      accessToken,
       false,
     );
   });
@@ -777,7 +778,7 @@ describe("DELETE /api/v1/bookings/:id", () => {
     const invalidBookingId = "6512e2046e6a3c3d399cff6e";
     return request(app)
       .delete(`/api/v1/bookings/${invalidBookingId}`)
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(404)
       .expect("Content-Type", /json/)
       .expect((res) => {
@@ -790,7 +791,7 @@ describe("DELETE /api/v1/bookings/:id", () => {
   it("should return 200 No Content if booking deleted successfully", async () => {
     return request(app)
       .delete(`/api/v1/bookings/${createdMockBooking._id}`)
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(200)
       .expect((res) => {
         expect(res.body).toEqual(createdMockBooking);
@@ -800,7 +801,7 @@ describe("DELETE /api/v1/bookings/:id", () => {
   it("should return 404 Not Found if booking does not exist", async () => {
     return request(app)
       .delete(`/api/v1/bookings/${createdMockBooking._id}`)
-      .auth(createdUserToken, { type: "bearer" })
+      .auth(accessToken, { type: "bearer" })
       .expect(404)
       .expect("Content-Type", /json/)
       .expect((res) => {

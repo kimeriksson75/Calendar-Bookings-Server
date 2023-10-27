@@ -1,21 +1,22 @@
+const http = require("http");
+const logger = require("pino")();
 const app = require("./app");
 const { PORT } = require('./config');
 
 const GracefulShutdownManager = require('@moebius/http-graceful-shutdown').GracefulShutdownManager;
 
-//const port =
-//  process.env.NODE_ENV === "production" ? process.env.PORT || 8080 : 3000;
-
-const server = app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+const httpServer = http.createServer(app);
+httpServer.setTimeout(5000); 
+httpServer.listen(PORT, () => {
+  logger.info(`Server listening on port ${PORT}`);
 });
 
-const shutdownManager = new GracefulShutdownManager(server);
+const shutdownManager = new GracefulShutdownManager(httpServer);
 const onProcessInterrupt = (signal) => {
-  console.log(`Termination signal is received from OS (' ${signal} '), the application will terminate`);
+  logger.info(`Termination signal is received from OS (' ${signal} '), the application will terminate`);
   //noinspection JSIgnoredPromiseFromCall
   shutdownManager.terminate(() => {
-    console.log('Server is terminated');
+    logger.info('Server is terminated');
   });
 }
 
@@ -25,5 +26,5 @@ process.on('uncaughtException', () => onProcessInterrupt('uncaughtException'));
 process.on('unhandledRejection', () => onProcessInterrupt('unhandledRejection'));
 
 process.on('exit', () => {
-  console.error('Exiting');
+  logger.info('Exiting');
 });

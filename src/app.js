@@ -18,7 +18,7 @@ const mongooseAdminBro = require("@admin-bro/mongoose");
 const expressAdminBro = require("@admin-bro/express");
 const swaggerUi = require("swagger-ui-express"),
 swaggerDocument = require("./swagger/index.json");
-
+app.set("view engine", "ejs");
 app.use(helmet());
 app.use(compression({ filter: compressFilter }));
 app.use(bodyParser.urlencoded({ extended: true }));

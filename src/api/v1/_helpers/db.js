@@ -21,4 +21,5 @@ module.exports = {
   Apartment: require("../apartments/apartment.model"),
   Service: require("../services/service.model"),
   Residence: require("../residences/residence.model"),
+  Token: require("../tokens/token.model"),
 };

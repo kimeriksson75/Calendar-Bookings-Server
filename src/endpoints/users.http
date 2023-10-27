@@ -5,22 +5,108 @@ User-Agent: rest-client
 Content-Type: application/json
 
 {
-    "email": "dario@mail.com",
+    "email": "kimeriksson75@gmail.com",
     "password": "1234",
-    "username": "darito",
-    "firstname": "Dario",
-    "lastname": "Cardio",
-    "apartment": "651075ca13b93e4bc07de008",
-    "residence": "651075a513b93e4bc07ddffd"
+    "username": "kimsson",
+    "firstname": "Kim",
+    "lastname": "Eriksson",
+    "apartment": "6537bc39689a254c979671c0",
+    "residence": "6537bc20689a254c979671bd"
+}
+###
+
+POST {{baseUrl}}/{{urlPath}} HTTP/1.1
+User-Agent: rest-client
+Content-Type: application/json
+
+{
+    "email": "janefonda@gmail.com",
+    "password": "1234",
+    "username": "janefonda",
+    "firstname": "Jane",
+    "lastname": "Fonda",
+    "apartment": "6537bdabc728294bee3bc9d3",
+    "residence": "6537bd8ec728294bee3bc9d0"
 }
 
 ###
+POST {{baseUrl}}/{{urlPath}}/authenticate HTTP/1.1
+User-Agent: rest-client
+Content-Type: application/json
 
+{
+    "username": "kimsson",
+    "password": "1234"
+}
+
+###
+POST {{baseUrl}}/{{urlPath}}/refresh-token HTTP/1.1
+User-Agent: rest-client
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTM5MWY5MGE1NmM0ZDFiYjFhYTAwNmYiLCJyb2xlcyI6WyJ1c2VyIl0sImlhdCI6MTY5ODI2MDM2MSwiZXhwIjoxNzAwODUyMzYxfQ.pP8i6AYYUa7NnmZU0ZDd6lUgkufiKPV9ageUkbL-2nU"
+}
+
+###
+POST {{baseUrl}}/{{urlPath}}/sign-out HTTP/1.1
+User-Agent: rest-client
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTM5MWY5MGE1NmM0ZDFiYjFhYTAwNmYiLCJyb2xlcyI6WyJ1c2VyIl0sImlhdCI6MTY5ODI1NTE0MiwiZXhwIjoxNzAwODQ3MTQyfQ.jVo4_f7dMdHxEEGQKEgUENKDJrUyMSotKcMSxlo41Os"
+}
+
+###
+@endpoint = reset-password-link
+POST {{baseUrl}}/{{urlPath}}/{{endpoint}} HTTP/1.1
+User-Agent: rest-client
+Content-Type: application/json
+
+{
+    "username": "kimsson",
+    "email": "kimeriksson75@gmail.com",
+    "firstname": "Kim",
+    "lastname": "Eriksson",
+    "apartment": "6537bc39689a254c979671c0",
+    "residence": "6537bc20689a254c979671bd",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTM5MWY1NGE1NmM0ZDFiYjFhYTAwNjYiLCJyb2xlcyI6WyJ1c2VyIl0sImlhdCI6MTY5ODM5OTcwMiwiZXhwIjoxNzAwOTkxNzAyfQ.PiPfIZnWB-ovdk2Pn8lDRLnSv97n8MbgNZZJLzOB6KI",
+    "accessToken": ""
+}
+
+###
+@id = 65391f54a56c4d1bb1aa0066
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTM5MWY1NGE1NmM0ZDFiYjFhYTAwNjYiLCJyb2xlcyI6WyJ1c2VyIl0sImlhdCI6MTY5ODM5OTcwMiwiZXhwIjoxNzAwOTkxNzAyfQ.PiPfIZnWB-ovdk2Pn8lDRLnSv97n8MbgNZZJLzOB6KI
+POST {{baseUrl}}/{{urlPath}}/reset-password/65391f54a56c4d1bb1aa0066/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTM5MWY1NGE1NmM0ZDFiYjFhYTAwNjYiLCJyb2xlcyI6WyJ1c2VyIl0sImlhdCI6MTY5ODM5OTcwMiwiZXhwIjoxNzAwOTkxNzAyfQ.PiPfIZnWB-ovdk2Pn8lDRLnSv97n8MbgNZZJLzOB6KI HTTP/1.1
+User-Agent: rest-client
+Content-Type: application/json
+
+{
+    "password": "1234",
+    "username": "kimsson",
+    "email": "kimeriksson75@gmail.com",
+    "firstname": "Kim",
+    "lastname": "Eriksson",
+    "apartment": "6537bc39689a254c979671c0",
+    "residence": "6537bc20689a254c979671bd",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NTM2NjY3MmI5NzdiYmJmNDM5YjY0MTAiLCJpYXQiOjE2OTgwNjgzODR9.Y2vuA1CdrpJa0UoP8kT98ZwOEGRot2HWcrWBmFO1nWE"
+}
+###
 GET {{baseUrl}}/{{urlPath}} HTTP/1.1
 User-Agent: rest-client
 Content-Type: application/json
 
 ###
+@id = 65366672b977bbbf439b6410
+GET {{baseUrl}}/{{urlPath}}/65366672b977bbbf439b6410
+User-Agent: rest-client
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+
+###
+
 @id = 6511cb9b761f988f83144a83
 PUT {{baseUrl}}/{{urlPath}}/{{id}} HTTP/1.1
 User-Agent: rest-client
@@ -35,3 +121,9 @@ Content-Type: application/json
     "apartment": "651075ca13b93e4bc07de008",
     "residence": "651075a513b93e4bc07ddffd"
 }
+
+###
+@id = 653956bd44ff3ebd655e9f85
+DELETE {{baseUrl}}/{{urlPath}}/{{id}} HTTP/1.1
+User-Agent: rest-client
+Content-Type: application/json

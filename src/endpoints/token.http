@@ -1,0 +1,30 @@
+@baseUrl = http://localhost:3000
+@urlPath = api/v1/tokens
+
+
+### 
+GET {{baseUrl}}/{{urlPath}}
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+###
+@endpoint = user
+GET {{baseUrl}}/{{urlPath}}/{{endpoint}}/6537ba51f0b828b66974584b
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+### 
+POST {{baseUrl}}/{{urlPath}}
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+    "userId": "6537a29bcae825b0f37b506a"
+}
+### 
+DELETE  {{baseUrl}}/{{urlPath}}/6537b28bb87232ce31e12f5a
+Content-Type: application/json
+Accept: application/json
+withCredentials: true

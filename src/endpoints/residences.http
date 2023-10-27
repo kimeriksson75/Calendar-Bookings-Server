@@ -1,10 +1,18 @@
 @baseUrl = http://localhost:3000
-@urlPath = api/v1/apartments
+@urlPath = api/v1/residences
 
 @authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NGVjZGFjOGQyNjliNDIzNjQ0YWU1MzEiLCJpYXQiOjE2OTMyNDQxOTZ9.Forb7DbMRY1QZOyoujrg-SByZf9XmzURqDhGUWH4dRg
 
 ### 
 GET {{baseUrl}}/{{urlPath}}
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+Authorization: Bearer {{authToken}}
+
+###
+@id = 65356a94b15262ec36bf7426
+GET {{baseUrl}}/{{urlPath}}/{{id}}
 Content-Type: application/json
 Accept: application/json
 withCredentials: true
@@ -17,6 +25,6 @@ Accept: application/json
 withCredentials: true
 
 {
-    "name": "Apartment 2",
-    "residence": "6537bd8ec728294bee3bc9d0"
+    "name": "Residence 2",
+    "address": "Address 2"
 }

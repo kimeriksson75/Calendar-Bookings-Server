@@ -17,11 +17,20 @@ const userSchema = Joi.object({
   username: Joi.string().required(),
   firstname: Joi.string().required(),
   lastname: Joi.string().required(),
-  password: Joi.string().min(4).required(),
+  password: Joi.string().min(4).allow(null),
   residence: Joi.string().hex().length(24).required(),
   apartment: Joi.string().hex().length(24).required(),
   hash: Joi.string(),
 });
+
+const authenticateSchema = Joi.object({
+  username: Joi.string().required(),
+  password: Joi.string().min(4),
+})
+
+const refreshTokenSchema = Joi.object({
+  refreshToken: Joi.string().required().label("Refresh Token"),
+})
 
 const serviceSchema = Joi.object({
   type: Joi.string().required(),
@@ -53,6 +62,14 @@ const bookingSchema = Joi.object({
   __v: Joi.number().allow(null),
 });
 
+const tokenSchema = Joi.object({
+  userId: Joi.string().hex().length(24).required(),
+  token: Joi.string().required(),
+  expiresAt: Joi.date().allow(null),
+  _id: Joi.string().hex().length(24).allow(null),
+  __v: Joi.number().allow(null),
+})
+
 const validate = async (schema, params) => {
   try {
     const validationResult = await schema.validate(params);
@@ -74,6 +91,9 @@ module.exports = {
   residenceSchema,
   apartmentSchema,
   userSchema,
+  authenticateSchema,
   serviceSchema,
   bookingSchema,
+  tokenSchema,
+  refreshTokenSchema,
 };

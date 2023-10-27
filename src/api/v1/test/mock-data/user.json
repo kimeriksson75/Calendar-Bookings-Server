@@ -1,9 +1,9 @@
 {
   "_id": "64f2fb695bd7da60df0673ba",
-  "username": "kimsson",
-  "email": "kim@mail.com",
-  "firstname": "Kim",
-  "lastname": "Eriksson",
+  "username": "johndoe",
+  "email": "johndoe@mail.com",
+  "firstname": "John",
+  "lastname": "Doe",
   "apartment": "64ecd83f3fd6c2226bc5a6fd",
   "residence": "64ecd76daa04c52253b0b6eb",
   "hash": "$2a$10$svugPwBtn4jXPZ9KObTo6.Hk24u61HjrvQDyxV/67l3SgpDCTuALe",

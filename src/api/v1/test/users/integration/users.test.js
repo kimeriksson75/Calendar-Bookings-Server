@@ -3,6 +3,8 @@ const app = require("../../../../../app");
 const {
   createDocument,
   deleteDocument,
+  authenticate,
+  findAndRemoveUserToken
 } = require("../../../_helpers/db.integration");
 
 describe("POST /api/v1/users", () => {
@@ -36,6 +38,7 @@ describe("POST /api/v1/users", () => {
   afterAll(async () => {
     await deleteDocument("apartments", createdApartmentId);
     await deleteDocument("residences", createdResidenceId);
+    await findAndRemoveUserToken(createdUserId);
   });
   it("should return 400 Bad request while missing username param", async () => {
     return request(app)
@@ -142,6 +145,303 @@ describe("POST /api/v1/users", () => {
   });
 });
 
+describe("POST /api/v1/users/authenticate", () => {
+  let mockUser = {
+    username: "User 1",
+    password: "password",
+    email: "user1@mail.com",
+    firstname: "John",
+    lastname: "Doe",
+    residence: "",
+    apartment: "",
+  };
+
+  let authenticateUser = {
+    username: mockUser.username,
+    password: mockUser.password
+  }
+
+  let createdUserId;
+  let createdResidenceId;
+  let createdApartmentId;
+
+  beforeAll(async () => {
+    createdResidenceId = await createDocument("residences", {
+      name: "Residence 1",
+      address: "Address 1",
+    });
+    createdApartmentId = await createDocument("apartments", {
+      name: "Apartment 1",
+      residence: createdResidenceId,
+    });
+    createdUserId = await createDocument("users", {
+      ...mockUser,
+      residence: createdResidenceId,
+      apartment: createdApartmentId,
+    });
+
+    mockUser.residence = createdResidenceId;
+    mockUser.apartment = createdApartmentId;
+
+    
+  });
+
+  afterAll(async () => {
+    await deleteDocument("apartments", createdApartmentId);
+    await deleteDocument("residences", createdResidenceId);
+    await deleteDocument("users", createdUserId);
+    await findAndRemoveUserToken(createdUserId);
+  });
+
+  it("should return 400 Bad request invalid password param", async () => {
+    return request(app)
+      .post("/api/v1/users/authenticate")
+      .send({
+        ...authenticateUser,
+        password: "5678",
+      })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          "Invalid password",
+        );
+      });
+  });
+  it("should return 404 Not found if user could not be found", async () => {
+    return request(app)
+      .post("/api/v1/users/authenticate")
+      .send({
+        ...authenticateUser,
+        username: "User 2",
+      })
+      .expect(404)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual("Username User 2 is not found");
+      });
+  });
+
+  it("should return 200 and user document", async () => {
+    return request(app)
+      .post("/api/v1/users/authenticate")
+      .send(authenticateUser)
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.username).toEqual(mockUser.username);
+        expect(res.body.email).toEqual(mockUser.email);
+        expect(res.body.firstname).toEqual(mockUser.firstname);
+        expect(res.body.lastname).toEqual(mockUser.lastname);
+        expect(res.body.residence).toEqual(mockUser.residence);
+        expect(res.body.apartment).toEqual(mockUser.apartment);
+        expect(res.body.accessToken).toBeDefined();
+        expect(res.body.refreshToken).toBeDefined();
+      });
+  });
+});
+
+describe("POST /api/v1/users/reset-password-link", () => {
+  let mockUser = {
+    username: "User 1",
+    password: "password",
+    email: "user1@mail.com",
+    firstname: "John",
+    lastname: "Doe",
+    residence: "",
+    apartment: "",
+  };
+
+  let createdUserId;
+  let createdResidenceId;
+  let createdApartmentId;
+
+  beforeAll(async () => {
+    createdResidenceId = await createDocument("residences", {
+      name: "Residence 1",
+      address: "Address 1",
+    });
+    createdApartmentId = await createDocument("apartments", {
+      name: "Apartment 1",
+      residence: createdResidenceId,
+    });
+    createdUserId = await createDocument("users", {
+      ...mockUser,
+      residence: createdResidenceId,
+      apartment: createdApartmentId,
+    });
+    mockUser.residence = createdResidenceId;
+    mockUser.apartment = createdApartmentId;
+  });
+
+  afterAll(async () => {
+    await deleteDocument("apartments", createdApartmentId);
+    await deleteDocument("residences", createdResidenceId);
+    await deleteDocument("users", createdUserId);
+    await findAndRemoveUserToken(createdUserId);
+
+  });
+
+  it("should return 404 Not found while missing email param", async () => {
+    return request(app)
+      .post("/api/v1/users/reset-password-link")
+      .send({
+        ...mockUser,
+        email: "",
+      })
+      .expect(404)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          "User with email  not found",
+        );
+      });
+  });
+
+  it("should return 200 and user document", async () => {
+    return request(app)
+      .post("/api/v1/users/reset-password-link")
+      .send({
+        ...mockUser,
+      })
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.username).toEqual(mockUser.username);
+        expect(res.body.email).toEqual(mockUser.email);
+        expect(res.body.firstname).toEqual(mockUser.firstname);
+        expect(res.body.lastname).toEqual(mockUser.lastname);
+        expect(res.body.residence).toEqual(mockUser.residence);
+        expect(res.body.apartment).toEqual(mockUser.apartment);
+      });
+  });
+});
+
+describe('POST /api/v1/users/reset-password/:id/:token', () => {
+  let mockUser = {
+    username: "User 1",
+    password: "new password",
+    email: "user1@mail.com",
+    firstname: "John",
+    lastname: "Doe",
+    residence: "",
+    apartment: "",
+  };
+
+
+  let createdUserId;
+  let createdResidenceId;
+  let createdApartmentId;
+
+  beforeAll(async () => {
+    createdResidenceId = await createDocument("residences", {
+      name: "Residence 1",
+      address: "Address 1",
+    });
+    createdApartmentId = await createDocument("apartments", {
+      name: "Apartment 1",
+      residence: createdResidenceId,
+    });
+    createdUserId = await createDocument("users", {
+      ...mockUser,
+      residence: createdResidenceId,
+      apartment: createdApartmentId,
+    });
+
+    const { refreshToken } = await authenticate(mockUser);
+    mockUser.residence = createdResidenceId;
+    mockUser.apartment = createdApartmentId;
+    mockUser.token = refreshToken;
+  });
+
+  afterAll(async () => {
+    await deleteDocument("apartments", createdApartmentId);
+    await deleteDocument("residences", createdResidenceId);
+    await deleteDocument("users", createdUserId);
+  });
+
+  it("should return 400 Bad request while empty password param", async () => {
+    return request(app)
+      .post(`/api/v1/users/reset-password/${createdUserId}/${mockUser.token}`)
+      .send({
+        ...mockUser,
+        password: "",
+      })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          "Password is required",
+        );
+      });
+  });
+
+  it("should return 400 Bad request while password is the same as the old password", async () => {
+    return request(app)
+      .post(`/api/v1/users/reset-password/${createdUserId}/${mockUser.token}`)
+      .send({
+        ...mockUser,
+        password: "password",
+      })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          "Password can not be the same as the old password",
+        );
+      });
+  });
+
+  it("should return 400 Bad request while invalid token param", async () => {
+    return request(app)
+      .post(`/api/v1/users/reset-password/${createdUserId}/invalid-token`)
+      .send({
+        ...mockUser,
+        password: "password",
+      })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          "Invalid token",
+        );
+      });
+  });
+
+  it("should return 400 Bad request found while invalid id param", async () => {
+    return request(app)
+      .post(`/api/v1/users/reset-password/invalid-id/${mockUser.token}`)
+      .send({
+        ...mockUser,
+        password: "password",
+      })
+      .expect(400)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.message).toEqual(
+          "Invalid id invalid-id",
+        );
+      });
+  });
+
+  it("should return 200 and user document", async () => {
+    return request(app)
+      .post(`/api/v1/users/reset-password/${createdUserId}/${mockUser.token}`)
+      .send({
+        ...mockUser,
+      })
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .expect((res) => {
+        expect(res.body.username).toEqual(mockUser.username);
+        expect(res.body.email).toEqual(mockUser.email);
+        expect(res.body.firstname).toEqual(mockUser.firstname);
+        expect(res.body.lastname).toEqual(mockUser.lastname);
+        expect(res.body.residence).toEqual(mockUser.residence);
+        expect(res.body.apartment).toEqual(mockUser.apartment);
+      });
+  });
+});
 describe("GET /api/v1/users", () => {
   let mockUser = {
     username: "User 1",
@@ -174,6 +474,7 @@ describe("GET /api/v1/users", () => {
   afterAll(async () => {
     await deleteDocument("apartments", createdApartmentId);
     await deleteDocument("residences", createdResidenceId);
+    await findAndRemoveUserToken(createdUserId);
   });
 
   it("should return all users in the database", async () => {
@@ -230,6 +531,7 @@ describe("GET /api/v1/users/:id", () => {
   afterAll(async () => {
     await deleteDocument("apartments", createdApartmentId);
     await deleteDocument("residences", createdResidenceId);
+    await findAndRemoveUserToken(createdUserId);
   });
 
   it("should return 404 Not found if user could not be found", async () => {
@@ -311,6 +613,8 @@ describe("PUT /api/v1/users/:id", () => {
   afterAll(async () => {
     await deleteDocument("apartments", createdApartmentId);
     await deleteDocument("residences", createdResidenceId);
+    await deleteDocument("users", createdUserId);
+    await findAndRemoveUserToken(createdUserId);
   });
 
   it("should return 400 Not found while missing username param", async () => {
@@ -373,16 +677,6 @@ describe("PUT /api/v1/users/:id", () => {
         mockUser.username = res.body.username;
       });
   });
-
-  it("should return 200 and deleted user document", async () => {
-    return request(app)
-      .delete(`/api/v1/users/${createdUserId}`)
-      .expect(200)
-      .expect("Content-Type", /json/)
-      .expect((res) => {
-        expect(res.body.username).toEqual(mockUser.username);
-      });
-  });
 });
 
 describe("DELETE /api/v1/users/:id", () => {
@@ -415,6 +709,7 @@ describe("DELETE /api/v1/users/:id", () => {
   afterAll(async () => {
     await deleteDocument("apartments", createdApartmentId);
     await deleteDocument("residences", createdResidenceId);
+    await findAndRemoveUserToken(createdUserId);
   });
 
   it("should return 404 Not found if user could not be found", async () => {

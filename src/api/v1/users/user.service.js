@@ -1,17 +1,17 @@
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const {
   ValidationError,
   NotFoundError,
 } = require("../../../_helpers/customErrors/customErrors");
-const { validate, userSchema } = require("../_helpers/db.schema.validation");
+const { validate, userSchema, authenticateSchema, refreshTokenSchema } = require("../_helpers/db.schema.validation");
 const { isValidObjectId } = require("../_helpers/db.document.validation");
-
-const { User, Residence, Apartment } = require("../_helpers/db");
+const { User, Residence, Apartment, Token } = require("../_helpers/db");
+const { sendEmail } = require("./user.email");
+const { verifyToken, verifyRefreshToken, generateTokens } = require("../_helpers/token.validation")
+const { BASE_URL, API_VERSION } = require("../../../config");
 
 const create = async (params) => {
   await validate(userSchema, params);
-
   const existingUserName = await User.findOne({
     username: params.username,
     email: params.email,
@@ -45,40 +45,127 @@ const create = async (params) => {
   if (params.password) {
     user.hash = bcrypt.hashSync(params.password, 10);
   }
+  delete user.password;
 
   const createdUser = await User.create(user);
   if (!createdUser) {
     throw new ValidationError(`Error while creating user`);
   }
-  return createdUser;
+  const token = await verifyToken(createdUser);
+  // eslint-disable-next-line no-unused-vars
+  const { hash, ...userWithoutHash } = createdUser.toObject();
+  return {
+    ...userWithoutHash,
+    token: token.token,
+  };
 };
 
-const authenticate = async ({ username, password }) => {
+const authenticate = async (params) => {
+  await validate(authenticateSchema, params);
+  const { username, password } = params;
   const user = await User.findOne({ username });
   if (!user) {
     throw new NotFoundError(`Username ${username} is not found`);
   }
-
-  if (user && bcrypt.compareSync(password, user.hash)) {
-    // eslint-disable-next-line no-unused-vars
-    const { hash, ...userWithoutHash } = user.toObject();
-    const token = jwt.sign({ sub: user._id }, process.env.ACCESS_TOKEN_SECRET);
-    return {
-      ...userWithoutHash,
-      token,
-    };
+  
+  const verifiedPassword = bcrypt.compareSync(password, user.hash);
+  if (!verifiedPassword) {
+    throw new ValidationError(`Invalid password`)
   }
+  // eslint-disable-next-line no-unused-vars
+  const { hash, ...userWithoutHash } = user.toObject();
+  const { accessToken, refreshToken } = await generateTokens(user);
+
+  return {
+    ...userWithoutHash,
+    refreshToken,
+    accessToken
+  };  
 };
 
-const update = async (id, userParam) => {
-  if (userParam.password) {
-    userParam.hash = bcrypt.hashSync(userParam.password, 10);
+const refreshToken = async (params) => {
+  await validate(refreshTokenSchema, params);
+  return await verifyRefreshToken(params.refreshToken)
+}
+const signOut = async (params) => {
+  await validate(refreshTokenSchema, params);
+
+  const userToken = await Token.findOneAndRemove({ token: params.refreshToken });
+  if (!userToken) {
+    throw new ValidationError("Invalid token")
   }
-  await validate(userSchema, userParam);
+
+  return null;
+}
+
+const resetPasswordLink = async (userParam) => {
+    const user = await User.findOne({ email: userParam.email });
+    if (!user) {
+      throw new NotFoundError(`User with email ${userParam.email} not found`);
+    }
+    const token = await verifyToken(user);
+    const link = `${BASE_URL}/api/${API_VERSION}/users/reset-password-form/${user._id}/${token.token}`;
+    console.log('link', link)
+    await sendEmail(user.email, "Password reset", link);
+  return user;
+};
+
+const resetPassword = async (id, token, params) => {
+  const { password, verifyPassword } = params;
+  if (password !== verifyPassword) {
+    throw new ValidationError("Passwords do not match")
+  }
+  
+  console.log('params', params)
+  isValidObjectId(id);
+  const user = await User.findById(id);
+  if (!user) {
+    throw new NotFoundError(`User id ${id} does not exist`);
+  }
+  const _token = await Token.findOne({
+    userId: id,
+    token,
+  });
+
+  if (!_token) {
+    throw new ValidationError(`Invalid or expired token`);
+  }
+  
+  if (new Date(_token.expiresAt) < new Date()) {
+    throw new ValidationError(`Token expired`);
+  }
+
+  if(!password) {
+    throw new ValidationError(`Password is required`);
+  }
+
+  const nonUniquePassword = await bcrypt.compare(password, user.hash)
+  if (nonUniquePassword) {
+    throw new ValidationError(`Password can not be the same as the old password`);
+  }
+  
+  user.hash = bcrypt.hashSync(password, 10);
+
+  await user.save();
+  await Token.findByIdAndRemove(_token._id);
+
+  // eslint-disable-next-line no-unused-vars
+  const { hash, ...userWithoutHash } = user.toObject();
+
+  return {
+    ...userWithoutHash,
+  };
+};
+
+const update = async (id, params) => {
+  if (params.password) {
+    params.hash = bcrypt.hashSync(params.password, 10);
+  }
+  await validate(userSchema, params);
   isValidObjectId(id);
   const updated = await User.findByIdAndUpdate(
     id,
-    { $set: userParam },
+    { $set: params },
     { new: true },
   );
   if (updated) {
@@ -115,6 +202,10 @@ const _delete = async (id) => {
 
 module.exports = {
   authenticate,
+  refreshToken,
+  resetPasswordLink,
+  resetPassword,
+  signOut,
   create,
   getAll,
   getById,

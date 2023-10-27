@@ -1,10 +1,11 @@
 @baseUrl = http://localhost:3000
-@urlPath = verify-access-token
+@urlPath = api/v1
+@endpoint = verify-access-token
 
-@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NGVjZGFjOGQyNjliNDIzNjQ0YWU1MzEiLCJpYXQiOjE2OTMyNDQxOTZ9.Forb7DbMRY1QZOyoujrg-SByZf9XmzURqDhGUWH4dRg
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTM5MWY5MGE1NmM0ZDFiYjFhYTAwNmYiLCJyb2xlcyI6WyJ1c2VyIl0sImlhdCI6MTY5ODI1NTE0MiwiZXhwIjoxNzAwODQ3MTQyfQ.jVo4_f7dMdHxEEGQKEgUENKDJrUyMSotKcMSxlo41Os
 
 ### 
-GET {{baseUrl}}/{{urlPath}}
+GET {{baseUrl}}/{{urlPath}}/{{endpoint}}
 Content-Type: application/json
 Accept: application/json
 withCredentials: true
