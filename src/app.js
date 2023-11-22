@@ -29,13 +29,13 @@ app.use(express.json());
 app.use(`/api/${API_VERSION}`, require(`./api/${API_VERSION}/`));
 app.use(errorHandler);
 
-const { User, Apartment, Booking, Residence, Service } = require(
+const { User, Apartment, Booking, Residence, Service, Token, Scanner, Tag } = require(
   `./api/${API_VERSION}/_helpers/db`,
 );
 
 AdminBro.registerAdapter(mongooseAdminBro);
 const AdminBroOptions = {
-  resources: [User, Apartment, Booking, Residence, Service],
+  resources: [User, Apartment, Booking, Residence, Service, Token, Scanner, Tag, ],
 };
 
 const adminBro = new AdminBro(AdminBroOptions);

@@ -2,7 +2,7 @@ const bookingService = require("./booking.service");
 
 exports.create = (req, res, next) =>
   bookingService
-    .create(req.body)
+    .create(req.params.user, req.body)
     .then((booking) => res.status(201).json(booking))
     .catch((err) => next(err));
 
@@ -44,7 +44,7 @@ exports.getById = (req, res, next) =>
 
 exports.update = (req, res, next) =>
   bookingService
-    .update(req.params.id, req.body)
+    .update(req.params.user, req.params.id, req.body)
     .then((booking) => res.status(200).json(booking))
     .catch((err) => next(err));
 

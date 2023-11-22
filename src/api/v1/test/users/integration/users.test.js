@@ -315,7 +315,7 @@ describe("POST /api/v1/users/reset-password-link", () => {
 describe("POST /api/v1/users/reset-password/:id/:token", () => {
   let mockUser = {
     username: "User 1",
-    password: "new password",
+    password: "password",
     email: "user1@mail.com",
     firstname: "John",
     lastname: "Doe",
@@ -358,8 +358,8 @@ describe("POST /api/v1/users/reset-password/:id/:token", () => {
     return request(app)
       .post(`/api/v1/users/reset-password/${createdUserId}/${mockUser.token}`)
       .send({
-        ...mockUser,
         password: "",
+        verifyPassword: "password",
       })
       .expect(400)
       .expect("Content-Type", /json/)
@@ -372,8 +372,9 @@ describe("POST /api/v1/users/reset-password/:id/:token", () => {
     return request(app)
       .post(`/api/v1/users/reset-password/${createdUserId}/${mockUser.token}`)
       .send({
-        ...mockUser,
         password: "password",
+        verifyPassword: "password",
+
       })
       .expect(400)
       .expect("Content-Type", /json/)

@@ -48,6 +48,7 @@ const create = async (params) => {
     throw new NotFoundError(`Apartment ${params.apartment} does not exist`);
   }
 
+  // implement .getSalt, https://blog.logrocket.com/password-hashing-node-js-bcrypt/
   const user = { ...params };
   if (params.password) {
     user.hash = bcrypt.hashSync(params.password, 10);
@@ -90,19 +91,46 @@ const authenticate = async (params) => {
   };
 };
 
+const authenticateWithToken = async ({ token }) => {
+  console.log('authenticateWithToken', token)
+  const existingToken = await Token.findOne({ token });
+  if (!existingToken) {
+    throw new NotFoundError(`Token ${token} does not exist`);
+  }
+
+  const user = await User.findById(existingToken.userId);
+  if (!user) {
+    throw new NotFoundError(`User connected to token ${token} does not exist`);
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  const { hash, ...userWithoutHash } = user.toObject();
+  const { accessToken, refreshToken } = await generateTokens(user);
+
+  await Token.findByIdAndRemove(existingToken._id);
+
+  return {
+    ...userWithoutHash,
+    refreshToken,
+    accessToken,
+  };
+};
+
 const refreshToken = async (params) => {
   await validate(refreshTokenSchema, params);
   return await verifyRefreshToken(params.refreshToken);
 };
-const signOut = async (params) => {
-  await validate(refreshTokenSchema, params);
+const signOut = async ({ refreshToken, accessToken }) => {
+  console.log(refreshToken, accessToken)
+  // await validate(refreshTokenSchema, refreshToken);
 
-  const userToken = await Token.findOneAndRemove({
-    token: params.refreshToken,
+  await Token.findOneAndRemove({
+    token: refreshToken,
   });
-  if (!userToken) {
-    throw new ValidationError("Invalid token");
-  }
+  await Token.findOneAndRemove({
+    token: accessToken,
+  });
+  
 
   return null;
 };
@@ -121,6 +149,7 @@ const resetPasswordLink = async (userParam) => {
 
 const resetPassword = async (id, token, params) => {
   const { password, verifyPassword } = params;
+  console.log("resetPassword", password, verifyPassword);
   if (password !== verifyPassword) {
     throw new ValidationError("Passwords do not match");
   }
@@ -212,6 +241,7 @@ const _delete = async (id) => {
 
 module.exports = {
   authenticate,
+  authenticateWithToken,
   refreshToken,
   resetPasswordLink,
   resetPassword,

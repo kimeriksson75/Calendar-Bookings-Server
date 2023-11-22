@@ -12,16 +12,18 @@ const { isValidObjectId } = require("./db.document.validation");
 
 const generateTokens = async (user) => {
   try {
-    const payload = { _id: user._id, roles: user.roles };
+      const payload = { _id: user._id, roles: user.roles };
+      
     const accessToken = jwt.sign(payload, ACCESS_TOKEN_SECRET, {
-      expiresIn: "14m",
+      expiresIn: "1d",
     });
     const refreshToken = jwt.sign(payload, REFRESH_TOKEN_SECRET, {
-      expiresIn: "30d",
+      expiresIn: "1h",
     });
 
     await Token.findOneAndRemove({ userId: user._id });
 
+    await new Token({ userId: user._id, token: accessToken }).save();
     await new Token({ userId: user._id, token: refreshToken }).save();
     return Promise.resolve({ accessToken, refreshToken });
   } catch (err) {

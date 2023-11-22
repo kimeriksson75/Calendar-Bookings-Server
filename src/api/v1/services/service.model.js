@@ -11,6 +11,7 @@ const timeSlot = new mongoose.Schema({
 const serviceSchema = new Schema({
   type: { type: String, required: true },
   timeslots: [timeSlot],
+  alternateTimeslots: [timeSlot],
   name: { type: String, required: true },
   residence: {
     type: mongoose.Schema.Types.ObjectId,

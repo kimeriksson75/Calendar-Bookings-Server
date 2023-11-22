@@ -14,7 +14,45 @@ const Booking = db.Booking;
 const Service = db.Service;
 const User = db.User;
 
-const create = async (bookingParam) => {
+const getUserMonthlyBookings = async (userId, date, limit) => {
+  isValidObjectId(userId);
+  isValidDate(date);
+  const start = moment(date).startOf("month");
+  const end = moment(date).endOf("month");
+  const bookings = await Booking.find({
+    $or: [{
+      "timeslots.userid": userId,
+      date: { $gte: start, $lte: end },
+    }, {
+      "alternateTimeslots.userid": userId,
+      date: { $gte: start, $lte: end },
+    }],
+  });
+  if (!bookings) {
+    return false;
+  }
+  return bookings.length >= limit
+};
+
+const isUpdateDeleteRequest = (current, update) => {
+  const issuedTimeslots = JSON.stringify(current.timeslots) === JSON.stringify(update.timeslots) ? ['alternateTimeslots'] : ['timeslots']
+  console.log(issuedTimeslots)
+  const currentBookedTimeslots = current[issuedTimeslots].reduce((acc, timeslot) => {
+    if (timeslot.userid) {
+      acc.push(timeslot.timeslot)
+    }
+    return acc
+  },[])
+  const updateBookedTimeslots = update[issuedTimeslots].reduce((acc, timeslot) => {
+    if (timeslot.userid) {
+      acc.push(timeslot.timeslot)
+    }
+    return acc
+  }, [])
+  console.log(currentBookedTimeslots.length, updateBookedTimeslots.length)
+  return currentBookedTimeslots.length > updateBookedTimeslots.length;
+}
+const create = async (userId, bookingParam) => {
   await validate(bookingSchema, bookingParam);
   isValidObjectId(bookingParam.service);
   const existingService = await Service.findById(bookingParam.service);
@@ -23,16 +61,31 @@ const create = async (bookingParam) => {
       `Service with id ${bookingParam.service} does not exists`,
     );
   }
+  const existingUser = await User.findById(userId);
+  if (!existingUser) {
+    throw new NotFoundError(`User with id ${userId} does not exists`);
+  }
+  const { limit } = existingService;
+  const userMonthlyBookings = await getUserMonthlyBookings(userId, bookingParam.date, limit);
+  
+  if (userMonthlyBookings) {
+    throw new ValidationError(
+      `User ${existingUser.username} has reached the limit of ${limit} bookings per month`,
+    );
+  }
+  
   const booking = await Booking.create(bookingParam);
   if (booking) {
     return booking;
   }
+  
   throw new ValidationError(`Error while creating booking`);
 };
 
-const update = async (id, bookingParam) => {
+const update = async (userId, id, bookingParam) => {
   await validate(bookingSchema, bookingParam);
   isValidObjectId(id);
+
   const existingService = await Service.findById(bookingParam.service);
   if (!existingService) {
     throw new NotFoundError(
@@ -43,6 +96,19 @@ const update = async (id, bookingParam) => {
   if (!existingBooking) {
     throw new NotFoundError(`Booking with id ${id} does not exists`);
   }
+  const existingUser = await User.findById(userId);
+  if (!existingUser) {
+    throw new NotFoundError(`User with id ${userId} does not exists`);
+  }
+  const { limit } = existingService;
+  const isDeleteRequest = isUpdateDeleteRequest(existingBooking, bookingParam);
+  const userMonthlyBookings = await getUserMonthlyBookings(userId, bookingParam.date, limit);
+  if (userMonthlyBookings && !isDeleteRequest) {
+    throw new ValidationError(
+      `You have reached the limit of ${limit} bookings per month`,
+    );
+  }
+
   const updatedBooking = await Booking.findByIdAndUpdate(
     id,
     { $set: bookingParam },
@@ -66,7 +132,6 @@ const getById = async (id) => {
 const getAll = async () => {
   const bookings = await Booking.find();
   if (bookings) {
-    console.log("bookings", bookings);
     return bookings;
   }
   throw new ValidationError(`Error while getting bookings`);
@@ -135,7 +200,15 @@ const getByServiceUser = async (service, id) => {
     throw new NotFoundError(`User with id ${id} does not exists`);
   }
 
-  const bookings = await Booking.find({ service, "timeslots.userid": id });
+  const bookings = await Booking.find({
+    $or: [{
+      "timeslots.userid": id,
+      service,
+    }, {
+      "alternateTimeslots.userid": id,
+      service,
+    }]
+  });
   if (bookings) {
     return bookings;
   }

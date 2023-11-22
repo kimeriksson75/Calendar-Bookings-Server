@@ -36,7 +36,7 @@ Content-Type: application/json
 
 {
     "username": "kimsson",
-    "password": "1234"
+    "password": "2345"
 }
 
 ###
@@ -70,14 +70,14 @@ Content-Type: application/json
     "lastname": "Eriksson",
     "apartment": "6537bc39689a254c979671c0",
     "residence": "6537bc20689a254c979671bd",
-    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTM5MWY1NGE1NmM0ZDFiYjFhYTAwNjYiLCJyb2xlcyI6WyJ1c2VyIl0sImlhdCI6MTY5ODM5OTcwMiwiZXhwIjoxNzAwOTkxNzAyfQ.PiPfIZnWB-ovdk2Pn8lDRLnSv97n8MbgNZZJLzOB6KI",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTM5MWY1NGE1NmM0ZDFiYjFhYTAwNjYiLCJyb2xlcyI6WyJ1c2VyIl0sImlhdCI6MTY5ODYwMTA3NiwiZXhwIjoxNzAxMTkzMDc2fQ.m5x3kGqZKp4vGfkesZOyV4HAcW6vwIdvLm3dole6Dtg",
     "accessToken": ""
 }
 
 ###
 @id = 65391f54a56c4d1bb1aa0066
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTM5MWY1NGE1NmM0ZDFiYjFhYTAwNjYiLCJyb2xlcyI6WyJ1c2VyIl0sImlhdCI6MTY5ODM5OTcwMiwiZXhwIjoxNzAwOTkxNzAyfQ.PiPfIZnWB-ovdk2Pn8lDRLnSv97n8MbgNZZJLzOB6KI
-POST {{baseUrl}}/{{urlPath}}/reset-password/65391f54a56c4d1bb1aa0066/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTM5MWY1NGE1NmM0ZDFiYjFhYTAwNjYiLCJyb2xlcyI6WyJ1c2VyIl0sImlhdCI6MTY5ODM5OTcwMiwiZXhwIjoxNzAwOTkxNzAyfQ.PiPfIZnWB-ovdk2Pn8lDRLnSv97n8MbgNZZJLzOB6KI HTTP/1.1
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTM5MWY1NGE1NmM0ZDFiYjFhYTAwNjYiLCJyb2xlcyI6WyJ1c2VyIl0sImlhdCI6MTY5ODYwMTA3NiwiZXhwIjoxNzAxMTkzMDc2fQ.m5x3kGqZKp4vGfkesZOyV4HAcW6vwIdvLm3dole6Dtg
+POST {{baseUrl}}/{{urlPath}}/reset-password/65391f54a56c4d1bb1aa0066/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTM5MWY1NGE1NmM0ZDFiYjFhYTAwNjYiLCJyb2xlcyI6WyJ1c2VyIl0sImlhdCI6MTY5ODYwMTA3NiwiZXhwIjoxNzAxMTkzMDc2fQ.m5x3kGqZKp4vGfkesZOyV4HAcW6vwIdvLm3dole6Dtg HTTP/1.1
 User-Agent: rest-client
 Content-Type: application/json
 

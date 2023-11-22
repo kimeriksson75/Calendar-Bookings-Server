@@ -1,12 +1,10 @@
 const mongoose = require("mongoose");
 const { MONGODB_URI } = require("../../../config");
-const monogoUri =
-  MONGODB_URI ?? "mongodb://localhost/node-mongo-registration-login-api";
 // connect
 mongoose
-  .connect(monogoUri, { useUnifiedTopology: true, useNewUrlParser: true })
+  .connect(MONGODB_URI, { useUnifiedTopology: true, useNewUrlParser: true })
   .then(() => {
-    //console.log(`DB ${monogoUri} connection established`);
+    console.info(`DB ${MONGODB_URI} connection established`);
   })
   .catch((error) => {
     console.error(`DB connection faild: ${error}`);
@@ -21,4 +19,6 @@ module.exports = {
   Service: require("../services/service.model"),
   Residence: require("../residences/residence.model"),
   Token: require("../tokens/token.model"),
+  Scanner: require("../scanners/scanner.model"),
+  Tag: require("../tags/tag.model"),
 };

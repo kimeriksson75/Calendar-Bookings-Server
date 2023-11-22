@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {
   authenticate,
+  authenticateWithToken,
   refreshToken,
   resetPasswordLink,
   resetPasswordForm,
@@ -15,6 +16,7 @@ const {
 } = require("./user.controller");
 
 router.post("/authenticate", authenticate);
+router.post("/authenticate/token",   authenticateWithToken);
 router.post("/reset-password-link", resetPasswordLink);
 router.get("/reset-password-form/:id/:token", resetPasswordForm);
 router.post("/reset-password/:id/:token", resetPassword);

@@ -11,6 +11,8 @@ const Residence = db.Residence;
 const create = async (serviceParam) => {
   await validate(serviceSchema, serviceParam);
   await isValidObjectId(serviceParam.residence);
+
+  console.log({serviceParam})
   const existingResidence = await Residence.findById(serviceParam.residence);
   if (!existingResidence) {
     throw new NotFoundError(

@@ -42,6 +42,14 @@ const serviceSchema = Joi.object({
       _id: Joi.string().hex().length(24).allow(null),
     }),
   ),
+  alternateTimeslots: Joi.array().items(
+    Joi.object({
+      userid: Joi.string().hex().length(24).allow(null),
+      username: Joi.string().allow(""),
+      timeslot: Joi.string().required(),
+      _id: Joi.string().hex().length(24).allow(null),
+    }),
+  ),
   name: Joi.string().required(),
   residence: Joi.string().hex().length(24).required(),
   limit: Joi.number().allow(null),
@@ -52,6 +60,14 @@ const bookingSchema = Joi.object({
   service: Joi.string().hex().length(24).required(),
   date: Joi.date().allow(null),
   timeslots: Joi.array().items(
+    Joi.object({
+      userid: Joi.string().hex().length(24).allow(null),
+      username: Joi.string().allow(""),
+      timeslot: Joi.string().required(),
+      _id: Joi.string().hex().length(24).allow(null),
+    }),
+  ),
+  alternateTimeslots: Joi.array().items(
     Joi.object({
       userid: Joi.string().hex().length(24).allow(null),
       username: Joi.string().allow(""),

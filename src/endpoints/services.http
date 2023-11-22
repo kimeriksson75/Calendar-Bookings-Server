@@ -1,0 +1,65 @@
+@baseUrl = http://localhost:3000
+@urlPath = api/v1/services
+
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NGVjZGFjOGQyNjliNDIzNjQ0YWU1MzEiLCJpYXQiOjE2OTMyNDQxOTZ9.Forb7DbMRY1QZOyoujrg-SByZf9XmzURqDhGUWH4dRg
+
+### 
+GET {{baseUrl}}/{{urlPath}}
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+Authorization: Bearer {{authToken}}
+
+###
+POST {{baseUrl}}/{{urlPath}}
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+Authorization: Bearer {{authToken}}
+
+{
+    "type": "laundry",
+    "timeslots": [
+        {
+        "userid": null,
+        "username": "",
+        "_id": "65429817add7c81260092b46",
+        "timeslot": "17.00 - 19.30"
+        },
+        {
+        "userid": null,
+        "username": "",
+        "_id": "65429817add7c81260092b47",
+        "timeslot": "19.30 - 22.00"
+        }
+    ],
+    "alternateTimeslots": [
+        {
+        "userid": null,
+        "username": "",
+        "_id": "65429817add7c81260092b46",
+        "timeslot": "07.00 - 10.00"
+        },
+        {
+        "userid": null,
+        "username": "",
+        "_id": "65429817add7c81260092b47",
+        "timeslot": "10.00 - 14.00"
+        },
+        {
+        "userid": null,
+        "username": "",
+        "_id": "65429817add7c81260092b48",
+        "timeslot": "14.00 - 18.00"
+        },
+        {
+        "userid": null,
+        "username": "",
+        "_id": "65429817add7c81260092b49",
+        "timeslot": "18.00 - 22.00"
+        } 
+    ],
+    "name": "Tvättstuga, Läslampan 1",
+    "residence": "65429601add7c81260092af3",
+    "limit": 4
+}
