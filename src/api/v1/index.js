@@ -9,7 +9,7 @@ router.get("/", function (req, res) {
   res.status(200).send("ok");
 });
 router.get("/verify-access-token", jwt.authenticateToken, (req, res) =>
-  res.status(200).json({ status: "ok" }),
+  res.status(200).json({ status: "alive and kick'n" }),
 );
 router.use("/users", require("./users/user.routes"));
 router.use(
