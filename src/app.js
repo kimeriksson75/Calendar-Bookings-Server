@@ -23,7 +23,11 @@ app.use(helmet());
 app.use(compression({ filter: compressFilter }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(`/api/${API_VERSION}`, require(`./api/${API_VERSION}/`));

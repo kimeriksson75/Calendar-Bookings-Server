@@ -5,6 +5,7 @@ module.exports = {
   REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
   BASE_URL: process.env.BASE_URL,
   MONGODB_URI: process.env.MONGODB_URI,
+  MONGODB_URI_PRODUCTION: process.env.MONGODB_URI_PRODUCTION,
   PORT: process.env.PORT,
   API_VERSION: process.env.API_VERSION,
   NODE_MAILER_SERVICE: process.env.NODE_MAILER_SERVICE,

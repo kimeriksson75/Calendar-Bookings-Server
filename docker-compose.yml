@@ -17,8 +17,6 @@ services:
       - 4000:3000
     environment:
       PORT: 3000
-      MONGODB_URI: mongodb://mongo_db:27017
-      DB_NAME: calendar-bookings
     depends_on: 
       - mongo_db
 
