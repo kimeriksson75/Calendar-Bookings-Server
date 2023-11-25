@@ -76,6 +76,11 @@ const create = async (userId, bookingParam) => {
   
   const booking = await Booking.create(bookingParam);
   if (booking) {
+    global.io.emit('booking_updates', {
+      service: bookingParam.service,
+      date: bookingParam.date,
+    });
+
     return booking;
   }
   
@@ -115,6 +120,10 @@ const update = async (userId, id, bookingParam) => {
     { new: true },
   );
   if (updatedBooking) {
+    global.io.emit('booking_updates', {
+      service: bookingParam.service,
+      date: bookingParam.date,
+    });
     return updatedBooking;
   }
   throw new ValidationError(`Error while updating booking`);

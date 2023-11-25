@@ -29,6 +29,7 @@
     "path": "^0.12.7",
     "pino": "^8.15.1",
     "rootpath": "^0.1.2",
+    "socket.io": "^4.7.2",
     "swagger-ui-express": "^5.0.0",
     "tslib": "^2.6.2",
     "yamljs": "^0.3.0"
