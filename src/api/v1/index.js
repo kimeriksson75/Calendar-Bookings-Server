@@ -11,13 +11,13 @@ router.get("/", function (req, res) {
 router.get("/verify-access-token", jwt.authenticateToken, (req, res) =>
   res.status(200).json({ status: "ok" }),
 );
-router.use("/users", require("./users/user.routes"));
-router.use("/bookings", require("./bookings/booking.routes"));
-router.use("/residences", require("./residences/residence.routes"));
-router.use("/apartments", require("./apartments/apartment.routes"));
-router.use("/services", require("./services/service.routes"));
-router.use("/tokens", require("./tokens/token.routes"));
-router.use("/scanners", require("./scanners/scanner.routes"));
+router.use("/users", jwt.authenticateToken, require("./users/user.routes"));
+router.use("/bookings", jwt.authenticateToken, require("./bookings/booking.routes"));
+router.use("/residences", jwt.authenticateToken, require("./residences/residence.routes"));
+router.use("/apartments", jwt.authenticateToken, require("./apartments/apartment.routes"));
+router.use("/services", jwt.authenticateToken, require("./services/service.routes"));
+router.use("/tokens", jwt.authenticateToken, require("./tokens/token.routes"));
+router.use("/scanners", jwt.authenticateToken, require("./scanners/scanner.routes"));
 router.use(
   "/tags",
   jwt.authenticateToken,
