@@ -7,17 +7,17 @@ const tagSchema = new Schema({
     scannerId: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: "scanner",
+        ref: "Scanner",
     },
     userId: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: "user",
+        ref: "User",
     },
     serviceId: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: "service",
+        ref: "Service",
     },
     createdAt: {
         type: Date,

@@ -7,11 +7,11 @@ const scannerSchema = new Schema({
     residenceId: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: "residence",
+        ref: "Residence",
     },
     serviceId: {
         type: Schema.Types.ObjectId,
-        ref: "service",
+        ref: "Service",
     },
     types: {
         type: [String],
