@@ -13,9 +13,12 @@ const Token = db.Token;
 const create = async (params) => {
   await validate(tokenSchema, params);
   const { userId } = params;
+  const generatedAccessToken = jwt.sign(userId, ACCESS_TOKEN_SECRET, {
+    expiresIn: "1d",
+  })
   const token = await new Token({
     userId,
-    token: jwt.sign({ sub: userId }, ACCESS_TOKEN_SECRET),
+    token: generatedAccessToken,
   }).save();
   if (token) {
     return token;

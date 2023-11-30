@@ -62,7 +62,7 @@ const verifyToken = async ({ _id, roles }) => {
     const payload = { _id, roles };
     token = {
       userId: _id,
-      token: jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: "14m" }),
+      token: jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: "1d" }),
     };
     await Token.create(token);
   }

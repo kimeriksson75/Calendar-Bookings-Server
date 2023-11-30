@@ -5,12 +5,14 @@ const Schema = mongoose.Schema;
 const timeSlot = new mongoose.Schema({
   userid: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
   username: { type: String, default: "" },
-  timeslot: { type: String, required: true },
+  start: { type: Date, required: true },
+  end: { type: Date, required: true },
 });
 const alternateTimeslot = new mongoose.Schema({
   userid: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
   username: { type: String, default: "" },
-  timeslot: { type: String, required: true },
+  start: { type: Date, required: true },
+  end: { type: Date, required: true },
 });
 
 const bookingSchema = new Schema({
