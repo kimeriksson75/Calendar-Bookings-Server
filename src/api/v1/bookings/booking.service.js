@@ -176,6 +176,28 @@ const getByServiceDate = async (service, date) => {
   return booking || {};
 };
 
+const getByServiceDateSpan = async (service, start, end) => {
+  isValidObjectId(service);
+  isValidDate(start);
+  isValidDate(end);
+  const existingService = await Service.findById(service);
+  if (!existingService) {
+    throw new NotFoundError(`Service with id ${service} does not exists`);
+  }
+  const startDate = moment(start).startOf("day");
+  const endDate = moment(end).endOf("day");
+  const bookings = await Booking.find({
+    service,
+    date: { $gte: startDate, $lte: endDate },
+  });
+  if (bookings) {
+    return bookings;
+  }
+  throw new NotFoundError(
+    `Booking with service ${service} and required date span does not exists`,
+  );
+}
+
 const getByServiceMonth = async (service, date) => {
   isValidObjectId(service);
   isValidDate(date);
@@ -241,6 +263,7 @@ module.exports = {
   getById,
   getByService,
   getByServiceDate,
+  getByServiceDateSpan,
   getByServiceMonth,
   getByServiceUser,
   update,

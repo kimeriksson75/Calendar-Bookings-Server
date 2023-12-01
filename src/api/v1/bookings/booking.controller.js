@@ -24,6 +24,12 @@ exports.getByServiceDate = (req, res, next) =>
     .then((booking) => res.status(200).json(booking))
     .catch((err) => next(err));
 
+exports.getByServiceDateSpan = (req, res, next) =>
+  bookingService
+    .getByServiceDateSpan(req.params.service, req.params.start, req.params.end)
+    .then((booking) => res.status(200).json(booking))
+    .catch((err) => next(err));
+
 exports.getByServiceMonth = (req, res, next) =>
   bookingService
     .getByServiceMonth(req.params.service, req.params.date)
