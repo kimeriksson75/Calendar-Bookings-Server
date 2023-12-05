@@ -18,10 +18,7 @@ router.use("/residences", jwt.authenticateToken, require("./residences/residence
 router.use("/apartments", jwt.authenticateToken, require("./apartments/apartment.routes"));
 router.use("/services", jwt.authenticateToken, require("./services/service.routes"));
 router.use("/tokens", jwt.authenticateToken, require("./tokens/token.routes"));
-router.use("/scanners", jwt.authenticateToken, require("./scanners/scanner.routes"));
-router.use(
-  "/tags",
-  jwt.authenticateToken,
-  require("./tags/tag.routes"));
+router.use("/scanners", require("./scanners/scanner.routes"));
+router.use("/tags", require("./tags/tag.routes"));
 
 module.exports = router;
