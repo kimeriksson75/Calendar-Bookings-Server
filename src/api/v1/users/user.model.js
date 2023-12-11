@@ -14,7 +14,6 @@ const userSchema = new Schema({
   apartment: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Apartment",
-    required: true,
   },
   residence: {
     type: mongoose.Schema.Types.ObjectId,

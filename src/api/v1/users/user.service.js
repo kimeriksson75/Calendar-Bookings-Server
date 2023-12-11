@@ -31,21 +31,9 @@ const create = async (params) => {
     );
   }
 
-  const existingUserApartment = await User.findOne({
-    apartment: params.apartment,
-  });
-  if (existingUserApartment) {
-    throw new ValidationError(`Apartment ${params.apartment} is already taken`);
-  }
-
   const existingResidence = await Residence.findById(params.residence);
   if (!existingResidence) {
     throw new NotFoundError(`Residence ${params.residence} does not exist`);
-  }
-
-  const existingApartment = await Apartment.findById(params.apartment);
-  if (!existingApartment) {
-    throw new NotFoundError(`Apartment ${params.apartment} does not exist`);
   }
 
   // implement .getSalt, https://blog.logrocket.com/password-hashing-node-js-bcrypt/
