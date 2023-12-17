@@ -3,24 +3,48 @@
   "date": "2023-09-12T17:21:47.228Z",
   "timeslots": [
     {
-      "timeslot": "07.00 - 10.00",
-      "userid": "64f2fb695bd7da60df0673ba",
-      "username": "Eriksson"
-    },
-    {
-      "timeslot": "10.00 - 14.00",
       "userid": null,
-      "username": ""
+      "username": "",
+      "start": "2023-12-02T16:00:00.000Z",
+      "end": "2023-12-02T18:30:00.000Z",
+      "_id": "656b75c56c0a78cef01c9cf1"
     },
     {
-      "timeslot": "14.00 - 18.00",
+      "userid": "65429760add7c81260092b33",
+      "username": "Eriksson",
+      "start": "2023-12-27T18:30:00.000Z",
+      "end": "2023-12-27T21:00:00.000Z",
+      "_id": "656b75c56c0a78cef01c9cf2"
+    }
+  ],
+  "alternateTimeslots": [
+    {
       "userid": null,
-      "username": "null"
+      "username": "",
+      "start": "2023-12-02T06:00:00.000Z",
+      "end": "2023-12-02T09:00:00.000Z",
+      "_id": "656b75c56c0a78cef01c9cf3"
     },
     {
-      "timeslot": "18.00 - 22.00",
-      "userid": "64f2fb695bd7da60df0673ba",
-      "username": "Eriksson"
+      "userid": null,
+      "username": "",
+      "start": "2023-12-02T09:00:00.000Z",
+      "end": "2023-12-02T13:00:00.000Z",
+      "_id": "656b75c56c0a78cef01c9cf4"
+    },
+    {
+      "userid": null,
+      "username": "",
+      "start": "2023-12-02T13:00:00.000Z",
+      "end": "2023-12-02T17:00:00.000Z",
+      "_id": "656b75c56c0a78cef01c9cf5"
+    },
+    {
+      "userid": null,
+      "username": "",
+      "start": "2023-12-02T17:00:00.000Z",
+      "end": "2023-12-02T21:00:00.000Z",
+      "_id": "656b75c56c0a78cef01c9cf6"
     }
   ]
 }

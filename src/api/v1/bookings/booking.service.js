@@ -36,7 +36,6 @@ const getUserMonthlyBookings = async (userId, date, limit) => {
 
 const isUpdateDeleteRequest = (current, update) => {
   const issuedTimeslots = JSON.stringify(current.timeslots) === JSON.stringify(update.timeslots) ? ['alternateTimeslots'] : ['timeslots']
-  console.log(issuedTimeslots)
   const currentBookedTimeslots = current[issuedTimeslots].reduce((acc, timeslot) => {
     if (timeslot.userid) {
       acc.push(timeslot.timeslot)
@@ -49,7 +48,6 @@ const isUpdateDeleteRequest = (current, update) => {
     }
     return acc
   }, [])
-  console.log(currentBookedTimeslots.length, updateBookedTimeslots.length)
   return currentBookedTimeslots.length > updateBookedTimeslots.length;
 }
 const create = async (userId, bookingParam) => {

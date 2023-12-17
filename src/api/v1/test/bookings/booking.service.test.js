@@ -2,6 +2,8 @@ const BookingService = require("../../bookings/booking.service");
 const mongoose = require("mongoose");
 const moment = require("moment");
 
+const MockedSocket = require('socket.io-mock');
+
 const { Booking, Service, User } = require("../../_helpers/db");
 const {
   isValidObjectId,
@@ -23,7 +25,7 @@ Booking.findByIdAndRemove = jest.fn();
 
 Service.findById = jest.fn();
 User.findById = jest.fn();
-
+global.io = new MockedSocket();
 jest.mock("../../_helpers/db.document.validation", () => ({
   isValidObjectId: jest.fn().mockImplementation(() => true),
   isValidDate: jest.fn().mockImplementation(() => true),
@@ -31,8 +33,10 @@ jest.mock("../../_helpers/db.document.validation", () => ({
 jest.mock("../../_helpers/db.schema.validation", () => ({
   validate: jest.fn().mockImplementation(() => null),
 }));
+
 afterEach(() => {
   jest.clearAllMocks();
+  jest.restoreAllMocks();
 });
 
 afterAll(async () => {
@@ -46,14 +50,19 @@ describe("BookingService.create", () => {
   it("should call Booking.create", async () => {
     Booking.create.mockReturnValue(mockBooking);
     Service.findById.mockReturnValue(mockService);
-    await BookingService.create(mockBooking);
+    User.findById.mockReturnValue(mockUser);
+    const userId = mockBooking.timeslots[1].userid;
+    await BookingService.create(userId, mockBooking);
     expect(Booking.create).toBeCalledWith(mockBooking);
   });
 
   it("should return the created booking", async () => {
+    const userId = mockBooking.timeslots[1].userid;
     Booking.create.mockReturnValue(mockBooking);
     Service.findById.mockReturnValue(mockService);
-    const result = await BookingService.create(mockBooking);
+    User.findById.mockReturnValue(mockUser);
+
+    const result = await BookingService.create(userId, mockBooking);
     expect(result).toEqual(mockBooking);
   });
 
@@ -61,7 +70,8 @@ describe("BookingService.create", () => {
     Booking.create.mockImplementation(() => {
       throw new Error("Error creating booking");
     });
-    await expect(BookingService.create(mockBooking)).rejects.toThrow(
+    const userId = mockBooking.timeslots[1].userid;
+    await expect(BookingService.create(userId, mockBooking)).rejects.toThrow(
       "Error creating booking",
     );
   });
@@ -81,8 +91,19 @@ describe("BookingService.create", () => {
   it("should throw an error if the service does not exist", async () => {
     Booking.create.mockReturnValue(mockBooking);
     Service.findById.mockReturnValue(null);
-    await expect(BookingService.create(mockBooking)).rejects.toThrow(
+    const userId = mockBooking.timeslots[1].userid;
+    await expect(BookingService.create(userId, mockBooking)).rejects.toThrow(
       `Service with id ${mockBooking.service} does not exists`,
+    );
+  });
+
+  it("should throw an error if the user does not exist", async () => {
+    Booking.create.mockReturnValue(mockBooking);
+    Service.findById.mockReturnValue(mockService);
+    User.findById.mockReturnValue(null);
+    const userId = mockBooking.timeslots[1].userid;
+    await expect(BookingService.create(userId, mockBooking)).rejects.toThrow(
+      `User with id ${userId} does not exists`,
     );
   });
 
@@ -90,7 +111,8 @@ describe("BookingService.create", () => {
     isValidObjectId.mockImplementationOnce(() => {
       throw new Error("Error validating service id");
     });
-    await expect(BookingService.create(mockBooking)).rejects.toThrowError(
+    const userId = mockBooking.timeslots[1].userid;
+    await expect(BookingService.create(userId, mockBooking)).rejects.toThrowError(
       "Error validating service id",
     );
   });
@@ -107,7 +129,9 @@ describe("BookingService.update", () => {
   it("should call Booking.update", async () => {
     Booking.findById.mockReturnValue(mockBooking);
     Booking.findByIdAndUpdate.mockReturnValue(mockBooking);
-    await BookingService.update(mockBookingId, mockBooking);
+    User.findById.mockReturnValue(mockUser);
+    const userId = mockBooking.timeslots[1].userid;
+    await BookingService.update(userId, mockBookingId, mockBooking);
     expect(Booking.findByIdAndUpdate).toBeCalledWith(
       mockBookingId,
       { $set: mockBooking },
@@ -118,34 +142,41 @@ describe("BookingService.update", () => {
   it("should return the updated booking", async () => {
     Booking.findById.mockReturnValue(mockBooking);
     Booking.findByIdAndUpdate.mockReturnValue(mockBooking);
-    const result = await BookingService.update(mockBookingId, mockBooking);
+    User.findById.mockReturnValue(mockUser);
+    const userId = mockBooking.timeslots[1].userid;
+    const result = await BookingService.update(userId, mockBookingId, mockBooking);
     expect(result).toEqual(mockBooking);
   });
 
   it("should catch errors", async () => {
     Booking.findById.mockReturnValue(mockBooking);
+    User.findById.mockReturnValue(mockUser);
     Booking.findByIdAndUpdate.mockImplementation(() => {
       throw new Error("Error updating booking");
     });
+    const userId = mockBooking.timeslots[1].userid;
     await expect(
-      BookingService.update(mockBookingId, mockBooking),
+      BookingService.update(userId, mockBookingId, mockBooking),
     ).rejects.toThrow("Error updating booking");
   });
 
   it("should throw an error if the booking does not exist", async () => {
     Booking.findById.mockReturnValue(null);
     Booking.findByIdAndUpdate.mockReturnValue(mockBooking);
+    User.findById.mockReturnValue(mockUser);
+    const userId = mockBooking.timeslots[1].userid;
     await expect(
-      BookingService.update(mockBookingId, mockBooking),
+      BookingService.update(userId, mockBookingId, mockBooking),
     ).rejects.toThrow(`Booking with id ${mockBookingId} does not exist`);
   });
-
+  
   it("should throw an error while invalid booking id", async () => {
     isValidObjectId.mockImplementationOnce(() => {
       throw new Error("Error validating booking id");
     });
+    const userId = mockBooking.timeslots[1].userid;
     await expect(
-      BookingService.update(mockBookingId, mockBooking),
+      BookingService.update(userId, mockBookingId, mockBooking),
     ).rejects.toThrowError("Error validating booking id");
   });
 
@@ -164,9 +195,21 @@ describe("BookingService.update", () => {
   it("should throw an error if the service does not exist", async () => {
     Booking.findById.mockReturnValue(mockBooking);
     Service.findById.mockReturnValue(null);
+    User.findById.mockReturnValue(mockUser);
+    const userId = mockBooking.timeslots[1].userid;
     await expect(
-      BookingService.update(mockBookingId, mockBooking),
+      BookingService.update(userId, mockBookingId, mockBooking),
     ).rejects.toThrow(`Service with id ${mockBooking.service} does not exists`);
+  });
+
+  it("should throw an error if the user does not exist", async () => {
+    Booking.findById.mockReturnValue(mockBooking);
+    Service.findById.mockReturnValue(mockService);
+    User.findById.mockReturnValue(null);
+    const userId = mockBooking.timeslots[1].userid;
+    await expect(
+      BookingService.update(userId, mockBookingId, mockBooking),
+    ).rejects.toThrow(`User with id ${userId} does not exists`);
   });
 
   it("should throw an error while invalid service id", async () => {
@@ -378,8 +421,13 @@ describe("BookingService.getByServiceUser", () => {
     );
     expect(Booking.find).toBeCalled();
     expect(Booking.find).toBeCalledWith({
-      service: mockBooking.service,
-      "timeslots.userid": mockBooking.timeslots[0].userid,
+      $or: [{
+        "timeslots.userid": mockBooking.timeslots[0].userid,
+        service: mockBooking.service,
+      }, {
+        "alternateTimeslots.userid": mockBooking.timeslots[0].userid,
+        service: mockBooking.service,
+      }],
     });
   });
 

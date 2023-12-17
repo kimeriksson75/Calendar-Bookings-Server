@@ -19,15 +19,16 @@ describe("BookingController.create", () => {
     expect(typeof BookingController.create).toBe("function");
   });
 
-  it("should call BookingService.create", () => {
+  it("should call BookingService.create", async () => {
     BookingService.create = jest.fn(() => Promise.resolve(mockBooking));
-    BookingController.create(req, res, next);
-    expect(BookingService.create).toBeCalledWith(req.body);
+    req.body = mockBooking;
+    req.params.user = mockBooking.timeslots[0].userid;
+    await BookingController.create(req, res, next);
+    expect(BookingService.create).toBeCalledWith(req.params.user, req.body);
   });
 
   it("should return 201 response and created booking data", async () => {
     BookingService.create = jest.fn(() => Promise.resolve(mockBooking));
-
     req.body = mockBooking;
     await BookingController.create(req, res, next);
     expect(res.statusCode).toBe(201);
@@ -226,9 +227,10 @@ describe("BookingController.update", () => {
   it("should call BookingService.update", () => {
     BookingService.update = jest.fn(() => Promise.resolve(mockBooking));
     req.params.id = mockBooking._id;
+    req.params.user = mockBooking.timeslots[1].userid;
     req.body = mockBooking;
     BookingController.update(req, res, next);
-    expect(BookingService.update).toBeCalledWith(req.params.id, req.body);
+    expect(BookingService.update).toBeCalledWith(req.params.user, req.params.id, req.body);
   });
 
   it("should return response with status 200 and updated booking", async () => {
