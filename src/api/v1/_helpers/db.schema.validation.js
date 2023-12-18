@@ -19,7 +19,7 @@ const userSchema = Joi.object({
   lastname: Joi.string().required(),
   password: Joi.string().min(4).allow(null),
   residence: Joi.string().hex().length(24).required(),
-  apartment: Joi.string().hex().length(24),
+  apartment: Joi.string().hex().length(24).allow(null),
   hash: Joi.string(),
 });
 

@@ -130,14 +130,16 @@ const resetPasswordLink = async (userParam) => {
   }
   const token = await verifyToken(user);
   const link = `${BASE_URL}/api/${API_VERSION}/users/reset-password-form/${user._id}/${token.token}`;
-  console.log("link", link);
   await sendEmail(user.email, "Password reset", link);
   return user;
 };
 
 const resetPassword = async (id, token, params) => {
-  const { password, verifyPassword } = params;
-  console.log("resetPassword", password, verifyPassword);
+  const { password = null, verifyPassword = null } = params;
+  console.log("resetPassword", 'password:', password, 'verifyPassword:',verifyPassword);
+  if (!password) {
+    throw new ValidationError(`Password is required`);
+  }
   if (password !== verifyPassword) {
     throw new ValidationError("Passwords do not match");
   }
@@ -160,9 +162,6 @@ const resetPassword = async (id, token, params) => {
     throw new ValidationError(`Token expired`);
   }
 
-  if (!password) {
-    throw new ValidationError(`Password is required`);
-  }
 
   const nonUniquePassword = await bcrypt.compare(password, user.hash);
   if (nonUniquePassword) {

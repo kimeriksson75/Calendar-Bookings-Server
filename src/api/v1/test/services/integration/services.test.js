@@ -5,25 +5,49 @@ let mockService = {
   type: "laundry",
   timeslots: [
     {
-      timeslot: "07.00 - 10.00",
       userid: null,
       username: "",
+      start: "2023-12-02T16:00:00.000Z",
+      end: "2023-12-02T18:30:00.000Z",
+      _id: "656b75c56c0a78cef01c9cf1"
     },
     {
-      timeslot: "10.00 - 14.00",
+      userid: "65429760add7c81260092b33",
+      username: "Eriksson",
+      start: "2023-12-27T18:30:00.000Z",
+      end: "2023-12-27T21:00:00.000Z",
+      _id: "656b75c56c0a78cef01c9cf2"
+    }
+  ],
+  alternateTimeslots: [
+    {
       userid: null,
       username: "",
+      start: "2023-12-02T06:00:00.000Z",
+      end: "2023-12-02T09:00:00.000Z",
+      _id: "656b75c56c0a78cef01c9cf3"
     },
     {
-      timeslot: "14.00 - 18.00",
       userid: null,
       username: "",
+      start: "2023-12-02T09:00:00.000Z",
+      end: "2023-12-02T13:00:00.000Z",
+      _id: "656b75c56c0a78cef01c9cf4"
     },
     {
-      timeslot: "18.00 - 22.00",
       userid: null,
       username: "",
+      start: "2023-12-02T13:00:00.000Z",
+      end: "2023-12-02T17:00:00.000Z",
+      _id: "656b75c56c0a78cef01c9cf5"
     },
+    {
+      userid: null,
+      username: "",
+      start: "2023-12-02T17:00:00.000Z",
+      end: "2023-12-02T21:00:00.000Z",
+      _id: "656b75c56c0a78cef01c9cf6"
+    }
   ],
   name: "Laundry Service 1",
   residence: "",

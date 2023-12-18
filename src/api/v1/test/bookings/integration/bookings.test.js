@@ -3,10 +3,13 @@ const app = require("../../../../../app");
 const {
   createDocument,
   authCreateDocument,
+  authCreateBookingDocument,
   deleteDocument,
   authDeleteDocument,
   authenticate,
 } = require("../../../_helpers/db.integration");
+const MockedSocket = require('socket.io-mock');
+global.io = new MockedSocket();
 
 let mockUser = {
   username: "User 1",
@@ -15,39 +18,63 @@ let mockUser = {
   firstname: "John",
   lastname: "Doe",
   residence: "",
-  apartment: "",
 };
 
-let mockTimeSlots = [
+let mockTimeSlots = [{
+  userid: "65429760add7c81260092b33",
+  username: "Eriksson",
+  start: "2023-12-02T16:00:00.000Z",
+  end: "2023-12-02T18:30:00.000Z",
+  _id: "656b75c56c0a78cef01c9cf1"
+},
+{
+  userid: null,
+  username: "",
+  start: "2023-12-27T18:30:00.000Z",
+  end: "2023-12-27T21:00:00.000Z",
+  _id: "656b75c56c0a78cef01c9cf2"
+  }]
+
+let mockAlternateTimeSlots = [
   {
-    timeslot: "07.00 - 10.00",
     userid: null,
     username: "",
+    start: "2023-12-02T06:00:00.000Z",
+    end: "2023-12-02T09:00:00.000Z",
+    _id: "656b75c56c0a78cef01c9cf3"
   },
   {
-    timeslot: "10.00 - 14.00",
     userid: null,
     username: "",
+    start: "2023-12-02T09:00:00.000Z",
+    end: "2023-12-02T13:00:00.000Z",
+    _id: "656b75c56c0a78cef01c9cf4"
   },
   {
-    timeslot: "14.00 - 18.00",
     userid: null,
     username: "",
+    start: "2023-12-02T13:00:00.000Z",
+    end: "2023-12-02T17:00:00.000Z",
+    _id: "656b75c56c0a78cef01c9cf5"
   },
   {
-    timeslot: "18.00 - 22.00",
     userid: null,
     username: "",
-  },
+    start: "2023-12-02T17:00:00.000Z",
+    end: "2023-12-02T21:00:00.000Z",
+    _id: "656b75c56c0a78cef01c9cf6"
+  }
 ];
 let mockBooking = {
   service: "",
   date: "2023-09-12T17:21:47.228Z",
   timeslots: [...mockTimeSlots],
+  alternateTimeslots: [...mockAlternateTimeSlots]
 };
 let mockService = {
   type: "laundry",
   timeslots: [...mockTimeSlots],
+  alternateTimeslots: [...mockAlternateTimeSlots],
   name: "Laundry Service 1",
   residence: "",
   limit: 2,
@@ -55,7 +82,6 @@ let mockService = {
 
 let createdUserId;
 let createdResidenceId;
-let createdApartmentId;
 let createdServiceId;
 let accessToken;
 let createdBooking;
@@ -65,10 +91,6 @@ beforeAll(async () => {
     name: "Residence 1",
     address: "Address 1",
   });
-  createdApartmentId = await createDocument("apartments", {
-    name: "Apartment 1",
-    residence: createdResidenceId,
-  });
   createdServiceId = await createDocument("services", {
     ...mockService,
     residence: createdResidenceId,
@@ -76,7 +98,6 @@ beforeAll(async () => {
   createdUserId = await createDocument("users", {
     ...mockUser,
     residence: createdResidenceId,
-    apartment: createdApartmentId,
   });
 
   const tokens = await authenticate(mockUser);
@@ -87,7 +108,6 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await deleteDocument("apartments", createdApartmentId);
   await deleteDocument("residences", createdResidenceId);
   await deleteDocument("services", createdServiceId);
   await deleteDocument("users", createdUserId);
@@ -99,7 +119,7 @@ describe("POST /api/v1/bookings", () => {
   });
   it("should return 400 Bad Request while invalid booking param", async () => {
     return request(app)
-      .post("/api/v1/bookings")
+      .post(`/api/v1/bookings/${createdUserId}`)
       .auth(accessToken, { type: "bearer" })
       .send({ ...mockBooking, date: "invalid date" })
       .expect(400)
@@ -112,7 +132,7 @@ describe("POST /api/v1/bookings", () => {
   it("should return 404 Not Found while service does not exist", async () => {
     const invalidServiceId = "6512e2046e6a3c3d399cff6e";
     return request(app)
-      .post("/api/v1/bookings")
+      .post(`/api/v1/bookings/${createdUserId}`)
       .auth(accessToken, { type: "bearer" })
       .send({ ...mockBooking, service: invalidServiceId })
       .expect(404)
@@ -126,7 +146,7 @@ describe("POST /api/v1/bookings", () => {
   it("should return 400 Bad Request while invalid service id", async () => {
     const invalidServiceId = "invalid id";
     return request(app)
-      .post("/api/v1/bookings")
+      .post(`/api/v1/bookings/${createdUserId}`)
       .auth(accessToken, { type: "bearer" })
       .send({ ...mockBooking, service: invalidServiceId })
       .expect(400)
@@ -140,11 +160,12 @@ describe("POST /api/v1/bookings", () => {
 
   it("should return 400 Bad Request while invalid booking param", async () => {
     return request(app)
-      .post("/api/v1/bookings")
+      .post(`/api/v1/bookings/${createdUserId}`)
       .auth(accessToken, { type: "bearer" })
       .send({
         ...mockBooking,
-        timeslots: [{ ...mockTimeSlots[0], userid: "invalid id" }],
+        timeslots: [{ 
+          ...mockTimeSlots[0], userid: "invalid id" }],
       })
       .expect(400)
       .expect("Content-Type", /json/)
@@ -157,7 +178,7 @@ describe("POST /api/v1/bookings", () => {
 
   it("should return 201 and created booking", async () => {
     return request(app)
-      .post("/api/v1/bookings")
+      .post(`/api/v1/bookings/${createdUserId}`)
       .auth(accessToken, { type: "bearer" })
       .send(mockBooking)
       .expect(201)
@@ -179,9 +200,10 @@ describe("POST /api/v1/bookings", () => {
 describe("PATCH /api/v1/bookings", () => {
   let createdMockBooking;
   beforeAll(async () => {
-    createdMockBooking = await authCreateDocument(
+    createdMockBooking = await authCreateBookingDocument(
       "bookings",
       mockBooking,
+      createdUserId,
       accessToken,
       false,
     );
@@ -193,7 +215,7 @@ describe("PATCH /api/v1/bookings", () => {
 
   it("should return 400 Bad Request while invalid booking param", async () => {
     return request(app)
-      .patch(`/api/v1/bookings/${createdMockBooking._id}`)
+      .patch(`/api/v1/bookings/${createdUserId}/${createdMockBooking._id}`)
       .auth(accessToken, { type: "bearer" })
       .send({ ...mockBooking, date: "invalid date" })
       .expect(400)
@@ -206,7 +228,7 @@ describe("PATCH /api/v1/bookings", () => {
   it("should return 404 Not Found if booking does not exist", async () => {
     const invalidBookingId = "6512e2046e6a3c3d399cff6e";
     return request(app)
-      .patch(`/api/v1/bookings/${invalidBookingId}`)
+      .patch(`/api/v1/bookings/${createdUserId}/${invalidBookingId}`)
       .auth(accessToken, { type: "bearer" })
       .send(mockBooking)
       .expect(404)
@@ -221,7 +243,7 @@ describe("PATCH /api/v1/bookings", () => {
   it("should return 400 Bad Request while invalid booking id", async () => {
     const invalidBookingId = "invalid id";
     return request(app)
-      .patch(`/api/v1/bookings/${invalidBookingId}`)
+      .patch(`/api/v1/bookings/${createdUserId}/${invalidBookingId}`)
       .auth(accessToken, { type: "bearer" })
       .send(mockBooking)
       .expect(400)
@@ -234,7 +256,7 @@ describe("PATCH /api/v1/bookings", () => {
   it("should return 400 Bad Request while invalid service id", async () => {
     const invalidServiceId = "invalid id";
     return request(app)
-      .patch(`/api/v1/bookings/${createdMockBooking._id}`)
+      .patch(`/api/v1/bookings/${createdUserId}/${createdMockBooking._id}`)
       .auth(accessToken, { type: "bearer" })
       .send({ ...mockBooking, service: invalidServiceId })
       .expect(400)
@@ -249,7 +271,7 @@ describe("PATCH /api/v1/bookings", () => {
   it("should return 404 Not Found while service does not exist", async () => {
     const invalidServiceId = "6512e2046e6a3c3d399cff6e";
     return request(app)
-      .patch(`/api/v1/bookings/${createdMockBooking._id}`)
+      .patch(`/api/v1/bookings/${createdUserId}/${createdMockBooking._id}`)
       .auth(accessToken, { type: "bearer" })
       .send({ ...mockBooking, service: invalidServiceId })
       .expect(404)
@@ -263,7 +285,7 @@ describe("PATCH /api/v1/bookings", () => {
 
   it("should return 200 and updated booking", async () => {
     return request(app)
-      .patch(`/api/v1/bookings/${createdMockBooking._id}`)
+      .patch(`/api/v1/bookings/${createdUserId}/${createdMockBooking._id}`)
       .auth(accessToken, { type: "bearer" })
       .send({ ...mockBooking, date: "2023-09-12T17:21:47.228Z" })
       .expect(200)
@@ -284,9 +306,10 @@ describe("PATCH /api/v1/bookings", () => {
 describe("GET /api/v1/bookings", () => {
   let createdMockBooking;
   beforeAll(async () => {
-    createdMockBooking = await authCreateDocument(
+    createdMockBooking = await authCreateBookingDocument(
       "bookings",
       mockBooking,
+      createdUserId,
       accessToken,
       false,
     );
@@ -313,9 +336,10 @@ describe("GET /api/v1/bookings", () => {
 describe("GET /api/v1/bookings/:id", () => {
   let createdMockBooking;
   beforeAll(async () => {
-    createdMockBooking = await authCreateDocument(
+    createdMockBooking = await authCreateBookingDocument(
       "bookings",
       mockBooking,
+      createdUserId,
       accessToken,
       false,
     );
@@ -365,9 +389,10 @@ describe("GET /api/v1/bookings/:id", () => {
 describe("GET /api/v1/bookings/service/:service", () => {
   let createdMockBooking;
   beforeAll(async () => {
-    createdMockBooking = await authCreateDocument(
+    createdMockBooking = await authCreateBookingDocument(
       "bookings",
       mockBooking,
+      createdUserId,
       accessToken,
       false,
     );
@@ -429,9 +454,10 @@ describe("GET /api/v1/bookings/service/:service", () => {
 describe("GET /api/v1/bookings/service/:service/date/:date", () => {
   let createdMockBooking;
   beforeAll(async () => {
-    createdMockBooking = await authCreateDocument(
+    createdMockBooking = await authCreateBookingDocument(
       "bookings",
       mockBooking,
+      createdUserId,
       accessToken,
       false,
     );
@@ -527,9 +553,10 @@ describe("GET /api/v1/bookings/service/:service/date/:date", () => {
 describe("GET /api/v1/bookings/service/:service/month/:date", () => {
   let createdMockBooking;
   beforeAll(async () => {
-    createdMockBooking = await authCreateDocument(
+    createdMockBooking = await authCreateBookingDocument(
       "bookings",
       mockBooking,
+      createdUserId,
       accessToken,
       false,
     );
@@ -616,9 +643,10 @@ describe("GET /api/v1/bookings/service/:service/month/:date", () => {
 describe("GET /api/v1/bookings/service/:service/user/:id", () => {
   let createdMockBooking;
   beforeAll(async () => {
-    createdMockBooking = await authCreateDocument(
+    createdMockBooking = await authCreateBookingDocument(
       "bookings",
       mockBooking,
+      createdUserId,
       accessToken,
       false,
     );
@@ -718,9 +746,10 @@ describe("GET /api/v1/bookings/service/:service/user/:id", () => {
 describe("DELETE /api/v1/bookings/:id", () => {
   let createdMockBooking;
   beforeAll(async () => {
-    createdMockBooking = await authCreateDocument(
+    createdMockBooking = await authCreateBookingDocument(
       "bookings",
       mockBooking,
+      createdUserId,
       accessToken,
       false,
     );

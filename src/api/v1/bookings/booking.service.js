@@ -87,7 +87,9 @@ const create = async (userId, bookingParam) => {
 
 const update = async (userId, id, bookingParam) => {
   await validate(bookingSchema, bookingParam);
+  isValidObjectId(userId);
   isValidObjectId(id);
+  isValidObjectId(bookingParam?.service);
 
   const existingService = await Service.findById(bookingParam.service);
   if (!existingService) {

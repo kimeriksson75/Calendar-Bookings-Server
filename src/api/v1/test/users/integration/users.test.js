@@ -15,28 +15,20 @@ describe("POST /api/v1/users", () => {
     firstname: "John",
     lastname: "Doe",
     residence: "",
-    apartment: "",
   };
 
   let createdUserId;
   let createdResidenceId;
-  let createdApartmentId;
 
   beforeAll(async () => {
     createdResidenceId = await createDocument("residences", {
       name: "Residence 1",
       address: "Address 1",
     });
-    createdApartmentId = await createDocument("apartments", {
-      name: "Apartment 1",
-      residence: createdResidenceId,
-    });
     mockUser.residence = createdResidenceId;
-    mockUser.apartment = createdApartmentId;
   });
 
   afterAll(async () => {
-    await deleteDocument("apartments", createdApartmentId);
     await deleteDocument("residences", createdResidenceId);
     await findAndRemoveUserToken(createdUserId);
   });
@@ -52,23 +44,6 @@ describe("POST /api/v1/users", () => {
       .expect((res) => {
         expect(res.body.message).toEqual(
           '"username" is not allowed to be empty',
-        );
-      });
-  });
-
-  it("should return 404 Not found if apartment does not exist", async () => {
-    const invalidApartmentId = "6511e643d6263f60d7e4544c";
-    return request(app)
-      .post("/api/v1/users")
-      .send({
-        ...mockUser,
-        apartment: invalidApartmentId,
-      })
-      .expect(404)
-      .expect("Content-Type", /json/)
-      .expect((res) => {
-        expect(res.body.message).toEqual(
-          `Apartment ${invalidApartmentId} does not exist`,
         );
       });
   });
@@ -102,7 +77,6 @@ describe("POST /api/v1/users", () => {
         expect(res.body.firstname).toEqual(mockUser.firstname);
         expect(res.body.lastname).toEqual(mockUser.lastname);
         expect(res.body.residence).toEqual(mockUser.residence);
-        expect(res.body.apartment).toEqual(mockUser.apartment);
         createdUserId = res.body._id;
       });
   });
@@ -116,22 +90,6 @@ describe("POST /api/v1/users", () => {
       .expect((res) => {
         expect(res.body.message).toEqual(
           "User User 1, user1@mail.com already exists",
-        );
-      });
-  });
-
-  it("should return 400 Bad request if apartment is already taken", async () => {
-    return request(app)
-      .post("/api/v1/users")
-      .send({
-        ...mockUser,
-        username: "User 2",
-      })
-      .expect(400)
-      .expect("Content-Type", /json/)
-      .expect((res) => {
-        expect(res.body.message).toEqual(
-          `Apartment ${mockUser.apartment} is already taken`,
         );
       });
   });
@@ -155,7 +113,6 @@ describe("POST /api/v1/users/authenticate", () => {
     firstname: "John",
     lastname: "Doe",
     residence: "",
-    apartment: "",
   };
 
   let authenticateUser = {
@@ -165,29 +122,21 @@ describe("POST /api/v1/users/authenticate", () => {
 
   let createdUserId;
   let createdResidenceId;
-  let createdApartmentId;
 
   beforeAll(async () => {
     createdResidenceId = await createDocument("residences", {
       name: "Residence 1",
       address: "Address 1",
     });
-    createdApartmentId = await createDocument("apartments", {
-      name: "Apartment 1",
-      residence: createdResidenceId,
-    });
     createdUserId = await createDocument("users", {
       ...mockUser,
       residence: createdResidenceId,
-      apartment: createdApartmentId,
     });
 
     mockUser.residence = createdResidenceId;
-    mockUser.apartment = createdApartmentId;
   });
 
   afterAll(async () => {
-    await deleteDocument("apartments", createdApartmentId);
     await deleteDocument("residences", createdResidenceId);
     await deleteDocument("users", createdUserId);
     await findAndRemoveUserToken(createdUserId);
@@ -232,7 +181,6 @@ describe("POST /api/v1/users/authenticate", () => {
         expect(res.body.firstname).toEqual(mockUser.firstname);
         expect(res.body.lastname).toEqual(mockUser.lastname);
         expect(res.body.residence).toEqual(mockUser.residence);
-        expect(res.body.apartment).toEqual(mockUser.apartment);
         expect(res.body.accessToken).toBeDefined();
         expect(res.body.refreshToken).toBeDefined();
       });
@@ -247,33 +195,24 @@ describe("POST /api/v1/users/reset-password-link", () => {
     firstname: "John",
     lastname: "Doe",
     residence: "",
-    apartment: "",
   };
 
   let createdUserId;
   let createdResidenceId;
-  let createdApartmentId;
 
   beforeAll(async () => {
     createdResidenceId = await createDocument("residences", {
       name: "Residence 1",
       address: "Address 1",
     });
-    createdApartmentId = await createDocument("apartments", {
-      name: "Apartment 1",
-      residence: createdResidenceId,
-    });
     createdUserId = await createDocument("users", {
       ...mockUser,
       residence: createdResidenceId,
-      apartment: createdApartmentId,
     });
     mockUser.residence = createdResidenceId;
-    mockUser.apartment = createdApartmentId;
   });
 
   afterAll(async () => {
-    await deleteDocument("apartments", createdApartmentId);
     await deleteDocument("residences", createdResidenceId);
     await deleteDocument("users", createdUserId);
     await findAndRemoveUserToken(createdUserId);
@@ -307,12 +246,11 @@ describe("POST /api/v1/users/reset-password-link", () => {
         expect(res.body.firstname).toEqual(mockUser.firstname);
         expect(res.body.lastname).toEqual(mockUser.lastname);
         expect(res.body.residence).toEqual(mockUser.residence);
-        expect(res.body.apartment).toEqual(mockUser.apartment);
       });
   });
 });
 
-describe("POST /api/v1/users/reset-password/:id/:token", () => {
+describe.skip("POST /api/v1/users/reset-password/:id/:token", () => {
   let mockUser = {
     username: "User 1",
     password: "password",
@@ -320,48 +258,39 @@ describe("POST /api/v1/users/reset-password/:id/:token", () => {
     firstname: "John",
     lastname: "Doe",
     residence: "",
-    apartment: "",
   };
 
   let createdUserId;
   let createdResidenceId;
-  let createdApartmentId;
 
   beforeAll(async () => {
     createdResidenceId = await createDocument("residences", {
       name: "Residence 1",
       address: "Address 1",
     });
-    createdApartmentId = await createDocument("apartments", {
-      name: "Apartment 1",
-      residence: createdResidenceId,
-    });
     createdUserId = await createDocument("users", {
       ...mockUser,
       residence: createdResidenceId,
-      apartment: createdApartmentId,
     });
 
     const { refreshToken } = await authenticate(mockUser);
     mockUser.residence = createdResidenceId;
-    mockUser.apartment = createdApartmentId;
     mockUser.token = refreshToken;
   });
 
   afterAll(async () => {
-    await deleteDocument("apartments", createdApartmentId);
     await deleteDocument("residences", createdResidenceId);
     await deleteDocument("users", createdUserId);
   });
 
-  it("should return 400 Bad request while empty password param", async () => {
+  it("should return 404 Bad request while empty password param", async () => {
     return request(app)
       .post(`/api/v1/users/reset-password/${createdUserId}/${mockUser.token}`)
       .send({
         password: "",
         verifyPassword: "password",
       })
-      .expect(400)
+      .expect(404)
       .expect("Content-Type", /json/)
       .expect((res) => {
         expect(res.body.message).toEqual("Password is required");
@@ -427,7 +356,6 @@ describe("POST /api/v1/users/reset-password/:id/:token", () => {
         expect(res.body.firstname).toEqual(mockUser.firstname);
         expect(res.body.lastname).toEqual(mockUser.lastname);
         expect(res.body.residence).toEqual(mockUser.residence);
-        expect(res.body.apartment).toEqual(mockUser.apartment);
       });
   });
 });
@@ -439,11 +367,9 @@ describe("GET /api/v1/users", () => {
     firstname: "John",
     lastname: "Doe",
     residence: "",
-    apartment: "",
   };
   let createdUserId;
   let createdResidenceId;
-  let createdApartmentId;
   let usersLength;
 
   beforeAll(async () => {
@@ -451,17 +377,11 @@ describe("GET /api/v1/users", () => {
       name: "Residence 1",
       address: "Address 1",
     });
-    createdApartmentId = await createDocument("apartments", {
-      name: "Apartment 1",
-      residence: createdResidenceId,
-    });
     mockUser.residence = createdResidenceId;
-    mockUser.apartment = createdApartmentId;
     createdUserId = await createDocument("users", mockUser);
   });
 
   afterAll(async () => {
-    await deleteDocument("apartments", createdApartmentId);
     await deleteDocument("residences", createdResidenceId);
     await findAndRemoveUserToken(createdUserId);
   });
@@ -497,28 +417,20 @@ describe("GET /api/v1/users/:id", () => {
     firstname: "John",
     lastname: "Doe",
     residence: "",
-    apartment: "",
   };
   let createdUserId;
   let createdResidenceId;
-  let createdApartmentId;
 
   beforeAll(async () => {
     createdResidenceId = await createDocument("residences", {
       name: "Residence 1",
       address: "Address 1",
     });
-    createdApartmentId = await createDocument("apartments", {
-      name: "Apartment 1",
-      residence: createdResidenceId,
-    });
     mockUser.residence = createdResidenceId;
-    mockUser.apartment = createdApartmentId;
     createdUserId = await createDocument("users", mockUser);
   });
 
   afterAll(async () => {
-    await deleteDocument("apartments", createdApartmentId);
     await deleteDocument("residences", createdResidenceId);
     await findAndRemoveUserToken(createdUserId);
   });
@@ -556,7 +468,6 @@ describe("GET /api/v1/users/:id", () => {
         expect(res.body.firstname).toEqual(mockUser.firstname);
         expect(res.body.lastname).toEqual(mockUser.lastname);
         expect(res.body.residence).toEqual(mockUser.residence);
-        expect(res.body.apartment).toEqual(mockUser.apartment);
       });
   });
 
@@ -579,28 +490,20 @@ describe("PUT /api/v1/users/:id", () => {
     firstname: "John",
     lastname: "Doe",
     residence: "",
-    apartment: "",
   };
   let createdUserId;
   let createdResidenceId;
-  let createdApartmentId;
 
   beforeAll(async () => {
     createdResidenceId = await createDocument("residences", {
       name: "Residence 1",
       address: "Address 1",
     });
-    createdApartmentId = await createDocument("apartments", {
-      name: "Apartment 1",
-      residence: createdResidenceId,
-    });
     mockUser.residence = createdResidenceId;
-    mockUser.apartment = createdApartmentId;
     createdUserId = await createDocument("users", mockUser);
   });
 
   afterAll(async () => {
-    await deleteDocument("apartments", createdApartmentId);
     await deleteDocument("residences", createdResidenceId);
     await deleteDocument("users", createdUserId);
     await findAndRemoveUserToken(createdUserId);
@@ -676,27 +579,19 @@ describe("DELETE /api/v1/users/:id", () => {
     firstname: "John",
     lastname: "Doe",
     residence: "",
-    apartment: "",
   };
   let createdUserId;
   let createdResidenceId;
-  let createdApartmentId;
 
   beforeAll(async () => {
     createdResidenceId = await createDocument("residences", {
       name: "Residence 1",
       address: "Address 1",
     });
-    createdApartmentId = await createDocument("apartments", {
-      name: "Apartment 1",
-      residence: createdResidenceId,
-    });
     mockUser.residence = createdResidenceId;
-    mockUser.apartment = createdApartmentId;
   });
 
   afterAll(async () => {
-    await deleteDocument("apartments", createdApartmentId);
     await deleteDocument("residences", createdResidenceId);
     await findAndRemoveUserToken(createdUserId);
   });

@@ -2,12 +2,12 @@ const request = require("supertest");
 const app = require("../app");
 
 describe("GET /api/v1/_health", () => {
-  it("should return 200 OK", async () => {
+  it("should return 200 and alive status message", async () => {
     return request(app)
       .get("/api/v1/_health")
       .expect(200)
       .expect("Content-Type", /json/)
-      .expect({ status: "ok" });
+      .expect({ status: "alive and kick'n" });
   });
 });
 

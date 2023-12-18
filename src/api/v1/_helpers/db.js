@@ -5,7 +5,7 @@ const connectUri = process.env.NODE_ENV === "production" ? MONGODB_URI_PRODUCTIO
 mongoose
   .connect(connectUri, { useUnifiedTopology: true, useNewUrlParser: true })
   .then(() => {
-    console.info(`DB ${connectUri} connection established`);
+    // console.info(`DB ${connectUri} connection established`);
   })
   .catch((error) => {
     console.error(`DB connection faild: ${error}`);

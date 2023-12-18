@@ -39,6 +39,20 @@ const authCreateDocument = async (collection, document, token, id = true) => {
   return returnValue;
 };
 
+const authCreateBookingDocument = async (collection, document, userId, token, id = true) => {
+  let returnValue;
+  await request(app)
+    .post(`/api/v1/${collection}/${userId}`)
+    .auth(token, { type: "bearer" })
+    .send(document)
+    .expect(201)
+    .expect("Content-Type", /json/)
+    .expect((res) => {
+      returnValue = id ? res.body._id : res.body;
+    });
+  return returnValue;
+};
+
 const authenticate = async ({ username, password }) => {
   let returnValue;
   await request(app)
@@ -70,6 +84,7 @@ module.exports = {
   authDeleteDocument,
   createDocument,
   authCreateDocument,
+  authCreateBookingDocument,
   authenticate,
   findAndRemoveUserToken,
 };

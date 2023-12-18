@@ -55,18 +55,34 @@ const verifyRefreshToken = async (refreshToken) => {
   return accessToken;
 };
 
-const verifyToken = async ({ _id, roles }) => {
-  isValidObjectId(_id);
-  let token = await Token.findOne({ _id });
-  if (!token) {
-    const payload = { _id, roles };
-    token = {
+const createNewToken = async ({ _id, roles }) => {
+  const payload = { _id, roles };
+    const token = {
       userId: _id,
       token: jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: "1d" }),
     };
     await Token.create(token);
+    return token;
+}
+const verifyToken = async ({ _id, roles }) => {
+  isValidObjectId(_id);
+  let token = await Token.findOne({ _id });
+  if (!token) {
+   return await createNewToken({ _id, roles })
+  } else {  
+    const isValidToken = jwt.verify(
+      token.token,
+      ACCESS_TOKEN_SECRET,
+      (err) => {
+        if (err) {
+          return false
+        }
+        return true;
+      },
+    );
+    console.log('isValidToken',isValidToken)
+    return isValidToken ? token : await createNewToken({ _id, roles })
   }
-  return token;
 };
 
 module.exports = {
