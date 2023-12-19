@@ -2,7 +2,6 @@ const request = require("supertest");
 const app = require("../../../../../app");
 const {
   createDocument,
-  authCreateDocument,
   authCreateBookingDocument,
   deleteDocument,
   authDeleteDocument,

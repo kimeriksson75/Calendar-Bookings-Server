@@ -5,7 +5,6 @@ const {
   
 const { Tag, User, Service } = require("../_helpers/db");
 const {
-    verifyToken,
     generateTokens,
 } = require("../_helpers/token.validation");
 

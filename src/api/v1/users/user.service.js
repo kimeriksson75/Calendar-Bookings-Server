@@ -10,7 +10,7 @@ const {
   refreshTokenSchema,
 } = require("../_helpers/db.schema.validation");
 const { isValidObjectId } = require("../_helpers/db.document.validation");
-const { User, Residence, Apartment, Token } = require("../_helpers/db");
+const { User, Residence, Token } = require("../_helpers/db");
 const { sendEmail } = require("./user.email");
 const {
   verifyToken,
