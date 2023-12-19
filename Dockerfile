@@ -1,6 +1,6 @@
 FROM --platform=linux/amd64 node:20
 WORKDIR /src
 COPY package*.json .
-RUN yarn ci 
+RUN npm ci 
 COPY . .
-CMD ["yarn", "start"]
+CMD ["npm", "start"]
