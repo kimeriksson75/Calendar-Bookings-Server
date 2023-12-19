@@ -35,10 +35,6 @@
     "tslib": "^2.6.2",
     "yamljs": "^0.3.0"
   },
-  "engines": {
-    "npm": "^6.x",
-    "node": "18.x"
-  },
   "devDependencies": {
     "chai": "^4.3.8",
     "eslint": "^8.50.0",
