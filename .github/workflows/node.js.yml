@@ -20,7 +20,7 @@ jobs:
           cache: "yarn"
       - run: yarn install --frozen-lockfile
       - run: yarn run lint
-      - run: docker-compose up -d mongo
+      - run: docker-compose up
       - run: yarn test -- --verbose --coverage
       - run: docker-compose build
       - run: docker-compose logs
