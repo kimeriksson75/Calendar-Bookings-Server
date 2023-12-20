@@ -1,6 +1,6 @@
 const logger = require("pino")();
 
-const errorHandler = (err, req, res) => {
+const errorHandler = (err, req, res, next) => {
   const { message = null, statusCode = null } = err;
   if (message && statusCode) {
     logger.error(
